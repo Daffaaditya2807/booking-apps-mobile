@@ -1,0 +1,235 @@
+import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
+import 'package:apllication_book_now/resource/sizes/list_padding.dart';
+import 'package:apllication_book_now/resource/sizes/list_rounded.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../../resource/fonts_style/fonts_style.dart';
+import '../../resource/list_color/colors.dart';
+import '../../resource/sizes/list_margin.dart';
+
+Widget componentTextMenu(
+    String label, IconData iconsLabel, VoidCallback function) {
+  return Padding(
+    padding: verticalPaddingSmall,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(
+              iconsLabel,
+              size: 30,
+              color: blueSecondary,
+            ),
+            spaceWidthMedium,
+            Text(
+              label,
+              style: boldStyle.copyWith(fontSize: fonth5, color: blueSecondary),
+            )
+          ],
+        ),
+        IconButton(
+            onPressed: function,
+            icon: Icon(
+              CupertinoIcons.chevron_forward,
+              size: 30,
+              color: blueSecondary,
+            ))
+      ],
+    ),
+  );
+}
+
+Widget componentTextGreeting(String personName) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      Text(
+        "Halo!",
+        style: semiBoldStyle.copyWith(fontSize: fonth3, color: Colors.black),
+      ),
+      spaceHeightMedium,
+      Text(
+        personName,
+        style: mediumStyle.copyWith(fontSize: fonth6, color: Colors.black),
+      ),
+    ],
+  );
+}
+
+Widget componentTextDetailBooking(
+    String day, String date, String time, String service) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        "Detail antrian anda",
+        style: boldStyle.copyWith(fontSize: fonth4, color: Colors.black),
+      ),
+      spaceHeightMedium,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Hari",
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+          Text(
+            day,
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+        ],
+      ),
+      spaceHeightSmall,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Tanggal",
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+          Text(
+            date,
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+        ],
+      ),
+      spaceHeightSmall,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Waktu",
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+          Text(
+            time,
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+        ],
+      ),
+      spaceHeightSmall,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Layanan",
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+          Text(
+            service,
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+        ],
+      ),
+      spaceHeightSmall,
+    ],
+  );
+}
+
+Widget componentTextDetailStatusBooking(
+    String day, String date, String time, String service, String status,
+    {String? reasonStatus}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Status antrian anda",
+            style: boldStyle.copyWith(fontSize: fonth4, color: Colors.black),
+          ),
+          Container(
+            decoration: BoxDecoration(
+                color: Colors.blue, borderRadius: roundedMediumGeo),
+            child: Padding(
+              padding: sideVerticalPaddingMedium,
+              child: Text(
+                status,
+                style: mediumStyle.copyWith(color: Colors.white),
+              ),
+            ),
+          )
+        ],
+      ),
+      spaceHeightMedium,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Hari",
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+          Text(
+            day,
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+        ],
+      ),
+      spaceHeightSmall,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Tanggal",
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+          Text(
+            date,
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+        ],
+      ),
+      spaceHeightSmall,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Waktu",
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+          Text(
+            time,
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+        ],
+      ),
+      spaceHeightSmall,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Layanan",
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+          Text(
+            service,
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+        ],
+      ),
+      spaceHeightSmall,
+      status == 'Ditolak'
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Alasan ditolak",
+                  style: regularStyle.copyWith(
+                      fontSize: fonth5, color: Colors.black),
+                ),
+                Text(
+                  reasonStatus ?? "",
+                  style: regularStyle.copyWith(
+                      fontSize: fonth5, color: Colors.black),
+                ),
+              ],
+            )
+          : Container(),
+      spaceHeightSmall,
+    ],
+  );
+}
