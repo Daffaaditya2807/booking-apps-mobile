@@ -2,6 +2,7 @@ import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
 import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:apllication_book_now/resource/sizes/list_rounded.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../resource/fonts_style/fonts_style.dart';
@@ -38,6 +39,40 @@ Widget componentTextMenu(
             ))
       ],
     ),
+  );
+}
+
+Widget componenTextHeaderDesc(String header, String desc) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      Text(
+        header,
+        style: semiBoldStyle.copyWith(fontSize: fonth3, color: blueSecondary),
+      ),
+      spaceHeightSmall,
+      Text(
+        desc,
+        style: mediumStyle.copyWith(fontSize: fonth6, color: greyPrimary),
+      ),
+    ],
+  );
+}
+
+Widget componenRichTextStyle(
+    String firstText, String lastText, VoidCallback function) {
+  return RichText(
+    text: TextSpan(
+        text: firstText,
+        style: mediumStyle.copyWith(fontSize: fonth6, color: greyPrimary),
+        children: <TextSpan>[
+          TextSpan(
+              text: lastText,
+              style:
+                  semiBoldStyle.copyWith(fontSize: fonth6, color: bluePrimary),
+              recognizer: TapGestureRecognizer()..onTap = function)
+        ]),
   );
 }
 

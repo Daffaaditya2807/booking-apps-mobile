@@ -1,49 +1,25 @@
-import 'package:apllication_book_now/presentation/widgets/header.dart';
+import 'package:apllication_book_now/presentation/state_management/controller_splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  TabController? controller;
-  List<Tab> menuTab = [
-    const Tab(
-      text: "Dipesan",
-    ),
-    const Tab(
-      text: "Dipesan",
-    ),
-    const Tab(
-      text: "Ditolak",
-    ),
-    const Tab(
-      text: "Selesai",
-    )
-  ];
-
-  List<Widget> pagesTest = [
-    const Icon(Icons.abc),
-    const Icon(Icons.baby_changing_station),
-    const Icon(Icons.spatial_audio),
-    const Icon(Icons.car_crash),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    controller = TabController(vsync: this, length: 4);
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: headerWithTabBar("Status", controller!, menuTab),
-      body: bodyTabBar(pagesTest, controller!),
+      body: _buildPageSplashScreen(),
+    );
+  }
+
+  Center _buildPageSplashScreen() {
+    Get.put(ControllerSplashScreen());
+    return Center(
+      child: Image.asset(
+        "assets/image/splash_screen/booknow.png",
+        width: 200,
+        height: 200,
+      ),
     );
   }
 }
