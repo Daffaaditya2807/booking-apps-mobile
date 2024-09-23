@@ -27,8 +27,9 @@ class CustomNavBarWidget extends StatelessWidget {
               data: IconThemeData(
                 size: 26.0,
                 color: isSelected
-                    ? (item.activeColorSecondary ?? item.activeColorPrimary)
-                    : item.inactiveColorPrimary ?? item.activeColorPrimary,
+                    ? (item.activeColorPrimary) // Warna icon ketika aktif
+                    : (item.inactiveColorPrimary ??
+                        item.activeColorPrimary), // Warna icon ketika tidak aktif
               ),
               child: item.icon,
             ),
@@ -42,8 +43,10 @@ class CustomNavBarWidget extends StatelessWidget {
                   item.title ?? "",
                   style: TextStyle(
                     color: isSelected
-                        ? (item.activeColorSecondary ?? item.activeColorPrimary)
-                        : item.inactiveColorPrimary,
+                        ? (item.activeColorSecondary ??
+                            item.activeColorPrimary) // Warna title ketika aktif
+                        : item
+                            .inactiveColorPrimary, // Warna title ketika tidak aktif
                     fontWeight: FontWeight.w400,
                     fontSize: 12.0,
                   ),
@@ -61,14 +64,17 @@ class CustomNavBarWidget extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: kBottomNavigationBarHeight,
-      decoration: BoxDecoration(color: Colors.white, boxShadow: [
-        BoxShadow(
-          color: Colors.grey.shade400.withOpacity(0.5),
-          spreadRadius: 1, // How much the shadow will spread
-          blurRadius: 10,
-          offset: const Offset(0, -5),
-        ),
-      ]),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade400.withOpacity(0.5),
+            spreadRadius: 1, // Jangkauan shadow
+            blurRadius: 10,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Row(

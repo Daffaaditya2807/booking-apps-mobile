@@ -1,1 +1,1 @@
-String apiService = 'http://10.52.3.25:8000/api/';
+String apiService = 'http://192.168.161.10:8000/api/';

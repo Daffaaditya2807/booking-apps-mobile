@@ -23,7 +23,7 @@ class IntroductionFirst extends StatelessWidget {
         children: [
           Expanded(child: Container()),
           informationText(
-              "assets/image/splash_screen/splash1.svg",
+              "assets/image/splash_screen/splash_screen_1.svg",
               "Kemudahan menanti anda",
               "Pesan layanan dengan cepat dan tunggu pemberitahuan lebih lanjut untuk menikmati layanan terbaik kami!"),
           Expanded(child: Container()),

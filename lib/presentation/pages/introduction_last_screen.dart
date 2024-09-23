@@ -24,7 +24,7 @@ class IntroductionLastScreen extends StatelessWidget {
         children: [
           Expanded(child: Container()),
           informationText(
-              "assets/image/splash_screen/splash2.svg",
+              "assets/image/splash_screen/splash_screen_2.svg",
               "Anda malas menunggu?",
               "Ambil antrian sekarang juga dan nikmati kenyamanan tanpa menunggu!"),
           Expanded(child: Container()),

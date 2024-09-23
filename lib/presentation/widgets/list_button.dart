@@ -19,17 +19,32 @@ Widget miniButtonPrimary(String text, VoidCallback funcion) {
       ));
 }
 
-Widget buttonPrimary(String text, VoidCallback funcion) {
-  return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-          backgroundColor: bluePrimary,
-          minimumSize: const Size.fromHeight(51),
-          shape: RoundedRectangleBorder(borderRadius: roundedMediumGeo)),
-      onPressed: funcion,
-      child: Text(
-        text,
-        style: semiBoldStyle.copyWith(fontSize: fonth5),
-      ));
+Widget buttonPrimary(String text, VoidCallback function) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [
+          bluePrimary,
+          blueSecondary
+        ], // Sesuaikan warna gradient di sini
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+      borderRadius: borderRoundedSmall, // Sesuaikan borderRadius di sini
+    ),
+    child: InkWell(
+      onTap: function,
+      borderRadius: borderRoundedSmall,
+      child: Container(
+        padding: verticalPaddingMedium,
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: semiBoldStyle.copyWith(fontSize: fonth5, color: Colors.white),
+        ),
+      ),
+    ),
+  );
 }
 
 Widget miniButtonSecondary(String text, VoidCallback funcion) {

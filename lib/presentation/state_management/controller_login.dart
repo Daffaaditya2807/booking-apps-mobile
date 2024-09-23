@@ -11,7 +11,7 @@ class ControllerLogin extends GetxController {
   var user = Rxn<UserModel>();
   var errorMessage = ''.obs;
 
-  Future<void> login(String username, String password) async {
+  Future<bool> login(String username, String password) async {
     isLoading.value = true;
 
     try {
@@ -25,19 +25,22 @@ class ControllerLogin extends GetxController {
         if (responseBody['meta']['status'] == 'success') {
           user.value = UserModel.fromJson(responseBody['data']['user']);
           errorMessage.value = '';
-          snackBarSucces("Berhasil Login", "yeyeye");
+          return true;
         }
       } else if (code == 500) {
         errorMessage.value =
             'Failed to autheticate. Status code: ${response.statusCode}';
         snackBarError(
             "Gagal Login", "Harap periksa kembali username dan password!");
+        return false;
       }
     } catch (e) {
       errorMessage.value = 'Error: $e';
+      return false;
     } finally {
       isLoading.value = false;
     }
+    return false;
   }
 
   bool checkDataNull(String name, String password) {
@@ -49,6 +52,12 @@ class ControllerLogin extends GetxController {
       return true;
     } else {
       return false;
+    }
+  }
+
+  void updateUserData(UserModel? newUser) {
+    if (newUser != null) {
+      user.value = newUser;
     }
   }
 }

@@ -45,10 +45,10 @@ Widget queueNumberUser(String queuNumberUser, String timeBookedUser) {
     child: Padding(
       padding: valuePaddingBig,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            "Nomor Antrian Sekarang",
+            "Nomor Antrian Anda",
             style:
                 regularStyle.copyWith(color: greyPrimary, fontSize: smallFont),
           ),
@@ -59,7 +59,7 @@ Widget queueNumberUser(String queuNumberUser, String timeBookedUser) {
           ),
           spaceHeightSmall,
           Text(
-            "Jam: $timeBookedUser",
+            "Layanan : Layanan 1 || Jam: $timeBookedUser",
             style: boldStyle.copyWith(fontSize: smallFont, color: greyPrimary),
           ),
         ],

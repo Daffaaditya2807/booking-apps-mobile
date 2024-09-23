@@ -9,13 +9,15 @@ import '../../resource/list_color/colors.dart';
 
 Widget textFieldInput(String label, String hintext,
     TextEditingController controller, BuildContext context,
-    {TextInputType? typeInput, List<TextInputFormatter>? formatter}) {
+    {TextInputType? typeInput,
+    List<TextInputFormatter>? formatter,
+    int? lenght}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         label,
-        style: mediumStyle.copyWith(color: Colors.black, fontSize: fonth6),
+        style: semiBoldStyle.copyWith(color: Colors.black, fontSize: fonth6),
       ),
       spaceHeightMedium,
       Theme(
@@ -27,6 +29,7 @@ Widget textFieldInput(String label, String hintext,
           controller: controller,
           cursorColor: blueSecondary,
           cursorWidth: 1.5,
+          maxLength: lenght,
           inputFormatters: formatter,
           keyboardType: typeInput,
           decoration: InputDecoration(
@@ -66,7 +69,7 @@ Widget textFieldPassword(
     children: [
       Text(
         label,
-        style: mediumStyle.copyWith(color: Colors.black, fontSize: fonth6),
+        style: semiBoldStyle.copyWith(color: Colors.black, fontSize: fonth6),
       ),
       spaceHeightMedium,
       Theme(

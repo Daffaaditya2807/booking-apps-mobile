@@ -14,7 +14,7 @@ Widget selectedDateContainer(
     bool Function(DateTime day) selectedPredicate) {
   return Container(
     decoration: BoxDecoration(
-      border: Border.all(color: blueSecondary, width: 2.0),
+      border: Border.all(color: blueTersier, width: 2.0),
       borderRadius: borderRoundedBig,
     ),
     child: TableCalendar(
@@ -24,7 +24,7 @@ Widget selectedDateContainer(
       onPageChanged: pageChanged,
       firstDay: DateTime.utc(2010, 10, 16),
       lastDay: DateTime.utc(2030, 3, 14),
-      rowHeight: 50,
+      rowHeight: 45,
       headerStyle: HeaderStyle(
         titleCentered: true,
         titleTextStyle:
@@ -37,7 +37,7 @@ Widget selectedDateContainer(
         rightChevronMargin: sidePaddingMedium,
         leftChevronIcon: Container(
           decoration: BoxDecoration(
-              color: Colors.black, borderRadius: roundedMediumGeo),
+              color: yellowActive, borderRadius: roundedMediumGeo),
           child: const Padding(
             padding: EdgeInsets.all(2.0),
             child: Icon(
@@ -49,7 +49,7 @@ Widget selectedDateContainer(
         ),
         rightChevronIcon: Container(
           decoration: BoxDecoration(
-              color: Colors.black, borderRadius: roundedMediumGeo),
+              color: yellowActive, borderRadius: roundedMediumGeo),
           child: const Padding(
             padding: EdgeInsets.all(2.0),
             child: Icon(
@@ -70,7 +70,7 @@ Widget selectedDateContainer(
         todayTextStyle: GoogleFonts.montserrat(
             color: Colors.white, fontWeight: FontWeight.bold),
         todayDecoration: BoxDecoration(
-          color: blueSecondary,
+          color: orangeActive,
           shape: BoxShape.circle,
         ),
         selectedTextStyle: GoogleFonts.montserrat(color: Colors.white),
@@ -78,7 +78,7 @@ Widget selectedDateContainer(
         outsideTextStyle: GoogleFonts.montserrat(color: greyPrimary),
         holidayTextStyle: GoogleFonts.montserrat(color: Colors.redAccent),
         selectedDecoration: BoxDecoration(
-          color: bluePrimary,
+          color: yellowActive,
           shape: BoxShape.circle,
         ),
       ),

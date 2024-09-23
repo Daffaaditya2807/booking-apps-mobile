@@ -2,6 +2,7 @@ import 'package:apllication_book_now/resource/list_color/colors.dart';
 import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
 import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../resource/fonts_style/fonts_style.dart';
 import 'list_button.dart';
@@ -14,7 +15,9 @@ AppBar headerWithIcon(String label) {
     ),
     leading: Padding(
       padding: valuePaddingBig,
-      child: backOutline(() {}),
+      child: backOutline(() {
+        Get.back();
+      }),
     ),
     centerTitle: true,
     elevation: 0,
@@ -43,13 +46,13 @@ AppBar headerWithTabBar(
         preferredSize: const Size.fromHeight(50),
         child: TabBar(
             controller: controller,
-            labelStyle:
-                semiBoldStyle.copyWith(color: blueSecondary, fontSize: fonth5),
+            labelStyle: semiBoldStyle.copyWith(
+                color: blueSecondary, fontSize: regularFont),
             labelColor: blueSecondary,
             indicatorSize: TabBarIndicatorSize.tab,
             indicatorWeight: 4,
             unselectedLabelColor: greySecondary,
-            indicatorColor: blueSecondary,
+            indicatorColor: Colors.amber,
             tabs: menuTabBar)),
     backgroundColor: Colors.white,
   );

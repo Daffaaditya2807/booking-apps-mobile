@@ -23,3 +23,23 @@ Widget informationText(String assetName, String header, String description) {
     ],
   );
 }
+
+Widget informationTextAsset(
+    String assetName, String header, String description) {
+  return Column(
+    children: [
+      Image.asset(assetName),
+      spaceHeightMedium,
+      Text(
+        header,
+        style: boldStyle.copyWith(color: blueSecondary, fontSize: fonth2),
+      ),
+      spaceHeightMedium,
+      Text(
+        description,
+        textAlign: TextAlign.center,
+        style: mediumStyle.copyWith(color: greyPrimary, fontSize: fonth6),
+      )
+    ],
+  );
+}

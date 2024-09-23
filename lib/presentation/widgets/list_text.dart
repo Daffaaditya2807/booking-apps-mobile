@@ -21,12 +21,12 @@ Widget componentTextMenu(
             Icon(
               iconsLabel,
               size: 30,
-              color: blueSecondary,
+              color: blueTersier,
             ),
             spaceWidthMedium,
             Text(
               label,
-              style: boldStyle.copyWith(fontSize: fonth5, color: blueSecondary),
+              style: boldStyle.copyWith(fontSize: fonth5, color: blueTersier),
             )
           ],
         ),
@@ -35,21 +35,22 @@ Widget componentTextMenu(
             icon: Icon(
               CupertinoIcons.chevron_forward,
               size: 30,
-              color: blueSecondary,
+              color: blueTersier,
             ))
       ],
     ),
   );
 }
 
-Widget componenTextHeaderDesc(String header, String desc) {
+Widget componenTextHeaderDesc(String header, String desc, {Color? warna}) {
+  final Color effectiveWarna = warna ?? bluePrimary;
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisAlignment: MainAxisAlignment.start,
     children: [
       Text(
         header,
-        style: semiBoldStyle.copyWith(fontSize: fonth3, color: blueSecondary),
+        style: semiBoldStyle.copyWith(fontSize: fonth3, color: effectiveWarna),
       ),
       spaceHeightSmall,
       Text(
@@ -83,12 +84,12 @@ Widget componentTextGreeting(String personName) {
     children: [
       Text(
         "Halo!",
-        style: semiBoldStyle.copyWith(fontSize: fonth3, color: Colors.black),
+        style: semiBoldStyle.copyWith(fontSize: fonth3, color: blueTersier),
       ),
       spaceHeightMedium,
       Text(
         personName,
-        style: mediumStyle.copyWith(fontSize: fonth6, color: Colors.black),
+        style: mediumStyle.copyWith(fontSize: fonth6, color: greyPrimary),
       ),
     ],
   );
@@ -179,7 +180,15 @@ Widget componentTextDetailStatusBooking(
           ),
           Container(
             decoration: BoxDecoration(
-                color: Colors.blue, borderRadius: roundedMediumGeo),
+                gradient: LinearGradient(
+                  colors: [
+                    bluePrimary,
+                    blueSecondary
+                  ], // Sesuaikan warna gradient di sini
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: roundedMediumGeo),
             child: Padding(
               padding: sideVerticalPaddingMedium,
               child: Text(

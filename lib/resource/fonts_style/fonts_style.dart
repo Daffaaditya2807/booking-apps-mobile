@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 TextStyle mediumStyle =
-    GoogleFonts.montserrat(fontWeight: FontWeight.w400, color: Colors.white);
+    GoogleFonts.montserrat(fontWeight: FontWeight.w500, color: Colors.white);
 
 TextStyle regularStyle = GoogleFonts.montserrat(color: Colors.white);
 

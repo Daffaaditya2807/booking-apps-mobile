@@ -13,10 +13,10 @@ Widget availableTime(String time) {
         border: Border.all(color: bluePrimary, width: 1.5),
         borderRadius: BorderRadius.all(roundedMedium)),
     child: Padding(
-      padding: sideVerticalPaddingBig,
+      padding: sideVerticalPaddingMedium,
       child: Text(
         time,
-        style: mediumStyle.copyWith(fontSize: fonth2, color: bluePrimary),
+        style: mediumStyle.copyWith(fontSize: fonth3, color: bluePrimary),
       ),
     ),
   );
@@ -25,12 +25,21 @@ Widget availableTime(String time) {
 Widget selectedTime(String time) {
   return Container(
     decoration: BoxDecoration(
-        color: bluePrimary, borderRadius: BorderRadius.all(roundedMedium)),
+        gradient: LinearGradient(
+          colors: [
+            bluePrimary,
+            blueSecondary
+          ], // Sesuaikan warna gradient di sini
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        border: Border.all(width: 1.5, color: bluePrimary),
+        borderRadius: BorderRadius.all(roundedMedium)),
     child: Padding(
-      padding: sideVerticalPaddingBig,
+      padding: sideVerticalPaddingMedium,
       child: Text(
         time,
-        style: mediumStyle.copyWith(fontSize: fonth2),
+        style: mediumStyle.copyWith(fontSize: fonth3),
       ),
     ),
   );
@@ -39,12 +48,14 @@ Widget selectedTime(String time) {
 Widget nonAvailableTime(String time) {
   return Container(
     decoration: BoxDecoration(
-        color: blueSecondary, borderRadius: BorderRadius.all(roundedMedium)),
+        color: greyTersier,
+        borderRadius: BorderRadius.all(roundedMedium),
+        border: Border.all(width: 1.5, color: greyTersier)),
     child: Padding(
-      padding: sideVerticalPaddingBig,
+      padding: sideVerticalPaddingMedium,
       child: Text(
         time,
-        style: mediumStyle.copyWith(fontSize: fonth2),
+        style: mediumStyle.copyWith(fontSize: fonth3),
       ),
     ),
   );

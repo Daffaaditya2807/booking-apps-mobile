@@ -3,6 +3,7 @@ import 'package:apllication_book_now/presentation/state_management/controller_lo
 import 'package:apllication_book_now/presentation/state_management/controller_show_hide.dart';
 import 'package:apllication_book_now/presentation/widgets/loading_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../resource/sizes/list_margin.dart';
@@ -37,9 +38,14 @@ class LoginScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          spaceHeightBig,
           componenTextHeaderDesc("Masuk", "Silakan masukkan data diri anda"),
           spaceHeightBig,
-          textFieldInput("Username", "Username", _username, context),
+          textFieldInput("Username", "Username", _username, context,
+              typeInput: TextInputType.text,
+              formatter: [
+                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+              ]),
           Obx(() => textFieldPassword(
               "Password",
               "Password",
@@ -49,7 +55,8 @@ class LoginScreen extends StatelessWidget {
               controllerShowHide.isShow.value == true
                   ? Icons.visibility_off
                   : Icons.visibility,
-              controllerShowHide.showHidePassword)),
+              controllerShowHide.showHidePassword,
+              typeInput: TextInputType.text)),
           spaceHeightMedium,
           Obx(() {
             if (controllerLogin.isLoading.value) {
@@ -61,7 +68,11 @@ class LoginScreen extends StatelessWidget {
                 bool checkField =
                     controllerLogin.checkDataNull(username, password);
                 if (!checkField) {
-                  controllerLogin.login(username, password);
+                  controllerLogin.login(username, password).then((bool value) {
+                    if (value) {
+                      Get.toNamed(Routes.navbarMenu);
+                    }
+                  });
                 }
               });
             }

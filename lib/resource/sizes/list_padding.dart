@@ -4,6 +4,7 @@ EdgeInsets sidePaddingBig = const EdgeInsets.symmetric(horizontal: 20.0);
 EdgeInsets sidePaddingMedium = const EdgeInsets.symmetric(horizontal: 15.0);
 EdgeInsets sidePaddingSmall = const EdgeInsets.symmetric(horizontal: 10.0);
 EdgeInsets verticalPaddingBig = const EdgeInsets.symmetric(vertical: 20.0);
+EdgeInsets verticalPaddingMedium = const EdgeInsets.symmetric(vertical: 15.0);
 EdgeInsets verticalPaddingSmall = const EdgeInsets.symmetric(vertical: 10.0);
 EdgeInsets sideVerticalPaddingSmall =
     const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0);
