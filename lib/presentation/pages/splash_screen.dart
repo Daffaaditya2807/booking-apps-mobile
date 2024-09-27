@@ -8,17 +8,21 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildPageSplashScreen(),
+      backgroundColor: Colors.white,
+      body: _buildPageSplashScreen(context),
     );
   }
 
-  Center _buildPageSplashScreen() {
+  Center _buildPageSplashScreen(BuildContext context) {
+    double heightAppBar = MediaQuery.of(context).viewPadding.top;
+    double heightScreen = MediaQuery.sizeOf(context).height;
+    double heightContainer =
+        (heightScreen - kToolbarHeight - heightAppBar) * 0.25;
     Get.put(ControllerSplashScreen());
     return Center(
       child: Image.asset(
-        "assets/image/splash_screen/booknow.png",
-        width: 200,
-        height: 200,
+        "assets/image/logo/logoapps.jpg",
+        height: heightContainer,
       ),
     );
   }

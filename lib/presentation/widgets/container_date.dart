@@ -9,77 +9,83 @@ import '../../resource/sizes/list_padding.dart';
 
 Widget selectedDateContainer(
     DateTime focusedDay,
-    Function(DateTime focusedDay) pageChanged,
-    Function(DateTime selectedDay, DateTime focusedDat) daySelected,
-    bool Function(DateTime day) selectedPredicate) {
+    Function(DateTime) pageChanged,
+    Function(DateTime, DateTime) daySelected,
+    bool Function(DateTime) isSelectable) {
   return Container(
     decoration: BoxDecoration(
-      border: Border.all(color: blueTersier, width: 2.0),
-      borderRadius: borderRoundedBig,
-    ),
-    child: TableCalendar(
-      focusedDay: focusedDay,
-      selectedDayPredicate: selectedPredicate,
-      onDaySelected: daySelected,
-      onPageChanged: pageChanged,
-      firstDay: DateTime.utc(2010, 10, 16),
-      lastDay: DateTime.utc(2030, 3, 14),
-      rowHeight: 45,
-      headerStyle: HeaderStyle(
-        titleCentered: true,
-        titleTextStyle:
-            semiBoldStyle.copyWith(fontSize: 16, color: Colors.black),
-        formatButtonVisible: false,
-        leftChevronPadding: const EdgeInsets.all(0),
-        headerPadding: verticalPaddingBig,
-        leftChevronMargin: sidePaddingMedium,
-        rightChevronPadding: const EdgeInsets.all(0),
-        rightChevronMargin: sidePaddingMedium,
-        leftChevronIcon: Container(
-          decoration: BoxDecoration(
-              color: yellowActive, borderRadius: roundedMediumGeo),
-          child: const Padding(
-            padding: EdgeInsets.all(2.0),
-            child: Icon(
-              Icons.chevron_left,
-              size: 25,
-              color: Colors.white,
+        borderRadius: borderRoundedBig, border: Border.all(color: blueTersier)),
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TableCalendar(
+        focusedDay: focusedDay,
+        selectedDayPredicate: (day) => isSameDay(day, focusedDay),
+        onDaySelected: daySelected,
+        sixWeekMonthsEnforced: true,
+        onPageChanged: pageChanged,
+        availableGestures: AvailableGestures.horizontalSwipe,
+        startingDayOfWeek: StartingDayOfWeek.monday,
+        enabledDayPredicate: isSelectable,
+        firstDay: DateTime.utc(2010, 10, 16),
+        lastDay: DateTime.utc(2030, 3, 14),
+        rowHeight: 45,
+        headerStyle: HeaderStyle(
+          titleCentered: true,
+          titleTextStyle:
+              semiBoldStyle.copyWith(fontSize: 16, color: Colors.black),
+          formatButtonVisible: false,
+          leftChevronPadding: const EdgeInsets.all(0),
+          headerPadding: verticalPaddingBig,
+          leftChevronMargin: sidePaddingMedium,
+          rightChevronPadding: const EdgeInsets.all(0),
+          rightChevronMargin: sidePaddingMedium,
+          leftChevronIcon: Container(
+            decoration: BoxDecoration(
+                color: yellowActive, borderRadius: roundedMediumGeo),
+            child: const Padding(
+              padding: EdgeInsets.all(2.0),
+              child: Icon(
+                Icons.chevron_left,
+                size: 25,
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
-        rightChevronIcon: Container(
-          decoration: BoxDecoration(
-              color: yellowActive, borderRadius: roundedMediumGeo),
-          child: const Padding(
-            padding: EdgeInsets.all(2.0),
-            child: Icon(
-              Icons.chevron_right,
-              size: 25,
-              color: Colors.white,
+          rightChevronIcon: Container(
+            decoration: BoxDecoration(
+                color: yellowActive, borderRadius: roundedMediumGeo),
+            child: const Padding(
+              padding: EdgeInsets.all(2.0),
+              child: Icon(
+                Icons.chevron_right,
+                size: 25,
+                color: Colors.white,
+              ),
             ),
           ),
+          decoration: const BoxDecoration(
+              // color: Colors.white,
+              ),
         ),
-        decoration: const BoxDecoration(
-            // color: Colors.white,
-            ),
-      ),
-      calendarStyle: CalendarStyle(
-        outsideDecoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        todayTextStyle: GoogleFonts.montserrat(
-            color: Colors.white, fontWeight: FontWeight.bold),
-        todayDecoration: BoxDecoration(
-          color: orangeActive,
-          shape: BoxShape.circle,
-        ),
-        selectedTextStyle: GoogleFonts.montserrat(color: Colors.white),
-        defaultTextStyle: GoogleFonts.montserrat(),
-        outsideTextStyle: GoogleFonts.montserrat(color: greyPrimary),
-        holidayTextStyle: GoogleFonts.montserrat(color: Colors.redAccent),
-        selectedDecoration: BoxDecoration(
-          color: yellowActive,
-          shape: BoxShape.circle,
+        calendarStyle: CalendarStyle(
+          outsideDecoration: const BoxDecoration(
+            color: Colors.white,
+          ),
+          todayTextStyle: GoogleFonts.montserrat(color: Colors.black),
+          todayDecoration: BoxDecoration(
+            border: Border.all(color: yellowActive),
+            shape: BoxShape.circle,
+          ),
+          disabledTextStyle: GoogleFonts.montserrat(color: Colors.black45),
+          selectedTextStyle: GoogleFonts.montserrat(
+              color: Colors.white, fontWeight: FontWeight.bold),
+          defaultTextStyle: GoogleFonts.montserrat(),
+          outsideTextStyle: GoogleFonts.montserrat(color: greyPrimary),
+          holidayTextStyle: GoogleFonts.montserrat(color: Colors.redAccent),
+          selectedDecoration: BoxDecoration(
+            color: yellowActive,
+            shape: BoxShape.circle,
+          ),
         ),
       ),
     ),

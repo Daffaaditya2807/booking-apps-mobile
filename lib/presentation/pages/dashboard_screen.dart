@@ -1,6 +1,7 @@
 import 'package:apllication_book_now/presentation/state_management/controller_dashboard.dart';
 import 'package:apllication_book_now/presentation/widgets/banner.dart';
 import 'package:apllication_book_now/presentation/widgets/carousel.dart';
+import 'package:apllication_book_now/presentation/widgets/loading_data.dart';
 import 'package:apllication_book_now/presentation/widgets/queue_number.dart';
 import 'package:apllication_book_now/resource/fonts_style/fonts_style.dart';
 import 'package:apllication_book_now/resource/list_color/colors.dart';
@@ -29,7 +30,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final CarouselSliderController _controller = CarouselSliderController();
   final ControllerDashboard controllerDashboard =
       Get.put(ControllerDashboard());
-  final controllerLogin = Get.find<ControllerLogin>();
+  final ControllerLogin controllerLogin =
+      Get.put(ControllerLogin(), permanent: true);
   final ControllerGetService controllerGetService =
       Get.put(ControllerGetService());
 
@@ -200,6 +202,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     double heightScreen = MediaQuery.sizeOf(context).height;
     double heightContainer =
         (heightScreen - kToolbarHeight - heightAppBar) * 0.25;
+
+    controllerDashboard.idUsers.value =
+        controllerLogin.user.value!.idUsers.toString();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: _buildDashboardPage(
@@ -234,9 +240,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
           spaceHeightBig,
           Padding(
             padding: sidePaddingBig,
-            child: Row(
-              children: [Expanded(child: queueNumberUser("A03", "09:00"))],
-            ),
+            child: Obx(() {
+              if (controllerDashboard.isLoading.value) {
+                return loadingData("mengambil data tiket");
+              } else {
+                return SizedBox(
+                  height: heightContainer * 0.7,
+                  child: ListView.builder(
+                    itemCount: controllerDashboard.ticketUser.length,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      final data = controllerDashboard.ticketUser[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width - 60,
+                            child: queueNumberUser(
+                              data.noLoket,
+                              data.jamBooking,
+                              data.layanan.name,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+            }),
           ),
           spaceHeightMedium,
           Padding(
@@ -355,10 +389,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 final services = controllerGetService.serviceList[index];
                 return InkWell(
                   onTap: () {
-                    Get.toNamed(Routes.detailServiceScreen);
+                    Get.toNamed(Routes.bookingScreen, arguments: services);
                   },
-                  child: serviceCard(context, services.name,
-                      services.description, services.image),
+                  child: Hero(
+                    tag: 'dashboard-${services.image}',
+                    child: serviceCard(context, services.name,
+                        services.description, services.image),
+                  ),
                 );
               },
             ),

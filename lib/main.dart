@@ -1,4 +1,5 @@
 import 'package:apllication_book_now/config/routes/routes.dart';
+import 'package:apllication_book_now/resource/list_color/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
         title: 'Book Now',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: bluePrimary),
           useMaterial3: true,
         ),
         initialRoute: Routes.initalRoutes,

@@ -44,6 +44,7 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   fl_chart: ^0.69.0
   cached_network_image: ^3.4.1
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,7 @@ flutter:
   assets:
     - assets/
     - assets/image/
+    - assets/image/logo/
     - assets/image/splash_screen/
     - assets/image/tes/
 

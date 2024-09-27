@@ -7,6 +7,7 @@ import 'package:apllication_book_now/resource/sizes/list_rounded.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import 'information.dart';
 import 'list_text.dart';
 import 'loading_data.dart';
 
@@ -77,8 +78,8 @@ Widget serviceCard(BuildContext context, String serviceName, String description,
   );
 }
 
-Widget detailService(
-    BuildContext context, String serviceName, String description) {
+Widget detailService(BuildContext context, String serviceName,
+    String description, String imageUrl, String tag) {
   double heightAppBar = MediaQuery.of(context).viewPadding.top;
   double heightScreen = MediaQuery.sizeOf(context).height;
   double heightContainer =
@@ -87,20 +88,39 @@ Widget detailService(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Container(
-        width: double.infinity,
-        height: heightContainer,
-        decoration: BoxDecoration(
-            borderRadius: roundedMediumGeo,
-            color: Colors.blue,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 3,
-                blurRadius: 7,
-                offset: const Offset(0, 3), // changes position of shadow
+      Hero(
+        tag: tag,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            width: double.infinity,
+            height: heightContainer,
+            decoration: BoxDecoration(
+                borderRadius: roundedMediumGeo,
+                color: Colors.blue,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 3,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3), // changes position of shadow
+                  ),
+                ]),
+            child: ClipRRect(
+              borderRadius: roundedMediumGeo,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    Center(child: loadingData("Memuat gambar..")),
+                errorWidget: (context, url, error) => const Icon(
+                  Icons.error,
+                  color: Colors.white,
+                ),
               ),
-            ]),
+            ),
+          ),
+        ),
       ),
       spaceHeightBig,
       Text(
@@ -119,8 +139,29 @@ Widget detailService(
   );
 }
 
+Widget emptyListService() {
+  return Column(
+    children: [
+      Expanded(child: Container()),
+      informationTextAsset(
+          "assets/image/splash_screen/empty1.png",
+          "Booking Kosong!",
+          "Belum ada layanan yang anda pesan. Pesan sekarang dan nikmati layanan terbaik kami sekarang juga!"),
+      Expanded(child: Container()),
+    ],
+  );
+}
+
 Widget detailStatusService(
-    BuildContext context, String serviceName, String description) {
+    BuildContext context,
+    String serviceName,
+    String status,
+    String jam,
+    String hari,
+    String tanggalLengkap,
+    String loket,
+    String reason,
+    String urlImage) {
   double heightAppBar = MediaQuery.of(context).viewPadding.top;
   double heightScreen = MediaQuery.sizeOf(context).height;
   double heightContainer =
@@ -140,18 +181,33 @@ Widget detailStatusService(
                 color: Colors.grey.withOpacity(0.5),
                 spreadRadius: 3,
                 blurRadius: 7,
-                offset: const Offset(0, 3), // changes position of shadow
+                offset: const Offset(0, 3),
               ),
             ]),
+        child: ClipRRect(
+          borderRadius: roundedMediumGeo,
+          child: CachedNetworkImage(
+            imageUrl: urlImage,
+            fit: BoxFit.cover,
+            placeholder: (context, url) =>
+                Center(child: loadingData("Memuat gambar..")),
+            errorWidget: (context, url, error) => const Icon(
+              Icons.error,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
       spaceHeightBig,
       spaceHeightMedium,
       componentTextDetailStatusBooking(
-          "Senin", "9 September 2024", "13:30", "Layanan 1", "Dipesan")
+          hari, tanggalLengkap, jam, serviceName, status, loket,
+          reasonStatus: reason)
     ],
   );
 }
 
+// "9 September 2024"
 Widget colourIndicatorService(String service, Color serviceIndicator) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 5),

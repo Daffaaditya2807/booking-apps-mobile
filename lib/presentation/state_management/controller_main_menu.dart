@@ -1,3 +1,4 @@
+import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,7 @@ class ControllerMainMenu extends GetxController {
   PersistentTabController? controller;
   var index = 0.obs; // Using Rx for reactive state
   var scrollControllers = <ScrollController>[].obs;
+  final ControllerLogin controllerLogin = Get.put(ControllerLogin());
 
   List<CustomNavBarScreen> buildScreens() {
     return [

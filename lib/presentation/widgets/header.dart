@@ -21,6 +21,7 @@ AppBar headerWithIcon(String label) {
     ),
     centerTitle: true,
     elevation: 0,
+    surfaceTintColor: Colors.white,
     bottom: PreferredSize(
         preferredSize: const Size.fromHeight(10),
         child: Padding(
@@ -55,6 +56,7 @@ AppBar headerWithTabBar(
             indicatorColor: Colors.amber,
             tabs: menuTabBar)),
     backgroundColor: Colors.white,
+    surfaceTintColor: Colors.white,
   );
 }
 
@@ -82,5 +84,6 @@ AppBar header(String label) {
           ),
         )),
     backgroundColor: Colors.white,
+    surfaceTintColor: Colors.white,
   );
 }

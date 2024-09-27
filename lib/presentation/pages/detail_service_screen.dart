@@ -1,6 +1,5 @@
 import 'package:apllication_book_now/presentation/widgets/header.dart';
 import 'package:apllication_book_now/presentation/widgets/list_button.dart';
-import 'package:apllication_book_now/presentation/widgets/list_service.dart';
 import 'package:apllication_book_now/resource/sizes/list_margin.dart';
 import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +26,8 @@ class DetailServiceScreen extends StatelessWidget {
       child: Column(
         children: [
           spaceHeightBig,
-          detailService(context, "Layanan 1",
-              "Jangan lewatkan kesempatan untuk merasakan layanan terbaik yang kami tawarkan! Segera booking sekarang dan dapatkan antrian lebih cepat untuk pengalaman yang memuaskan dan tak terlupakan. Waktu Anda berharga, jadi pastikan Anda mengambil langkah pertama hari ini."),
+          // detailService(context, "Layanan 1",
+          //     "Jangan lewatkan kesempatan untuk merasakan layanan terbaik yang kami tawarkan! Segera booking sekarang dan dapatkan antrian lebih cepat untuk pengalaman yang memuaskan dan tak terlupakan. Waktu Anda berharga, jadi pastikan Anda mengambil langkah pertama hari ini."),
           Expanded(child: Container()),
           buttonPrimary("Booking", () {
             Get.toNamed(Routes.bookingScreen);

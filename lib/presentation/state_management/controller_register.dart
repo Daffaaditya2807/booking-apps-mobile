@@ -6,6 +6,8 @@ import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../../config/routes/routes.dart';
+
 class ControllerRegister extends GetxController {
   var isLoading = false.obs;
   var user = Rxn<UserModel>();
@@ -34,7 +36,7 @@ class ControllerRegister extends GetxController {
         if (responseBody['meta']['status'] == 'success') {
           user.value = UserModel.fromJson(responseBody['data']['user']);
           errorMessahe.value = '';
-          snackBarSucces("Berhasil Register", "yeyeye");
+          Get.offNamed(Routes.loginScreen);
         } else if (code == 500) {
           errorMessahe.value =
               'failed to register. with error ${response.statusCode}';

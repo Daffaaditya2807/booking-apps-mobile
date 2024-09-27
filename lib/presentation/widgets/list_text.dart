@@ -61,6 +61,14 @@ Widget componenTextHeaderDesc(String header, String desc, {Color? warna}) {
   );
 }
 
+Widget componentTextHeader(String header, {Color? warna}) {
+  final Color effectiveWarna = warna ?? bluePrimary;
+  return Text(
+    header,
+    style: semiBoldStyle.copyWith(fontSize: fonth3, color: effectiveWarna),
+  );
+}
+
 Widget componenRichTextStyle(
     String firstText, String lastText, VoidCallback function) {
   return RichText(
@@ -165,8 +173,8 @@ Widget componentTextDetailBooking(
   );
 }
 
-Widget componentTextDetailStatusBooking(
-    String day, String date, String time, String service, String status,
+Widget componentTextDetailStatusBooking(String day, String date, String time,
+    String service, String status, String loket,
     {String? reasonStatus}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,7 +264,21 @@ Widget componentTextDetailStatusBooking(
         ],
       ),
       spaceHeightSmall,
-      status == 'Ditolak'
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "No Loket",
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+          Text(
+            loket,
+            style: regularStyle.copyWith(fontSize: fonth5, color: Colors.black),
+          ),
+        ],
+      ),
+      spaceHeightSmall,
+      status == 'ditolak'
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

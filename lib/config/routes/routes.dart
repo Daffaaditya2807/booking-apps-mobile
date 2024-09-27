@@ -10,6 +10,7 @@ import 'package:apllication_book_now/presentation/pages/setting_password_screen.
 import 'package:apllication_book_now/presentation/pages/setting_profile_screen.dart';
 import 'package:apllication_book_now/presentation/pages/setting_screen.dart';
 import 'package:apllication_book_now/presentation/pages/splash_screen.dart';
+import 'package:apllication_book_now/presentation/pages/status_screen.dart';
 import 'package:apllication_book_now/presentation/pages/status_service_screen.dart';
 import 'package:get/get.dart';
 
@@ -27,6 +28,7 @@ class Routes {
   static String serviceStatusScreen = "/statusSericeScreen";
   static String profileSettingScreen = "/profileSettingScreen";
   static String passwordSettingScreen = "/passwordSettingScreen";
+  static String statusScreen = "/statusScreen";
 
   static String initalRoutes = splashScreen;
   static final List<GetPage> routesList = [
@@ -58,15 +60,12 @@ class Routes {
     GetPage(name: detailServiceScreen, page: () => const DetailServiceScreen()),
     GetPage(name: bookingScreen, page: () => BookingScreen()),
     GetPage(name: bookingDoneScreen, page: () => const BookingDoneScreen()),
-    GetPage(name: serviceStatusScreen, page: () => const StatusServiceScreen()),
+    GetPage(name: serviceStatusScreen, page: () => StatusServiceScreen()),
     GetPage(name: profileSettingScreen, page: () => SettingProfileScreen()),
-    GetPage(name: passwordSettingScreen, page: () => SettingPasswordScreen())
+    GetPage(
+      name: passwordSettingScreen,
+      page: () => SettingPasswordScreen(),
+    ),
+    GetPage(name: statusScreen, page: () => const StatusScreen())
   ];
-  // static Map<String, Widget Function(BuildContext)> routesList = {
-  //   splashScreen: (context) => const SplashScreen(),
-  //   introductionFirst: (context) => const IntroductionFirst(),
-  //   introductionLast: (context) => const IntroductionLastScreen(),
-  //   loginScreen: (context) => LoginScreen(),
-  //   registerScreen: (context) => RegisterScreen()
-  // };
 }

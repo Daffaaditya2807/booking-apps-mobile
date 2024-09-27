@@ -37,7 +37,8 @@ Widget queueNumberNow(String queuNumberNow, String timeBookedNow) {
   );
 }
 
-Widget queueNumberUser(String queuNumberUser, String timeBookedUser) {
+Widget queueNumberUser(
+    String queuNumberUser, String timeBookedUser, String layanan) {
   return Container(
     decoration: BoxDecoration(
         border: Border.all(color: greySecondary),
@@ -46,6 +47,7 @@ Widget queueNumberUser(String queuNumberUser, String timeBookedUser) {
       padding: valuePaddingBig,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             "Nomor Antrian Anda",
@@ -59,7 +61,7 @@ Widget queueNumberUser(String queuNumberUser, String timeBookedUser) {
           ),
           spaceHeightSmall,
           Text(
-            "Layanan : Layanan 1 || Jam: $timeBookedUser",
+            "$layanan || Jam: $timeBookedUser",
             style: boldStyle.copyWith(fontSize: smallFont, color: greyPrimary),
           ),
         ],

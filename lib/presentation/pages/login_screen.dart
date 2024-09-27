@@ -21,7 +21,8 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController _password = TextEditingController();
 
   final ShowHidePassword controllerShowHide = Get.put(ShowHidePassword());
-  final ControllerLogin controllerLogin = Get.put(ControllerLogin());
+  final ControllerLogin controllerLogin =
+      Get.put(ControllerLogin(), permanent: true);
 
   @override
   Widget build(BuildContext context) {

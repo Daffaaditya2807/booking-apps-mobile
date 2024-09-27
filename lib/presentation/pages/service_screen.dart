@@ -38,10 +38,13 @@ class ServiceScreen extends StatelessWidget {
               final service = controllerGetService.serviceList[index];
               return InkWell(
                 onTap: () {
-                  Get.toNamed(Routes.detailServiceScreen);
+                  Get.toNamed(Routes.bookingScreen, arguments: service);
                 },
-                child: serviceCard(
-                    context, service.name, service.description, service.image),
+                child: Hero(
+                  tag: 'service-${service.image}',
+                  child: serviceCard(context, service.name, service.description,
+                      service.image),
+                ),
               );
             },
           );
