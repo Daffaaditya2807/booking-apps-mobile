@@ -1,3 +1,4 @@
+import 'package:apllication_book_now/presentation/widgets/list_button.dart';
 import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
 import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:apllication_book_now/resource/sizes/list_rounded.dart';
@@ -175,7 +176,7 @@ Widget componentTextDetailBooking(
 
 Widget componentTextDetailStatusBooking(String day, String date, String time,
     String service, String status, String loket,
-    {String? reasonStatus}) {
+    {String? reasonStatus, VoidCallback? function}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -278,7 +279,7 @@ Widget componentTextDetailStatusBooking(String day, String date, String time,
         ],
       ),
       spaceHeightSmall,
-      status == 'ditolak'
+      status == 'dibatalkan'
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -295,7 +296,8 @@ Widget componentTextDetailStatusBooking(String day, String date, String time,
               ],
             )
           : Container(),
-      spaceHeightSmall,
+      spaceHeightBig,
+      status == 'diproses' ? buttonPrimary("Selesai", function!) : Container()
     ],
   );
 }

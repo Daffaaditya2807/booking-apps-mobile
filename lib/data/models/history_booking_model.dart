@@ -30,7 +30,7 @@ class HistoryBookingModel {
     return HistoryBookingModel(
         idBooking: json['id_booking'].toString(),
         nomorBooking: json['nomor_booking'].toString(),
-        noLoket: json['id_pelayanan'].toString(),
+        noLoket: json['no_pelayanan'].toString(),
         idUser: json['id_users'].toString(),
         alamat: json['alamat'].toString(),
         idLayanan: json['id_layanan'].toString(),

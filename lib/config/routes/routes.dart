@@ -12,6 +12,7 @@ import 'package:apllication_book_now/presentation/pages/setting_screen.dart';
 import 'package:apllication_book_now/presentation/pages/splash_screen.dart';
 import 'package:apllication_book_now/presentation/pages/status_screen.dart';
 import 'package:apllication_book_now/presentation/pages/status_service_screen.dart';
+import 'package:apllication_book_now/presentation/pages/update_status_done_screen.dart';
 import 'package:get/get.dart';
 
 class Routes {
@@ -29,6 +30,7 @@ class Routes {
   static String profileSettingScreen = "/profileSettingScreen";
   static String passwordSettingScreen = "/passwordSettingScreen";
   static String statusScreen = "/statusScreen";
+  static String doneUpdateStatusScreen = '/doneUpdateStatusScreen';
 
   static String initalRoutes = splashScreen;
   static final List<GetPage> routesList = [
@@ -66,6 +68,9 @@ class Routes {
       name: passwordSettingScreen,
       page: () => SettingPasswordScreen(),
     ),
-    GetPage(name: statusScreen, page: () => const StatusScreen())
+    GetPage(name: statusScreen, page: () => const StatusScreen()),
+    GetPage(
+        name: doneUpdateStatusScreen,
+        page: () => const ScreenUpdateStatusDone())
   ];
 }

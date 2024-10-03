@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../config/routes/routes.dart';
+import '../../data/data_sources/api.dart';
 import '../state_management/controller_login.dart';
 import '../widgets/list_service.dart';
 
@@ -32,7 +33,7 @@ class _StatusScreenState extends State<StatusScreen>
       text: "Diproses",
     ),
     const Tab(
-      text: "Ditolak",
+      text: "Dibatalkan",
     ),
     const Tab(
       text: "Selesai",
@@ -80,11 +81,14 @@ class _StatusScreenState extends State<StatusScreen>
                       },
                       child: Padding(
                         padding: sidePaddingBig,
-                        child: serviceCard(
+                        child: historyServiceCard(
                             context,
                             historyPesann.layanan.name,
                             historyPesann.layanan.description,
-                            historyPesann.layanan.image),
+                            '$apiImage${historyPesann.layanan.image}',
+                            historyPesann.tanggal,
+                            historyPesann.nomorBooking,
+                            historyPesann.jamBooking),
                       ),
                     );
                   },
@@ -115,11 +119,14 @@ class _StatusScreenState extends State<StatusScreen>
                       },
                       child: Padding(
                         padding: sidePaddingBig,
-                        child: serviceCard(
+                        child: historyServiceCard(
                             context,
                             historyProses.layanan.name,
                             historyProses.layanan.description,
-                            historyProses.layanan.image),
+                            '$apiImage${historyProses.layanan.image}',
+                            historyProses.tanggal,
+                            historyProses.nomorBooking,
+                            historyProses.jamBooking),
                       ),
                     );
                   },
@@ -150,11 +157,14 @@ class _StatusScreenState extends State<StatusScreen>
                       },
                       child: Padding(
                         padding: sidePaddingBig,
-                        child: serviceCard(
+                        child: historyServiceCard(
                             context,
                             historyTolak.layanan.name,
                             historyTolak.layanan.description,
-                            historyTolak.layanan.image),
+                            '$apiImage${historyTolak.layanan.image}',
+                            historyTolak.tanggal,
+                            historyTolak.nomorBooking,
+                            historyTolak.jamBooking),
                       ),
                     );
                   },
@@ -185,11 +195,14 @@ class _StatusScreenState extends State<StatusScreen>
                       },
                       child: Padding(
                         padding: sidePaddingBig,
-                        child: serviceCard(
+                        child: historyServiceCard(
                             context,
                             historySelesai.layanan.name,
                             historySelesai.layanan.description,
-                            historySelesai.layanan.image),
+                            '$apiImage${historySelesai.layanan.image}',
+                            historySelesai.tanggal,
+                            historySelesai.nomorBooking,
+                            historySelesai.jamBooking),
                       ),
                     );
                   },

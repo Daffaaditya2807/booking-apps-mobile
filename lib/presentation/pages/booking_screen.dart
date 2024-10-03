@@ -1,3 +1,4 @@
+import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/data/models/service_model.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_booking.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
@@ -5,6 +6,7 @@ import 'package:apllication_book_now/presentation/widgets/clock_inputs.dart';
 import 'package:apllication_book_now/presentation/widgets/list_button.dart';
 import 'package:apllication_book_now/presentation/widgets/list_loket.dart';
 import 'package:apllication_book_now/presentation/widgets/list_text.dart';
+import 'package:apllication_book_now/presentation/widgets/loading_data.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
 import 'package:apllication_book_now/resource/fonts_style/fonts_style.dart';
 import 'package:apllication_book_now/resource/list_color/colors.dart';
@@ -58,12 +60,27 @@ class BookingScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               spaceHeightBig,
-              detailService(
-                  context,
+              ExpansionTile(
+                title: Text(
                   services.name,
-                  services.description,
-                  services.image,
-                  '${Get.currentRoute.split('/').last}-${services.image}'),
+                  style: semiBoldStyle.copyWith(color: bluePrimary),
+                ),
+                tilePadding: const EdgeInsets.all(0),
+                shape: const RoundedRectangleBorder(),
+                subtitle: Text(
+                  "Baca lebih lanjut untuk deskripsi layanan",
+                  style: regularStyle.copyWith(
+                      color: Colors.black, fontSize: smallFont),
+                ),
+                children: [
+                  detailService(
+                      context,
+                      services.name,
+                      services.description,
+                      '$apiImage${services.image}',
+                      '${Get.currentRoute.split('/').last}-${services.image}'),
+                ],
+              ),
               spaceHeightBig,
               const Divider(),
               spaceHeightBig,
@@ -76,63 +93,77 @@ class BookingScreen extends StatelessWidget {
                       controllerBooking.changeFocusedDay,
                       (selectedDay, focusedDay) {
                     if (controllerBooking.isSelectable(selectedDay)) {
-                      controllerBooking.changeSelectedDay(selectedDay);
-                      controllerBooking.changeFocusedDay(focusedDay);
+                      if (!controllerBooking.isLoadingLoket.value) {
+                        controllerBooking.changeSelectedDay(selectedDay);
+                        controllerBooking.changeFocusedDay(focusedDay);
+                      }
                     }
                   }, controllerBooking.isSelectable)),
               spaceHeightBig,
               const Divider(),
               spaceHeightBig,
-              Obx(() => GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 2.5,
-                    ),
-                    itemCount: controllerBooking.times.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      var timeEntry = controllerBooking.times[index];
-                      DateTime currenTime = DateTime.now();
-                      DateTime availableTimess = DateTime.parse(
-                          '${controllerBooking.selectedDay.value!.toIso8601String().split('T')[0]} ${timeEntry['time']}:00');
-                      int differenceInMinutes =
-                          availableTimess.difference(currenTime).inMinutes;
-                      bool isTimeValid = availableTimess.isAfter(currenTime) &&
-                          differenceInMinutes > 20;
-                      return Obx(() {
-                        bool isSelected =
-                            controllerBooking.selectedTime.value ==
-                                    timeEntry['time'] &&
-                                timeEntry['available'] &&
-                                isTimeValid;
+              Obx(() => controllerBooking.isLoading.value &&
+                      controllerBooking.isFirstLoadValue.value
+                  ? loadingData("memuat daftar jam...")
+                  : GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 2.5,
+                      ),
+                      itemCount: controllerBooking.times.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        var timeEntry = controllerBooking.times[index];
+                        DateTime currenTime = DateTime.now();
+                        DateTime availableTimess = DateTime.parse(
+                            '${controllerBooking.selectedDay.value!.toIso8601String().split('T')[0]} ${timeEntry['time']}:00');
+                        int differenceInMinutes =
+                            availableTimess.difference(currenTime).inMinutes;
+                        bool isTimeValid =
+                            availableTimess.isAfter(currenTime) &&
+                                differenceInMinutes > 20;
 
-                        return InkWell(
-                          onTap: () {
-                            if (timeEntry['available'] && isTimeValid) {
-                              controllerBooking.selectedTime.value =
-                                  timeEntry['time'];
-                              controllerBooking.jamBooking.value =
-                                  timeEntry['time'];
-                              controllerBooking.selectedLocket.value = '';
-                              controllerBooking.fetchAvailableLoket();
-                            }
-                          },
-                          child: isSelected
-                              ? selectedTime(timeEntry['time'])
-                              : timeEntry['available'] && isTimeValid
-                                  ? availableTime(timeEntry['time'])
-                                  : nonAvailableTime(timeEntry['time']),
-                        );
-                      });
-                    },
-                  )),
+                        // String waktuKepilih =
+                        //     '${controllerBooking.selectedDay.value!.toIso8601String().split('T')[0]} ${timeEntry['time']}:00';
+                        // String waktuSekarang = currenTime.toString();
+                        // print(
+                        //     "waktu kepilih $waktuKepilih dan Waktu sekarang $waktuSekarang");
+                        return Obx(() {
+                          bool isSelected =
+                              controllerBooking.selectedTime.value ==
+                                      timeEntry['time'] &&
+                                  timeEntry['available'] &&
+                                  isTimeValid;
+
+                          return InkWell(
+                            onTap: () {
+                              if (timeEntry['available'] && isTimeValid) {
+                                controllerBooking.selectedTime.value =
+                                    timeEntry['time'];
+                                controllerBooking.jamBooking.value =
+                                    timeEntry['time'];
+                                controllerBooking.selectedLocket.value = '';
+                                controllerBooking.fetchAvailableLoket();
+                              }
+                            },
+                            child: isSelected
+                                ? selectedTime(timeEntry['time'])
+                                : timeEntry['available'] && isTimeValid
+                                    ? availableTime(timeEntry['time'])
+                                    : nonAvailableTime(timeEntry['time']),
+                          );
+                        });
+                      },
+                    )),
               spaceHeightMedium,
               Obx(() => controllerBooking.availableLoket.isEmpty
-                  ? Container()
+                  ? controllerBooking.isLoadingLoket.value
+                      ? loadingData("memuat loket tersedia")
+                      : Container()
                   : SizedBox(
                       width: double.infinity,
                       // decoration: BoxDecoration(color: Colors.pink),
@@ -144,41 +175,46 @@ class BookingScreen extends StatelessWidget {
                             style: mediumStyle.copyWith(color: Colors.black),
                           ),
                           spaceHeightSmall,
-                          SizedBox(
-                            height: 30,
-                            child: Obx(() => ListView.builder(
-                                  itemCount:
-                                      controllerBooking.availableLoket.length,
-                                  shrinkWrap: true,
-                                  // physics: const NeverScrollableScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    return Obx(() {
-                                      bool isSelectedLocket = controllerBooking
-                                              .selectedLocket.value ==
-                                          controllerBooking
-                                              .availableLoket[index]
-                                              .toString();
-                                      return InkWell(
-                                        onTap: () {
-                                          controllerBooking
-                                                  .selectedLocket.value =
-                                              controllerBooking
-                                                  .availableLoket[index]
-                                                  .toString();
+                          Obx(() => controllerBooking.isLoadingLoket.value
+                              ? loadingData("memuat loket tersedia")
+                              : SizedBox(
+                                  height: 30,
+                                  child: Obx(() => ListView.builder(
+                                        itemCount: controllerBooking
+                                            .availableLoket.length,
+                                        shrinkWrap: true,
+                                        // physics: const NeverScrollableScrollPhysics(),
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder: (context, index) {
+                                          return Obx(() {
+                                            bool isSelectedLocket =
+                                                controllerBooking
+                                                        .selectedLocket.value ==
+                                                    controllerBooking
+                                                        .availableLoket[index]
+                                                        .toString();
+                                            return InkWell(
+                                              onTap: () {
+                                                controllerBooking
+                                                        .selectedLocket.value =
+                                                    controllerBooking
+                                                        .availableLoket[index]
+                                                        .toString();
+                                              },
+                                              child: isSelectedLocket
+                                                  ? selectedLocket(
+                                                      controllerBooking
+                                                          .availableLoket[index]
+                                                          .toString())
+                                                  : availableLoket(
+                                                      controllerBooking
+                                                          .availableLoket[index]
+                                                          .toString()),
+                                            );
+                                          });
                                         },
-                                        child: isSelectedLocket
-                                            ? selectedLocket(controllerBooking
-                                                .availableLoket[index]
-                                                .toString())
-                                            : availableLoket(controllerBooking
-                                                .availableLoket[index]
-                                                .toString()),
-                                      );
-                                    });
-                                  },
-                                )),
-                          )
+                                      )),
+                                ))
                         ],
                       ),
                     )),
@@ -190,13 +226,12 @@ class BookingScreen extends StatelessWidget {
                 String tanggalBooking =
                     controllerBooking.selectedDay.value.toString();
                 String idUser = controllerUser.user.value!.idUsers.toString();
-
-                // Get.toNamed(Routes.bookingDoneScreen);
                 if (jamBooking != '' &&
                     idLayanan.isNotEmpty &&
                     chooseLocket.isNotEmpty) {
                   Get.defaultDialog(
                       title: "Konfirmasi Booking",
+                      barrierDismissible: false,
                       titleStyle: semiBoldStyle.copyWith(
                           color: bluePrimary, fontSize: fonth4),
                       content: Padding(
@@ -266,27 +301,35 @@ class BookingScreen extends StatelessWidget {
                             ),
                             spaceHeightSmall,
                             const Divider(),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: miniButtonOutline("Batal", () {
-                                  Get.back();
-                                })),
-                                spaceWidthMedium,
-                                Expanded(
-                                    child: miniButtonPrimary("Buat", () {
-                                  print(
-                                      "Loketnya adalah = $chooseLocket\nId Layanan = $idLayanan\nJam Booking = $jamBooking\ntanggal = $tanggalBooking\nId User = $idUser");
-                                  controllerBooking.insertBooking(
-                                      idPelayanan: chooseLocket,
-                                      alamat: "Bluru Kidul",
-                                      idLayanan: idLayanan,
-                                      jamBooking: jamBooking,
-                                      tanggal: tanggalBooking,
-                                      idUser: idUser);
-                                })),
-                              ],
-                            )
+                            Obx(() => controllerBooking.isLoading.value
+                                ? loadingData("mengirim data")
+                                : Row(
+                                    children: [
+                                      Expanded(
+                                          child: miniButtonOutline("Batal", () {
+                                        Get.back();
+                                      })),
+                                      spaceWidthMedium,
+                                      Expanded(
+                                          child: miniButtonPrimary("Buat", () {
+                                        print(
+                                            "Loketnya adalah = $chooseLocket\nId Layanan = $idLayanan\nJam Booking = $jamBooking\ntanggal = $tanggalBooking\nId User = $idUser");
+                                        DateTime dateFormat =
+                                            DateTime.parse(tanggalBooking);
+                                        String formateDate =
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(dateFormat);
+
+                                        controllerBooking.insertBooking(
+                                            idPelayanan: chooseLocket,
+                                            alamat: "Bluru Kidul",
+                                            idLayanan: idLayanan,
+                                            jamBooking: jamBooking,
+                                            tanggal: formateDate,
+                                            idUser: idUser);
+                                      })),
+                                    ],
+                                  )),
                           ],
                         ),
                       ));

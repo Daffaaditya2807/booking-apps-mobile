@@ -36,8 +36,15 @@ Widget serviceCard(BuildContext context, String serviceName, String description,
               child: CachedNetworkImage(
                 imageUrl: urlImage,
                 fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    Center(child: loadingData("Memuat gambar..")),
+                placeholder: (context, url) => Center(
+                    child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    color: bluePrimary,
+                    strokeWidth: 2.0,
+                  ),
+                )),
                 errorWidget: (context, url, error) => const Icon(
                   Icons.error,
                   color: Colors.white,
@@ -78,38 +85,36 @@ Widget serviceCard(BuildContext context, String serviceName, String description,
   );
 }
 
-Widget detailService(BuildContext context, String serviceName,
-    String description, String imageUrl, String tag) {
-  double heightAppBar = MediaQuery.of(context).viewPadding.top;
-  double heightScreen = MediaQuery.sizeOf(context).height;
-  double heightContainer =
-      (heightScreen - kToolbarHeight - heightAppBar) * 0.25;
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.start,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Hero(
-        tag: tag,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            width: double.infinity,
-            height: heightContainer,
+Widget historyServiceCard(
+    BuildContext context,
+    String serviceName,
+    String description,
+    String urlImage,
+    String tanggal,
+    String noLoket,
+    String jam) {
+  double sidePadding = 40;
+  double spaceService = 12;
+  double screenWidth = MediaQuery.sizeOf(context).width;
+  double containerWidth = (screenWidth - sidePadding - spaceService) * 0.35;
+  double widthScreen =
+      screenWidth - containerWidth - sidePadding - spaceService;
+
+  return Padding(
+    padding: verticalPaddingSmall,
+    child: IntrinsicHeight(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: containerWidth,
+            height: double.infinity,
             decoration: BoxDecoration(
-                borderRadius: roundedMediumGeo,
-                color: Colors.blue,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 3,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                ]),
+                color: greyPrimary, borderRadius: roundedMediumGeo),
             child: ClipRRect(
               borderRadius: roundedMediumGeo,
               child: CachedNetworkImage(
-                imageUrl: imageUrl,
+                imageUrl: urlImage,
                 fit: BoxFit.cover,
                 placeholder: (context, url) =>
                     Center(child: loadingData("Memuat gambar..")),
@@ -120,11 +125,115 @@ Widget detailService(BuildContext context, String serviceName,
               ),
             ),
           ),
+          spaceWidthMedium,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: widthScreen,
+                child: Text(
+                  '$serviceName | $noLoket',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: semiBoldStyle.copyWith(
+                      color: Colors.black, fontSize: fonth6),
+                ),
+              ),
+              SizedBox(
+                width: widthScreen,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    spaceHeightSmall,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Tanggal : $tanggal",
+                          textAlign: TextAlign.justify,
+                          overflow: TextOverflow.ellipsis,
+                          style: regularStyle.copyWith(
+                              color: greyPrimary,
+                              fontSize: regularFont,
+                              height: 1.5),
+                        ),
+                        // Text(
+                        //   "No : $noLoket",
+                        //   textAlign: TextAlign.justify,
+                        //   overflow: TextOverflow.ellipsis,
+                        //   style: regularStyle.copyWith(
+                        //       color: greyPrimary,
+                        //       fontSize: regularFont,
+                        //       height: 1.5),
+                        // ),
+                      ],
+                    ),
+                    spaceHeightSmall,
+                    Text(
+                      "Waktu : $jam",
+                      textAlign: TextAlign.justify,
+                      overflow: TextOverflow.ellipsis,
+                      style: regularStyle.copyWith(
+                          color: greyPrimary,
+                          fontSize: regularFont,
+                          height: 1.5),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    ),
+  );
+}
+
+Widget detailService(BuildContext context, String serviceName,
+    String description, String imageUrl, String tag) {
+  double heightAppBar = MediaQuery.of(context).viewPadding.top;
+  double heightScreen = MediaQuery.sizeOf(context).height;
+  double heightContainer =
+      (heightScreen - kToolbarHeight - heightAppBar) * 0.25;
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          width: double.infinity,
+          height: heightContainer,
+          decoration: BoxDecoration(
+              borderRadius: roundedMediumGeo,
+              color: greyTersier,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 3,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3), // changes position of shadow
+                ),
+              ]),
+          child: ClipRRect(
+            borderRadius: roundedMediumGeo,
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.cover,
+              placeholder: (context, url) =>
+                  Center(child: loadingData("Memuat gambar..")),
+              errorWidget: (context, url, error) => const Icon(
+                Icons.error,
+                color: Colors.white,
+              ),
+            ),
+          ),
         ),
       ),
       spaceHeightBig,
       Text(
-        serviceName,
+        "Deskripsi",
         overflow: TextOverflow.ellipsis,
         style: semiBoldStyle.copyWith(color: Colors.black, fontSize: fonth6),
       ),
@@ -161,7 +270,8 @@ Widget detailStatusService(
     String tanggalLengkap,
     String loket,
     String reason,
-    String urlImage) {
+    String urlImage,
+    {VoidCallback? function}) {
   double heightAppBar = MediaQuery.of(context).viewPadding.top;
   double heightScreen = MediaQuery.sizeOf(context).height;
   double heightContainer =
@@ -169,13 +279,14 @@ Widget detailStatusService(
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.max,
     children: [
       Container(
         width: double.infinity,
         height: heightContainer,
         decoration: BoxDecoration(
             borderRadius: roundedMediumGeo,
-            color: Colors.blue,
+            color: greyTersier,
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.5),
@@ -201,13 +312,20 @@ Widget detailStatusService(
       spaceHeightBig,
       spaceHeightMedium,
       componentTextDetailStatusBooking(
-          hari, tanggalLengkap, jam, serviceName, status, loket,
-          reasonStatus: reason)
+        hari,
+        tanggalLengkap,
+        jam,
+        serviceName,
+        status,
+        loket,
+        reasonStatus: reason,
+        function: function,
+      ),
+      // Expanded(child: Container()),
     ],
   );
 }
 
-// "9 September 2024"
 Widget colourIndicatorService(String service, Color serviceIndicator) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 5),

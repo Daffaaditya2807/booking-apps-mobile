@@ -49,7 +49,10 @@ class RegisterScreen extends StatelessWidget {
                 "Buat Akun", "Silakan masukkan data diri anda"),
             spaceHeightBig,
             textFieldInput("Nama Lengkap", "Nama Lengkap", _nama, context,
-                typeInput: TextInputType.name),
+                typeInput: TextInputType.name,
+                formatter: [
+                  FilteringTextInputFormatter.allow(RegExp('[a-zA-Z ]'))
+                ]),
             textFieldInput("Email", "Email", _email, context,
                 typeInput: TextInputType.emailAddress,
                 formatter: [

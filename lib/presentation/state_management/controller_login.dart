@@ -5,6 +5,7 @@ import 'package:apllication_book_now/data/models/user_model.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ControllerLogin extends GetxController {
   var isLoading = false.obs;
@@ -24,6 +25,7 @@ class ControllerLogin extends GetxController {
       if (code == 200) {
         if (responseBody['meta']['status'] == 'success') {
           user.value = UserModel.fromJson(responseBody['data']['user']);
+          await saveUserToPrefs(user.value!);
           errorMessage.value = '';
           return true;
         }
@@ -55,9 +57,31 @@ class ControllerLogin extends GetxController {
     }
   }
 
+  Future<void> saveUserToPrefs(UserModel userModel) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userJson = json.encode(userModel.toJson());
+    await prefs.setString('user', userJson);
+  }
+
+  Future<void> loadUserFromPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('user');
+    if (userJson != null) {
+      user.value = UserModel.fromJson(json.decode(userJson));
+    }
+  }
+
   void updateUserData(UserModel? newUser) {
     if (newUser != null) {
       user.value = newUser;
+      saveUserToPrefs(newUser);
     }
+  }
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    loadUserFromPrefs();
   }
 }

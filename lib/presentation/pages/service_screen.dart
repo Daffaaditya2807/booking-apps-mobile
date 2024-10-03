@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../config/routes/routes.dart';
+import '../../data/data_sources/api.dart';
 
 class ServiceScreen extends StatelessWidget {
   ServiceScreen({super.key});
@@ -40,11 +41,8 @@ class ServiceScreen extends StatelessWidget {
                 onTap: () {
                   Get.toNamed(Routes.bookingScreen, arguments: service);
                 },
-                child: Hero(
-                  tag: 'service-${service.image}',
-                  child: serviceCard(context, service.name, service.description,
-                      service.image),
-                ),
+                child: serviceCard(context, service.name, service.description,
+                    '$apiImage${service.image}'),
               );
             },
           );

@@ -7,34 +7,36 @@ import '../../resource/sizes/list_padding.dart';
 import '../widgets/information.dart';
 import '../widgets/list_button.dart';
 
-class IntroductionLastScreen extends StatelessWidget {
-  const IntroductionLastScreen({super.key});
+class ScreenUpdateStatusDone extends StatelessWidget {
+  const ScreenUpdateStatusDone({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: _buildPageIntroductionLast(),
+      body: _buildPageBookingDone(),
     );
   }
 
-  Padding _buildPageIntroductionLast() {
-    return Padding(
+  SafeArea _buildPageBookingDone() {
+    return SafeArea(
+        child: Padding(
       padding: sidePaddingBig,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(child: Container()),
-          informationText(
-              "assets/image/splash_screen/splash_screen_2.svg",
-              "Anda malas menunggu?",
-              "Ambil antrian sekarang juga dan nikmati kenyamanan tanpa menunggu!"),
+          informationTextAsset(
+              "assets/image/splash_screen/booking.png",
+              "Booking Selesai!",
+              "Terimah kasih telah menggunakan jasa booking pada aplikasi kami. Semoga hasilnya memuaskan ya.. "),
           Expanded(child: Container()),
-          buttonPrimary("Daftar Sekarang", () {
-            Get.offNamed(Routes.loginScreen);
+          buttonPrimary("Selesai", () {
+            Get.offAllNamed(Routes.navbarMenu);
           }),
           spaceHeightBig
         ],
       ),
-    );
+    ));
   }
 }

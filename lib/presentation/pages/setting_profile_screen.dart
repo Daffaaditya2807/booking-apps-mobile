@@ -39,7 +39,10 @@ class SettingProfileScreen extends StatelessWidget {
         children: [
           spaceHeightBig,
           textFieldInput("Nama Lengkap", "Nama Lengkap", _nama, context,
-              typeInput: TextInputType.name, formatter: []),
+              typeInput: TextInputType.name,
+              formatter: [
+                FilteringTextInputFormatter.allow(RegExp('[a-zA-Z ]'))
+              ]),
           textFieldInput("No Telepon", "No Telepon", _noTelpon, context,
               typeInput: TextInputType.phone,
               lenght: 13,

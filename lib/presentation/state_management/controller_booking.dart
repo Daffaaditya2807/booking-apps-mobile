@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 
 class ControllerBooking extends GetxController {
   var isLoading = false.obs;
+  var isFirstLoadValue = true.obs;
+  var isLoadingLoket = false.obs;
   var focusedDay = DateTime.now().obs;
   var selectedDay = Rxn<DateTime>();
   var availableTimes = <String>[].obs;
@@ -16,6 +18,9 @@ class ControllerBooking extends GetxController {
   var selectedTime = ''.obs;
   var selectedLocket = ''.obs;
   var serviceId = 0.obs;
+  //hosting
+  // var availableLoket = <String>[].obs;
+  //local
   var availableLoket = <int>[].obs;
   var jamBooking = ''.obs;
   var tags = ''.obs;
@@ -28,8 +33,10 @@ class ControllerBooking extends GetxController {
     if (select.isAfter(DateTime.now().subtract(const Duration(days: 1)))) {
       selectedDay.value = select;
       selectedTime.value = '';
-      fetchAvailableTimes();
       availableLoket.clear();
+      isLoadingLoket(false);
+      isFirstLoadValue(true);
+      fetchAvailableTimes();
     }
   }
 
@@ -38,64 +45,86 @@ class ControllerBooking extends GetxController {
   }
 
   Future<void> fetchAvailableTimes() async {
-    print("ID = ${serviceId.value}");
-    if (selectedDay.value == null) return;
-    var response = await http.post(
-      Uri.parse('${apiService}booking'), // Ganti dengan URL API Anda
-      body: jsonEncode({
-        'tanggal': selectedDay.value!.toIso8601String().split('T')[0],
-        'id_layanan': serviceId.value,
-        'id': 1
-      }),
-      headers: {'Content-Type': 'application/json'},
-    );
+    if (isFirstLoadValue.value) {
+      isLoading(true);
+    }
+    try {
+      if (selectedDay.value == null) return;
+      var response = await http.post(
+        Uri.parse('${apiService}booking'), // Ganti dengan URL API Anda
+        body: jsonEncode({
+          'tanggal': selectedDay.value!.toIso8601String().split('T')[0],
+          'id_layanan': serviceId.value,
+          'id': 1
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
 
-    if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
-      List<String> available =
-          List<String>.from(jsonData['data']['time_slots']['available']);
-      List<String> nonAvailable =
-          List<String>.from(jsonData['data']['time_slots']['non_available']);
-      List<String> allTimes = (available + nonAvailable).toSet().toList()
-        ..sort(); // Remove duplicates and sort
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        List<String> available =
+            List<String>.from(jsonData['data']['time_slots']['available']);
+        List<String> nonAvailable =
+            List<String>.from(jsonData['data']['time_slots']['non_available']);
+        List<String> allTimes = (available + nonAvailable).toSet().toList()
+          ..sort(); // Remove duplicates and sort
 
-      times.clear();
-      for (String time in allTimes) {
-        String formattedTime =
-            time.substring(0, 5); // Converts "08:00:00" to "08:00"
-        times.add(
-            {'time': formattedTime, 'available': available.contains(time)});
+        times.clear();
+        for (String time in allTimes) {
+          String formattedTime =
+              time.substring(0, 5); // Converts "08:00:00" to "08:00"
+          times.add(
+              {'time': formattedTime, 'available': available.contains(time)});
+        }
+      } else {
+        // Handle error
       }
-    } else {
-      // Handle error
+    } catch (e) {
+      print(e);
+    } finally {
+      isLoading(false);
+      isFirstLoadValue(false);
     }
   }
 
   Future<void> fetchAvailableLoket() async {
-    print("Jam booking = ${jamBooking.value}");
-    var response = await http.post(
-      Uri.parse('${apiService}loket'), // Update the API URL here
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'tanggal': selectedDay.value!
-            .toIso8601String()
-            .split('T')[0], // Date in YYYY-MM-DD format
-        'id_layanan': serviceId.value, // Service ID
-        'jam_booking': jamBooking.value // Booking time
-      }),
-    );
+    if (!isFirstLoadValue.value) {
+      isLoadingLoket(true);
+      try {
+        var response = await http.post(
+          Uri.parse('${apiService}loket'), // Update the API URL here
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'tanggal': selectedDay.value!
+                .toIso8601String()
+                .split('T')[0], // Date in YYYY-MM-DD format
+            'id_layanan': serviceId.value, // Service ID
+            'jam_booking': jamBooking.value // Booking time
+          }),
+        );
 
-    if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
-      List<int> lokets = List<int>.from(jsonData['data']['available_loket']);
-      availableLoket.assignAll(lokets); // Update the list with fetched data
-    } else {
-      // Handle error
-      print('Error loading data: ${response.statusCode}');
-      availableTimes.clear();
-      nonAvailableTimes.clear();
-      times.clear();
-      availableLoket.clear();
+        if (response.statusCode == 200) {
+          var jsonData = jsonDecode(response.body);
+          //Hosting
+          // List<String> lokets =
+          //     List<String>.from(jsonData['data']['available_loket']);
+          //local
+          List<int> lokets =
+              List<int>.from(jsonData['data']['available_loket']);
+          availableLoket.assignAll(lokets);
+        } else {
+          // Handle error
+          print('Error loading data: ${response.statusCode}');
+          // availableTimes.clear();
+          // nonAvailableTimes.clear();
+          // times.clear();
+          availableLoket.clear();
+        }
+      } catch (e) {
+        print('mengalami error : $e');
+      } finally {
+        isLoadingLoket(false);
+      }
     }
   }
 
@@ -114,8 +143,7 @@ class ControllerBooking extends GetxController {
             await http.post(Uri.parse('${apiService}insertbooking'),
                 headers: {'Content-Type': 'application/json'},
                 body: jsonEncode({
-                  'id_pelayanan': idPelayanan,
-                  'alamat': alamat,
+                  'no_pelayanan': idPelayanan,
                   'id_layanan': idLayanan,
                   'jam_booking': jamBooking,
                   'tanggal': tanggal,
@@ -124,6 +152,7 @@ class ControllerBooking extends GetxController {
 
         final responseBody = json.decode(response.body);
         int code = responseBody['meta']['code'];
+        print(responseBody);
 
         if (code == 200) {
           if (responseBody['meta']['status'] == 'success') {

@@ -23,4 +23,15 @@ class UserModel {
         phoneNumber: json['phone_number'],
         phoneToken: json['phone_token']);
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id_users': idUsers,
+      'nama_pembeli': namaPembeli,
+      'email': email,
+      'username': username,
+      'phone_number': phoneNumber,
+      'phone_token': phoneToken,
+    };
+  }
 }

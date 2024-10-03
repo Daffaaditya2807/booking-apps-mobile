@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:apllication_book_now/config/routes/routes.dart';
 import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/data/models/history_booking_model.dart';
+import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -42,6 +44,28 @@ class ControllerStatusScreen extends GetxController {
     }
   }
 
+  Future<void> updateStatusProsesUser(String idBooking) async {
+    isLoading(true);
+    try {
+      final response = await http.post(Uri.parse('${apiService}updateBooking'),
+          headers: {'Content-type': 'application/json'},
+          body: jsonEncode({'id_booking': idBooking}));
+
+      final responseBody = json.decode(response.body);
+      int code = responseBody['meta']['code'];
+      if (code == 200) {
+        Get.toNamed(Routes.doneUpdateStatusScreen);
+        // print(Routes.doneUpdateStatusScreen);
+      } else {
+        snackBarError("Gagal", "ada sesuatu yang error");
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    } finally {
+      isLoading(false);
+    }
+  }
+
   void assignAllHistoryPesan(String idUser) async {
     try {
       isLoading(true);
@@ -69,7 +93,7 @@ class ControllerStatusScreen extends GetxController {
   void assignHistoryDitolak(String idUser) async {
     try {
       isLoading(true);
-      var historyDitolakList = await fetchHistory(idUser, 'ditolak');
+      var historyDitolakList = await fetchHistory(idUser, 'dibatalkan');
       if (historyDitolakList.isNotEmpty) {
         historyTolak.assignAll(historyDitolakList);
       }
