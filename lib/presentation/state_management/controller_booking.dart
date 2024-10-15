@@ -19,9 +19,9 @@ class ControllerBooking extends GetxController {
   var selectedLocket = ''.obs;
   var serviceId = 0.obs;
   //hosting
-  // var availableLoket = <String>[].obs;
+  var availableLoket = <String>[].obs;
   //local
-  var availableLoket = <int>[].obs;
+  // var availableLoket = <int>[].obs;
   var jamBooking = ''.obs;
   var tags = ''.obs;
 
@@ -106,18 +106,15 @@ class ControllerBooking extends GetxController {
         if (response.statusCode == 200) {
           var jsonData = jsonDecode(response.body);
           //Hosting
-          // List<String> lokets =
-          //     List<String>.from(jsonData['data']['available_loket']);
+          List<String> lokets =
+              List<String>.from(jsonData['data']['available_loket']);
           //local
-          List<int> lokets =
-              List<int>.from(jsonData['data']['available_loket']);
+          // List<int> lokets =
+          //     List<int>.from(jsonData['data']['available_loket']);
           availableLoket.assignAll(lokets);
         } else {
           // Handle error
           print('Error loading data: ${response.statusCode}');
-          // availableTimes.clear();
-          // nonAvailableTimes.clear();
-          // times.clear();
           availableLoket.clear();
         }
       } catch (e) {
@@ -161,6 +158,9 @@ class ControllerBooking extends GetxController {
         } else if (code == 500) {
           snackBarError("Gagal buat booking pesanan",
               "Terjadi kesalahan saat melakukan booking pesanan");
+        } else if (code == 400) {
+          snackBarError("Gagal buat booking pesanan",
+              "Tanggal tersebut dan loket tersebut sudah terdapat data booking mohon cari yang lain");
         }
       } catch (e) {
         print(e);

@@ -2,6 +2,7 @@ import 'package:apllication_book_now/config/routes/routes.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_show_hide.dart';
 import 'package:apllication_book_now/presentation/widgets/loading_data.dart';
+import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -58,6 +59,15 @@ class LoginScreen extends StatelessWidget {
                   : Icons.visibility,
               controllerShowHide.showHidePassword,
               typeInput: TextInputType.text)),
+          Align(
+            alignment: Alignment.topRight,
+            child: InkWell(
+                onTap: () {
+                  Get.toNamed(Routes.forgetPasswordScreen);
+                },
+                child:
+                    componentTextHeader("Lupa Password?", size: regularFont)),
+          ),
           spaceHeightMedium,
           Obx(() {
             if (controllerLogin.isLoading.value) {

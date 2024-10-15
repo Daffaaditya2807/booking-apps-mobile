@@ -1,12 +1,12 @@
 import 'package:apllication_book_now/config/routes/routes.dart';
 import 'package:apllication_book_now/presentation/widgets/header.dart';
 import 'package:apllication_book_now/presentation/widgets/list_text.dart';
+import 'package:apllication_book_now/presentation/widgets/loading_data.dart';
 import 'package:apllication_book_now/resource/sizes/list_margin.dart';
 import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../resource/fonts_style/fonts_style.dart';
 import '../../resource/list_color/colors.dart';
 import '../../resource/sizes/list_font_size.dart';
@@ -34,8 +34,40 @@ class SettingScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           spaceHeightBig,
-          Obx(() => componentTextGreeting(
-              "${controllerLogin.user.value?.namaPembeli ?? 'Guest'}!")),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Obx(() => componentTextGreeting(
+                  "${controllerLogin.user.value?.namaPembeli ?? 'Guest'}!")),
+              Obx(() {
+                return controllerLogin.user.value == null
+                    ? const CircularProgressIndicator()
+                    : Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: greyTersier,
+                              width: 1.0,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(2.0),
+                          child: ClipOval(
+                            child: SvgPicture.network(
+                              controllerLogin.user.value!.avatarUrl,
+                              fit: BoxFit.contain,
+                              alignment: Alignment.center,
+                              width: 50,
+                              height: 50,
+                            ),
+                          ),
+                        ),
+                      );
+              })
+            ],
+          ),
+          // Obx(() => componentTextGreeting(
+          //     "${controllerLogin.user.value?.namaPembeli ?? 'Guest'}!")),
           spaceHeightMedium,
           componentTextMenu("Ubah Profile", Icons.account_circle_outlined, () {
             Get.toNamed(Routes.profileSettingScreen);
@@ -63,23 +95,23 @@ class SettingScreen extends StatelessWidget {
                       ),
                       spaceHeightSmall,
                       const Divider(),
-                      Row(
-                        children: [
-                          Expanded(
-                              child: miniButtonOutline("Tidak", () {
-                            Get.back();
-                          })),
-                          spaceWidthMedium,
-                          Expanded(
-                              child: miniButtonPrimary("Iya", () async {
-                            controllerLogin.user.value = null;
-                            final SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            await prefs.remove('user');
-                            Get.offAllNamed(Routes.loginScreen);
-                          })),
-                        ],
-                      )
+                      Obx(() => controllerLogin.isLoading.value
+                          ? loadingData("keluar akun..")
+                          : Row(
+                              children: [
+                                Expanded(
+                                    child: miniButtonOutline("Tidak", () {
+                                  Get.back();
+                                })),
+                                spaceWidthMedium,
+                                Expanded(
+                                    child: miniButtonPrimary("Iya", () async {
+                                  await controllerLogin.logout(controllerLogin
+                                      .user.value!.idUsers
+                                      .toString());
+                                })),
+                              ],
+                            ))
                     ],
                   ),
                 ));

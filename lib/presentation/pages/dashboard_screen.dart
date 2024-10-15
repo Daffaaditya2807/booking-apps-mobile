@@ -12,10 +12,12 @@ import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../config/routes/routes.dart';
+import '../state_management/controller_dicebear.dart';
 import '../state_management/controller_get_service.dart';
 import '../state_management/controller_login.dart';
 import '../widgets/list_service.dart';
@@ -33,19 +35,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final CarouselSliderController _controller = CarouselSliderController();
   final ControllerDashboard controllerDashboard =
       Get.put(ControllerDashboard());
-  // final ControllerDashboard controllerDashboard = Get.find<ControllerDashboard>();
-
+  final DiceBearController diceBearController = Get.put(DiceBearController());
   final ControllerLogin controllerLogin =
       Get.put(ControllerLogin(), permanent: true);
   final ControllerGetService controllerGetService =
       Get.put(ControllerGetService());
 
-  List<Widget> listWidget(BuildContext context) => [
-        containerBanner2(context),
-        containerBanner2(context),
-        containerBanner2(context),
-        containerBanner2(context),
-      ];
+  List<Widget> listWidget(BuildContext context) =>
+      List.generate(controllerDashboard.urlImagee.length, (int index) {
+        final listUrl = controllerDashboard.urlImagee[index];
+        if (listUrl != null) {
+          return containerBanner2(context, listUrl);
+        } else {
+          return Container(
+            color: Colors.blue,
+          );
+        }
+      });
   @override
   Widget build(BuildContext context) {
     double heightAppBar = MediaQuery.of(context).viewPadding.top;
@@ -54,8 +60,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         (heightScreen - kToolbarHeight - heightAppBar) * 0.25;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: _buildDashboardPage(heightContainer, context,
-          controllerLogin.user.value?.namaPembeli ?? ''),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          controllerDashboard.fetchGetTicketUser(
+              controllerLogin.user.value!.idUsers.toString());
+          controllerDashboard.fetchChartData();
+          controllerGetService.fetchService();
+          controllerDashboard.assignAllHistoryPesan(
+              controllerLogin.user.value!.idUsers.toString());
+        },
+        child: _buildDashboardPage(heightContainer, context,
+            controllerLogin.user.value?.namaPembeli ?? ''),
+      ),
     );
   }
 
@@ -78,19 +94,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
           spaceHeightBig,
           Padding(
             padding: sidePaddingBig,
-            child: componentTextGreeting("$nameUser!"),
-          ),
-          spaceHeightBig,
-          carouselSlider(
-              _controller,
-              heightContainer,
-              (index, reason) => controllerDashboard.getIndex(index),
-              listWidget(context)),
-          Center(
-            child: Obx(() => indicatorCarousel(
-                controllerDashboard.currentIndex.value,
-                listWidget(context),
-                _controller)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                componentTextGreeting("$nameUser!"),
+                Obx(() {
+                  return controllerLogin.user.value == null
+                      ? const CircularProgressIndicator()
+                      : Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: greyTersier,
+                                width: 1.0,
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(2.0),
+                            child: ClipOval(
+                              child: SvgPicture.network(
+                                controllerLogin.user.value!.avatarUrl,
+                                fit: BoxFit.contain,
+                                alignment: Alignment.center,
+                                width: 50,
+                                height: 50,
+                              ),
+                            ),
+                          ),
+                        );
+                })
+              ],
+            ),
           ),
           spaceHeightBig,
           Padding(
@@ -168,66 +202,88 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             padding: const EdgeInsets.all(2.0),
                             child: BarChart(
                               BarChartData(
-                                alignment: BarChartAlignment.spaceAround,
-                                maxY: controllerDashboard.maxY.value + 1,
-                                minY: 0,
-                                titlesData: FlTitlesData(
-                                  show: true,
-                                  bottomTitles: AxisTitles(
-                                    sideTitles: SideTitles(
-                                      showTitles: true,
-                                      reservedSize: 22,
-                                      getTitlesWidget: (double value, _) {
-                                        TextStyle style = regularStyle.copyWith(
-                                            fontSize: 12, color: Colors.black);
-                                        List<String> jamLayanan =
-                                            controllerDashboard.jamLayanan;
-                                        if (value.toInt() < jamLayanan.length) {
-                                          return Text(
-                                            jamLayanan[value.toInt()],
-                                            style: style,
-                                          );
-                                        } else {
-                                          return Text(
-                                            '',
-                                            style: style,
-                                          );
-                                        }
-                                      },
+                                  alignment: BarChartAlignment.spaceAround,
+                                  maxY: controllerDashboard.maxY.value + 1,
+                                  minY: 0,
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    bottomTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        reservedSize: 22,
+                                        getTitlesWidget: (double value, _) {
+                                          TextStyle style =
+                                              regularStyle.copyWith(
+                                                  fontSize: 12,
+                                                  color: Colors.black);
+                                          List<String> jamLayanan =
+                                              controllerDashboard.jamLayanan;
+                                          if (value.toInt() <
+                                              jamLayanan.length) {
+                                            return Text(
+                                              jamLayanan[value.toInt()],
+                                              style: style,
+                                            );
+                                          } else {
+                                            return Text(
+                                              '',
+                                              style: style,
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    leftTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        interval: 1,
+                                        getTitlesWidget:
+                                            (double value, TitleMeta meta) {
+                                          return Text(value.toInt().toString(),
+                                              style: regularStyle.copyWith(
+                                                  fontSize: smallFont,
+                                                  color: Colors.black),
+                                              textAlign: TextAlign.left);
+                                        },
+                                        reservedSize: 10,
+                                      ),
+                                    ),
+                                    topTitles: const AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
+                                    ),
+                                    rightTitles: const AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
                                     ),
                                   ),
-                                  leftTitles: AxisTitles(
-                                    sideTitles: SideTitles(
-                                      showTitles: true,
-                                      interval: 1,
-                                      getTitlesWidget:
-                                          (double value, TitleMeta meta) {
-                                        return Text(value.toInt().toString(),
-                                            style: regularStyle.copyWith(
-                                                fontSize: smallFont,
-                                                color: Colors.black),
-                                            textAlign: TextAlign.left);
-                                      },
-                                      reservedSize: 10,
+                                  borderData: FlBorderData(
+                                    show: true,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 1,
                                     ),
                                   ),
-                                  topTitles: const AxisTitles(
-                                    sideTitles: SideTitles(showTitles: false),
-                                  ),
-                                  rightTitles: const AxisTitles(
-                                    sideTitles: SideTitles(showTitles: false),
-                                  ),
-                                ),
-                                borderData: FlBorderData(
-                                  show: true,
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 1,
-                                  ),
-                                ),
-                                barGroups: controllerDashboard.barGroups,
-                                gridData: const FlGridData(show: true),
-                              ),
+                                  barGroups: controllerDashboard.barGroups,
+                                  gridData: const FlGridData(show: true),
+                                  barTouchData: BarTouchData(
+                                      enabled: false,
+                                      touchTooltipData: BarTouchTooltipData(
+                                        getTooltipColor: (group) =>
+                                            Colors.transparent,
+                                        tooltipPadding: EdgeInsets.zero,
+                                        tooltipMargin: 8,
+                                        getTooltipItem:
+                                            (BarChartGroupData group,
+                                                int groupIndex,
+                                                BarChartRodData rod,
+                                                int rodIndex) {
+                                          return rod.toY == 0
+                                              ? null
+                                              : BarTooltipItem(
+                                                  rod.toY.round().toString(),
+                                                  regularStyle.copyWith(
+                                                      color: greyPrimary));
+                                        },
+                                      ))),
                             ),
                           ),
                         ),
@@ -270,6 +326,68 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               )),
           spaceHeightMedium,
+          Obx(() => listWidget(context).isEmpty
+              ? Container()
+              : carouselSlider(
+                  _controller,
+                  heightContainer,
+                  (index, reason) => controllerDashboard.getIndex(index),
+                  listWidget(context))),
+          Center(
+            child: Obx(() => listWidget(context).isEmpty
+                ? Container()
+                : indicatorCarousel(controllerDashboard.currentIndex.value,
+                    listWidget(context), _controller)),
+          ),
+          spaceHeightBig,
+          Padding(
+            padding: sidePaddingBig,
+            child: componenTextHeaderDesc(
+              "Pesanan Baru Dibuat",
+              "Menampilkan 3 Pesanan yang baru dibuat",
+              warna: blueTersier,
+            ),
+          ),
+          Obx(() {
+            if (controllerDashboard.historyPesan.isEmpty) {
+              return loadingData("memuat data");
+            } else {
+              return ListView.builder(
+                itemCount: controllerDashboard.historyPesan.length > 3
+                    ? 3
+                    : controllerDashboard.historyPesan.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final historyService =
+                      controllerDashboard.historyPesan[index];
+                  return InkWell(
+                    onTap: () {
+                      Get.toNamed(Routes.serviceStatusScreen,
+                          arguments: historyService);
+                    },
+                    child: Padding(
+                      padding: sidePaddingBig,
+                      child: historyServiceCard(
+                          context,
+                          historyService.layanan.name,
+                          historyService.layanan.description,
+                          '$apiImage${historyService.layanan.image}',
+                          historyService.tanggal,
+                          historyService.noLoket,
+                          historyService.jamBooking),
+                    ),
+                  );
+                },
+              );
+            }
+          }),
+          spaceHeightMedium,
+          Padding(
+            padding: sidePaddingBig,
+            child: componentTextHeader("Layanan",
+                warna: blueTersier, size: fonth5),
+          ),
           Padding(
             padding: sidePaddingBig,
             child: ListView.builder(

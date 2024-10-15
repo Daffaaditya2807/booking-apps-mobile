@@ -19,7 +19,11 @@ class ServiceScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: header("Layanan"),
-      body: _buildPageServiceScreen(),
+      body: RefreshIndicator(
+          onRefresh: () async {
+            controllerGetService.fetchService();
+          },
+          child: _buildPageServiceScreen()),
     );
   }
 

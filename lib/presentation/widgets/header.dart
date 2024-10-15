@@ -7,7 +7,8 @@ import 'package:get/get.dart';
 import '../../resource/fonts_style/fonts_style.dart';
 import 'list_button.dart';
 
-AppBar headerWithIcon(String label) {
+AppBar headerWithIcon(String label, {Color? backgroundColor}) {
+  backgroundColor ?? Colors.white;
   return AppBar(
     title: Text(
       label,
@@ -30,7 +31,7 @@ AppBar headerWithIcon(String label) {
             thickness: 1.0,
           ),
         )),
-    backgroundColor: Colors.white,
+    backgroundColor: backgroundColor,
   );
 }
 
@@ -60,10 +61,27 @@ AppBar headerWithTabBar(
   );
 }
 
-TabBarView bodyTabBar(List<Widget> pages, TabController controller) {
+Widget bodyTabBar(List<Widget> pages, TabController controller) {
   return TabBarView(
     controller: controller,
-    children: pages,
+    physics: const NeverScrollableScrollPhysics(),
+    children: pages.map((widget) {
+      return ScrollConfiguration(
+          behavior: const ScrollBehavior(),
+          child: Builder(
+            builder: (context) {
+              return NotificationListener<ScrollNotification>(
+                  onNotification: (scrollNotification) {
+                    if (scrollNotification.metrics.pixels ==
+                        scrollNotification.metrics.minScrollExtent) {
+                      return true;
+                    }
+                    return false;
+                  },
+                  child: widget);
+            },
+          ));
+    }).toList(),
   );
 }
 

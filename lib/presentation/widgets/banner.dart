@@ -1,8 +1,9 @@
 import 'package:apllication_book_now/resource/sizes/list_padding.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Widget containerBanner2(BuildContext context) {
+Widget containerBanner2(BuildContext context, String imageUrl) {
   double heightAppBar = MediaQuery.of(context).viewPadding.top;
   double heightScreen = MediaQuery.sizeOf(context).height;
   double heightContainer =
@@ -26,6 +27,13 @@ Widget containerBanner2(BuildContext context) {
                 offset: const Offset(0, 3), // changes position of shadow
               ),
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       );

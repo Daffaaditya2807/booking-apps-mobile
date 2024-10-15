@@ -62,11 +62,32 @@ Widget componenTextHeaderDesc(String header, String desc, {Color? warna}) {
   );
 }
 
-Widget componentTextHeader(String header, {Color? warna}) {
+Widget componenTextHeaderDescCenter(String header, String desc,
+    {Color? warna}) {
   final Color effectiveWarna = warna ?? bluePrimary;
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text(
+        header,
+        style: semiBoldStyle.copyWith(fontSize: fonth3, color: effectiveWarna),
+      ),
+      spaceHeightSmall,
+      Text(
+        desc,
+        style: mediumStyle.copyWith(fontSize: fonth6, color: greyPrimary),
+      ),
+    ],
+  );
+}
+
+Widget componentTextHeader(String header, {Color? warna, double? size}) {
+  final Color effectiveWarna = warna ?? bluePrimary;
+  final double fonthSize = size ?? fonth3;
   return Text(
     header,
-    style: semiBoldStyle.copyWith(fontSize: fonth3, color: effectiveWarna),
+    style: semiBoldStyle.copyWith(fontSize: fonthSize, color: effectiveWarna),
   );
 }
 
@@ -175,7 +196,7 @@ Widget componentTextDetailBooking(
 }
 
 Widget componentTextDetailStatusBooking(String day, String date, String time,
-    String service, String status, String loket,
+    String service, String status, String loket, List<Color> colour,
     {String? reasonStatus, VoidCallback? function}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,10 +211,7 @@ Widget componentTextDetailStatusBooking(String day, String date, String time,
           Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    bluePrimary,
-                    blueSecondary
-                  ], // Sesuaikan warna gradient di sini
+                  colors: colour,
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

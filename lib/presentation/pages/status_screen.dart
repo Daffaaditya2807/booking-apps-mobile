@@ -24,6 +24,7 @@ class _StatusScreenState extends State<StatusScreen>
       Get.put(ControllerStatusScreen());
   final ControllerLogin controllerUser =
       Get.put(ControllerLogin(), permanent: true);
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   List<Tab> menuTab = [
     const Tab(
@@ -44,14 +45,45 @@ class _StatusScreenState extends State<StatusScreen>
   void initState() {
     super.initState();
     controller = TabController(vsync: this, length: 4);
+    controller?.addListener(_handleTabSelection);
+    _loadData();
+    controllerStatusScreen.idUsers.value =
+        controllerUser.user.value!.idUsers.toString();
+  }
+
+  void _handleTabSelection() {
+    if (controller!.indexIsChanging) {
+      switch (controller!.index) {
+        case 0:
+          controllerStatusScreen.assignAllHistoryPesan(
+              controllerUser.user.value!.idUsers.toString());
+          break;
+        case 1:
+          controllerStatusScreen.assignAllHistoryProses(
+              controllerUser.user.value!.idUsers.toString());
+          break;
+        case 2:
+          controllerStatusScreen.assignHistoryDitolak(
+              controllerUser.user.value!.idUsers.toString());
+          break;
+        case 3:
+          controllerStatusScreen.assignHistorySelesai(
+              controllerUser.user.value!.idUsers.toString());
+          break;
+      }
+    }
+  }
+
+  void _loadData() {
+    // Memuat data default untuk tab pertama
     controllerStatusScreen
         .assignAllHistoryPesan(controllerUser.user.value!.idUsers.toString());
-    controllerStatusScreen
-        .assignAllHistoryProses(controllerUser.user.value!.idUsers.toString());
-    controllerStatusScreen
-        .assignHistoryDitolak(controllerUser.user.value!.idUsers.toString());
-    controllerStatusScreen
-        .assignHistorySelesai(controllerUser.user.value!.idUsers.toString());
+  }
+
+  Future<void> _onRefresh() async {
+    refreshKey.currentState?.show(atTop: false);
+    _loadData();
+    await Future.delayed(const Duration(seconds: 1));
   }
 
   @override
@@ -71,6 +103,7 @@ class _StatusScreenState extends State<StatusScreen>
               ? emptyListService()
               : ListView.builder(
                   itemCount: controllerStatusScreen.historyPesan.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     final historyPesann =
                         controllerStatusScreen.historyPesan[index];
@@ -109,6 +142,7 @@ class _StatusScreenState extends State<StatusScreen>
               ? emptyListService()
               : ListView.builder(
                   itemCount: controllerStatusScreen.historyProses.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     final historyProses =
                         controllerStatusScreen.historyProses[index];
@@ -147,6 +181,7 @@ class _StatusScreenState extends State<StatusScreen>
               ? emptyListService()
               : ListView.builder(
                   itemCount: controllerStatusScreen.historyTolak.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     final historyTolak =
                         controllerStatusScreen.historyTolak[index];
@@ -172,7 +207,7 @@ class _StatusScreenState extends State<StatusScreen>
         }
       }),
       Obx(() {
-        if (controllerStatusScreen.isLoading.value) {
+        if (controllerStatusScreen.isLoadingSelesai.value) {
           return Column(
             children: [
               Expanded(child: Container()),
@@ -185,6 +220,7 @@ class _StatusScreenState extends State<StatusScreen>
               ? emptyListService()
               : ListView.builder(
                   itemCount: controllerStatusScreen.historySelesai.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     final historySelesai =
                         controllerStatusScreen.historySelesai[index];

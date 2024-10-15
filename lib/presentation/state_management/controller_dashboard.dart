@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:apllication_book_now/data/data_sources/notification_helper.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
+import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
 import 'package:apllication_book_now/resource/list_color/colors.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,14 +26,16 @@ class ControllerDashboard extends GetxController {
   var namaLayanan = <String>[].obs;
   var layanan = <Map<String, dynamic>>[].obs;
   var maxY = 0.0.obs;
-  final ControllerLogin controllerLogin = Get.put(ControllerLogin());
+  var historyPesan = <HistoryBookingModel>[].obs;
+  List urlImagee = [].obs;
 
+  final ControllerLogin controllerLogin = Get.put(ControllerLogin());
+  NotificationHelper notificationHelper = NotificationHelper();
   void getIndex(int current) {
     currentIndex.value = current;
   }
 
   Future<List<HistoryBookingModel>> fetchGetTicketUser(String idUser) async {
-    print("kesini ga bang");
     isLoading(true);
     try {
       final response = await http.post(Uri.parse('${apiService}getTicketUser'),
@@ -60,18 +65,83 @@ class ControllerDashboard extends GetxController {
     }
   }
 
-  // void assignTicketUser(String idUser) async {
-  //   try {
-  //     isLoading(true);
-  //     var getTicketUser = await fetchGetTicketUser(idUser);
-  //     if (getTicketUser.isNotEmpty) {
-  //       ticketUser.assignAll(getTicketUser);
-  //       print("DONEE ${ticketUser[1].nomorBooking}");
-  //     }
-  //   } finally {
-  //     isLoading(false);
-  //   }
-  // }
+  Future<List<HistoryBookingModel>> fetchHistory(
+      String idUser, String status) async {
+    try {
+      final response = await http.post(
+          Uri.parse('${apiService}gethistorybooking'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'id_users': idUser, 'status': status}));
+
+      final responseBody = json.decode(response.body);
+      int code = responseBody['meta']['code'];
+      if (code == 200) {
+        var data = jsonDecode(response.body)['data'];
+        List<HistoryBookingModel> historyProses =
+            List<HistoryBookingModel>.from(
+                data.map((i) => HistoryBookingModel.fromJson(i)));
+        historyProses.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        return historyProses;
+      } else if (code == 404) {
+        message.value = "tidak ada history booking";
+        return [];
+      } else {
+        message.value = "Failed to load history booking";
+        return [];
+      }
+    } catch (e) {
+      throw Exception("error : $e");
+    }
+  }
+
+  void assignAllHistoryPesan(String idUser) async {
+    try {
+      // isLoading(true);
+      var historyPesanList = await fetchHistory(idUser, 'dipesan');
+      if (historyPesanList.isNotEmpty) {
+        historyPesan.assignAll(historyPesanList);
+      }
+    } finally {
+      // isLoading(false);
+    }
+  }
+
+  Future<List> urlImageBanners() async {
+    isLoading(true);
+    try {
+      final response = await http.get(
+        Uri.parse('${apiService}getbanners'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      // Cek status kode HTTP
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        int code = responseBody['meta']['code'];
+
+        // Cek kode dari response JSON
+        if (code == 200) {
+          List banners = responseBody['data']['data'];
+          urlImagee.assignAll(banners);
+          return urlImagee;
+        } else if (code == 500) {
+          snackBarError(
+              "Gagal mendapatkan list banner", "ada sesuatu yang error");
+          return [];
+        } else {
+          return [];
+        }
+      } else {
+        snackBarError("Gagal mendapatkan list banner",
+            "HTTP Error: ${response.statusCode}");
+        return [];
+      }
+    } catch (e) {
+      snackBarError("Error", "Terjadi kesalahan: $e");
+      return [];
+    } finally {
+      isLoading(false);
+    }
+  }
 
   void assignTicketUser(String idUser) async {
     await fetchGetTicketUser(idUser);
@@ -95,7 +165,9 @@ class ControllerDashboard extends GetxController {
 
         for (var data in bookingsData) {
           List<BarChartRodData> rods = [];
-          for (var booking in data['bookings']) {
+          List<int> indicators = [];
+          for (var i = 0; i < data['bookings'].length; i++) {
+            var booking = data['bookings'][i];
             double bookingCount =
                 double.parse(booking['booking_count'].toString());
             if (bookingCount > highestBookingCount) {
@@ -109,11 +181,14 @@ class ControllerDashboard extends GetxController {
                 borderRadius: BorderRadius.circular(0),
               ),
             );
+            if (bookingCount > 0) {
+              indicators.add(i);
+            }
           }
           loadedBarGroups.add(BarChartGroupData(
-            x: data['x'],
-            barRods: rods,
-          ));
+              x: data['x'],
+              barRods: rods,
+              showingTooltipIndicators: indicators));
         }
 
         barGroups.value = loadedBarGroups;
@@ -122,15 +197,14 @@ class ControllerDashboard extends GetxController {
         Get.snackbar('Error', 'Failed to fetch chart data');
       }
     } catch (e) {
-      print("EROR GEDEN : ${e.toString()}");
       Get.snackbar('Error', e.toString());
+      print(e.toString());
     } finally {
       isLoadingChart(false);
     }
   }
 
   Color getColorForService(int serviceId) {
-    // Cocokkan serviceId dengan id_layanan dari daftar layanan
     layanan.firstWhere((element) => element['id_layanan'] == serviceId,
         orElse: () => {});
 
@@ -161,19 +235,27 @@ class ControllerDashboard extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
+    urlImageBanners();
     fetchChartData();
+
     if (controllerLogin.user.value?.idUsers.toString() != null) {
       assignTicketUser(controllerLogin.user.value?.idUsers.toString() ?? '');
+      assignAllHistoryPesan(
+          controllerLogin.user.value?.idUsers.toString() ?? '');
     }
 
     controllerLogin.user.listen((userModel) {
       if (userModel != null) {
-        print("after login ${userModel.idUsers.toString()}");
         assignTicketUser(userModel.idUsers.toString());
+        assignAllHistoryPesan(userModel.idUsers.toString());
       } else {
-        print("User is null or logged out");
-        ticketUser.clear(); // Clear tickets on logout
+        ticketUser.clear();
       }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      notificationHelper.showNotification(
+          message.notification?.title, message.notification?.body);
     });
   }
 }

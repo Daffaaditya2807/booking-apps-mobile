@@ -102,14 +102,14 @@ class RegisterScreen extends StatelessWidget {
                   String confirmPassword = _confirmpassword.text;
                   String phone = _noTelpon.text;
 
-                  String tokenPhone =
-                      "dJgBJaowT9yQ2DmChnFvKV:APA91bElUt1CqxlfjWsmHsHLZHNRrWLDC3x2C3BgVgGHLdzyVgZmi-5ttGK8m6VY2QGP8IAbOHtZ8VNfDGnncignLXM48nAvIp16xGowmNcYDTVtGj4DxV-1XqdtSELq8GlI-hNTzbZ3";
+                  // String tokenPhone =
+                  //     "dJgBJaowT9yQ2DmChnFvKV:APA91bElUt1CqxlfjWsmHsHLZHNRrWLDC3x2C3BgVgGHLdzyVgZmi-5ttGK8m6VY2QGP8IAbOHtZ8VNfDGnncignLXM48nAvIp16xGowmNcYDTVtGj4DxV-1XqdtSELq8GlI-hNTzbZ3";
                   bool checkField = controllerRegister.checkDataNullRegister(
                       nama, email, username, password, confirmPassword, phone);
 
                   if (!checkField) {
                     controllerRegister.register(
-                        nama, email, username, password, phone, tokenPhone);
+                        nama, email, username, password, phone);
                   }
                 });
               }
@@ -117,7 +117,9 @@ class RegisterScreen extends StatelessWidget {
             spaceHeightBig,
             Center(
               child: componenRichTextStyle("Sudah Punya Akun? ", "Masuk", () {
-                Get.offNamed(Routes.loginScreen);
+                if (!controllerRegister.isLoading.value) {
+                  Get.offNamed(Routes.loginScreen);
+                }
               }),
             ),
             spaceHeightBig,

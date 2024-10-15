@@ -23,25 +23,28 @@ CarouselSlider carouselSlider(
       viewportFraction: 1.0,
       initialPage: 0,
       pageSnapping: true,
+      enableInfiniteScroll: items.length == 1 ? false : true,
       onPageChanged: pageChaned,
     ),
     items: items.map((item) => item).toList(),
   );
 }
 
-AnimatedSmoothIndicator indicatorCarousel(
+Widget indicatorCarousel(
     int current, List<Widget> items, CarouselSliderController controller) {
-  return AnimatedSmoothIndicator(
-    activeIndex: current,
-    count: items.length,
-    effect: JumpingDotEffect(
-        verticalOffset: 10,
-        dotColor: greySecondary,
-        dotHeight: 10,
-        dotWidth: 10,
-        activeDotColor: blueTersier),
-    onDotClicked: (index) {
-      controller.animateToPage(index);
-    },
-  );
+  return items.isNotEmpty
+      ? AnimatedSmoothIndicator(
+          activeIndex: current,
+          count: items.length,
+          effect: JumpingDotEffect(
+              verticalOffset: 10,
+              dotColor: greySecondary,
+              dotHeight: 10,
+              dotWidth: 10,
+              activeDotColor: blueTersier),
+          onDotClicked: (index) {
+            controller.animateToPage(index);
+          },
+        )
+      : const SizedBox.shrink();
 }

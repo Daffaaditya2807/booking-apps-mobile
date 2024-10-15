@@ -2,21 +2,42 @@ import 'dart:convert';
 
 import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/data/models/user_model.dart';
+import 'package:apllication_book_now/presentation/state_management/controller_dicebear.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
 import '../../config/routes/routes.dart';
+import '../../data/data_sources/notification_helper.dart';
 
 class ControllerRegister extends GetxController {
   var isLoading = false.obs;
   var user = Rxn<UserModel>();
   var errorMessahe = ''.obs;
+  var deviceToken = ''.obs;
+  final DiceBearController diceBearController = Get.put(DiceBearController());
+  NotificationHelper notificationHelper = NotificationHelper();
+
+  @override
+  void onInit() {
+    super.onInit();
+    diceBearController.fetchRandomAvatar();
+    notificationHelper.requestPermission();
+    getToken();
+  }
+
+  Future<void> getToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? token = await messaging.getToken();
+    deviceToken.value = token.toString();
+    print("token ${deviceToken.value}");
+  }
 
   Future<void> register(String name, String email, String username,
-      String password, String phone, String phoneToken) async {
+      String password, String phone) async {
     isLoading.value = true;
-
+    print("token ${deviceToken.value}");
     try {
       final response = await http.post(Uri.parse('${apiService}register'),
           headers: {'Content-Type': 'application/json'},
@@ -26,28 +47,36 @@ class ControllerRegister extends GetxController {
             'username': username,
             'password': password,
             'phone_number': phone,
-            'phone_token': phoneToken
+            'phone_token': deviceToken.value,
+            'avatar': diceBearController.avatarUrl.value
           }));
 
       final responseBody = json.decode(response.body);
+      print(responseBody);
       int code = responseBody['meta']['code'];
-
       if (code == 200) {
         if (responseBody['meta']['status'] == 'success') {
           user.value = UserModel.fromJson(responseBody['data']['user']);
           errorMessahe.value = '';
-          Get.offNamed(Routes.loginScreen);
+          Get.offNamed(Routes.otpInputScreen, arguments: {
+            'email': email.toString(),
+            'name': name.toString(),
+            'id_user': user.value!.idUsers.toString()
+          });
         } else if (code == 500) {
           errorMessahe.value =
               'failed to register. with error ${response.statusCode}';
           snackBarError("Gagal Register",
               "Terjadi kesalahan saat melakukan pendaftaran akun");
         }
-      } else if (code == 500) {}
+      } else if (code == 400) {
+        snackBarError("Gagal Register", "Username telah tersedia");
+      } else if (code == 401) {
+        snackBarError("Gagal Register", "Email telah tersedia");
+      }
     } catch (e) {
       errorMessahe.value = 'Error: ${e}';
     } finally {
-      print("p");
       isLoading.value = false;
     }
   }

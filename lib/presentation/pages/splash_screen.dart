@@ -1,9 +1,19 @@
 import 'package:apllication_book_now/presentation/state_management/controller_splash_screen.dart';
+import 'package:apllication_book_now/resource/fonts_style/fonts_style.dart';
+import 'package:apllication_book_now/resource/list_color/colors.dart';
+import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 
+import '../../resource/sizes/list_margin.dart';
+
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+  SplashScreen({super.key});
+
+  final ControllerSplashScreen controllerSplashScreen =
+      Get.put(ControllerSplashScreen());
 
   @override
   Widget build(BuildContext context) {
@@ -13,17 +23,45 @@ class SplashScreen extends StatelessWidget {
     );
   }
 
-  Center _buildPageSplashScreen(BuildContext context) {
+  Widget _buildPageSplashScreen(BuildContext context) {
     double heightAppBar = MediaQuery.of(context).viewPadding.top;
     double heightScreen = MediaQuery.sizeOf(context).height;
     double heightContainer =
         (heightScreen - kToolbarHeight - heightAppBar) * 0.25;
-    Get.put(ControllerSplashScreen());
-    return Center(
-      child: Image.asset(
-        "assets/image/logo/logoapps.jpg",
-        height: heightContainer,
-      ),
-    );
+
+    return Obx(() {
+      if (controllerSplashScreen.profileModel.value == null) {
+        return Container();
+      } else {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+              width: double.infinity,
+            ),
+            SizedBox(
+              width: heightContainer,
+              height: heightContainer,
+              child: CachedNetworkImage(
+                imageUrl: controllerSplashScreen.profileModel.value!.logo,
+                fit: BoxFit.cover,
+              ),
+            ),
+            spaceHeightBig,
+            Text(controllerSplashScreen.profileModel.value?.namaUsaha ?? '',
+                    style: boldStyle.copyWith(
+                        color: bluePrimary, fontSize: fonth2))
+                .animate()
+                .shader(
+                  duration: const Duration(milliseconds: 2000),
+                )
+                .fadeIn(duration: 300.ms)
+                .slide(),
+          ],
+        );
+      }
+    });
   }
 }

@@ -1,11 +1,14 @@
 import 'package:apllication_book_now/presentation/pages/booking_done_screen.dart';
 import 'package:apllication_book_now/presentation/pages/booking_screen.dart';
 import 'package:apllication_book_now/presentation/pages/detail_service_screen.dart';
+import 'package:apllication_book_now/presentation/pages/forget_password_screen.dart';
 import 'package:apllication_book_now/presentation/pages/introduction_first_screen.dart';
 import 'package:apllication_book_now/presentation/pages/introduction_last_screen.dart';
 import 'package:apllication_book_now/presentation/pages/login_screen.dart';
 import 'package:apllication_book_now/presentation/pages/main_menu.dart';
+import 'package:apllication_book_now/presentation/pages/otp_screen.dart';
 import 'package:apllication_book_now/presentation/pages/register_screen.dart';
+import 'package:apllication_book_now/presentation/pages/reset_password_screen.dart';
 import 'package:apllication_book_now/presentation/pages/setting_password_screen.dart';
 import 'package:apllication_book_now/presentation/pages/setting_profile_screen.dart';
 import 'package:apllication_book_now/presentation/pages/setting_screen.dart';
@@ -31,12 +34,15 @@ class Routes {
   static String passwordSettingScreen = "/passwordSettingScreen";
   static String statusScreen = "/statusScreen";
   static String doneUpdateStatusScreen = '/doneUpdateStatusScreen';
+  static String otpInputScreen = '/otpScreen';
+  static String resetPasswordScreen = '/resetPasswordScreen';
+  static String forgetPasswordScreen = '/forgetPasswordScreen';
 
   static String initalRoutes = splashScreen;
   static final List<GetPage> routesList = [
     GetPage(
       name: splashScreen,
-      page: () => const SplashScreen(),
+      page: () => SplashScreen(),
     ),
     GetPage(
       name: introductionFirst,
@@ -71,6 +77,9 @@ class Routes {
     GetPage(name: statusScreen, page: () => const StatusScreen()),
     GetPage(
         name: doneUpdateStatusScreen,
-        page: () => const ScreenUpdateStatusDone())
+        page: () => const ScreenUpdateStatusDone()),
+    GetPage(name: otpInputScreen, page: () => OtpScreen()),
+    GetPage(name: forgetPasswordScreen, page: () => ForgetPasswordScreen()),
+    GetPage(name: resetPasswordScreen, page: () => ResetPasswordScreen())
   ];
 }
