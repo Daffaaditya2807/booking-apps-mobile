@@ -7,12 +7,15 @@ import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
-
 import '../../data/models/profile_model.dart';
+import 'controller_dashboard.dart';
 
 class ControllerStatusScreen extends GetxController {
   var isLoading = false.obs;
   var isLoadingSelesai = false.obs;
+  var isLoadingPesan = false.obs;
+  var isLoadingProses = false.obs;
+  var isLoadingTolak = false.obs;
   var message = ''.obs;
   var idUsers = ''.obs;
   var historyPesan = <HistoryBookingModel>[].obs;
@@ -29,18 +32,27 @@ class ControllerStatusScreen extends GetxController {
         apiKey: "e8dd0273a5e8de2d483b",
         cluster: "ap1",
         onConnectionStateChange: (currentState, previousState) {
-          print("Connection State: $currentState");
+          print("Connection State Status Screen: $currentState");
         },
         onError: (message, code, error) {
           print("Pusher Error : $message");
         },
         onEvent: (PusherEvent event) {
-          print("Data Update ${event.data}");
-
-          assignAllHistoryPesan(idUsers.value);
-          assignAllHistoryProses(idUsers.value);
-          assignHistorySelesai(idUsers.value);
-          assignHistoryDitolak(idUsers.value);
+          // print("Data Update SCREEN STATUS ${event.data}");
+          // print("Tes Data ${event.eventName} and ${event.channelName}");
+          var eventData = jsonDecode(event.data);
+          String eventUserId = eventData['id_users'];
+          if (eventUserId == idUsers.value) {
+            assignAllHistoryPesan(idUsers.value);
+            assignAllHistoryProses(idUsers.value);
+            assignHistorySelesai(idUsers.value);
+            assignHistoryDitolak(idUsers.value);
+            ControllerDashboard controllerDashboard =
+                Get.find<ControllerDashboard>();
+            controllerDashboard.assignAllHistoryLast(idUsers.value);
+          } else {
+            print("Event diterima untuk user lain, tidak memperbarui data");
+          }
         },
       );
       await pusher.connect();
@@ -110,7 +122,6 @@ class ControllerStatusScreen extends GetxController {
       int code = responseBody['meta']['code'];
       if (code == 200) {
         Get.toNamed(Routes.doneUpdateStatusScreen);
-        // print(Routes.doneUpdateStatusScreen);
       } else {
         snackBarError("Gagal", "ada sesuatu yang error");
       }
@@ -123,49 +134,61 @@ class ControllerStatusScreen extends GetxController {
 
   void assignAllHistoryPesan(String idUser) async {
     try {
-      // isLoading(true);
+      isLoadingPesan(true);
       var historyPesanList = await fetchHistory(idUser, 'dipesan');
       if (historyPesanList.isNotEmpty) {
         historyPesan.assignAll(historyPesanList);
+      } else {
+        historyPesan.clear();
       }
     } finally {
-      // isLoading(false);
+      isLoadingPesan(false);
+      historyPesan.refresh();
     }
   }
 
   void assignAllHistoryProses(String idUser) async {
     try {
-      // isLoading(true);
+      isLoadingProses(true);
       var historyProsesList = await fetchHistory(idUser, 'diproses');
       if (historyProsesList.isNotEmpty) {
         historyProses.assignAll(historyProsesList);
+      } else {
+        historyProses.clear();
       }
     } finally {
-      // isLoading(false);
+      isLoadingProses(false);
+      historyProses.refresh();
     }
   }
 
   void assignHistoryDitolak(String idUser) async {
     try {
-      // isLoading(true);
+      isLoadingTolak(true);
       var historyDitolakList = await fetchHistory(idUser, 'dibatalkan');
       if (historyDitolakList.isNotEmpty) {
         historyTolak.assignAll(historyDitolakList);
+      } else {
+        historyTolak.clear();
       }
     } finally {
-      // isLoading(false);
+      isLoadingTolak(false);
+      historyTolak.refresh();
     }
   }
 
   void assignHistorySelesai(String idUser) async {
     try {
-      // isLoading(true);
+      isLoadingSelesai(true);
       var historySelesaiList = await fetchHistory(idUser, 'selesai');
       if (historySelesaiList.isNotEmpty) {
         historySelesai.assignAll(historySelesaiList);
+      } else {
+        historySelesai.clear();
       }
     } finally {
-      // isLoading(false);
+      isLoadingSelesai(false);
+      historySelesai.refresh();
     }
   }
 
@@ -180,7 +203,7 @@ class ControllerStatusScreen extends GetxController {
   @override
   void onClose() {
     // TODO: implement onClose
-    pusher.disconnect();
+    // pusher.disconnect();
     super.onClose();
   }
 }

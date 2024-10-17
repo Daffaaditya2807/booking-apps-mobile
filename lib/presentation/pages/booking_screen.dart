@@ -34,7 +34,7 @@ class BookingScreen extends StatelessWidget {
     controllerBooking.serviceId.value = services.id;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: headerWithIcon("Pesan Layanan"),
+      appBar: headerWithIcon("Pesan Layanan", backgroundColor: Colors.white),
       body: _buildPageBookingScreen(context),
     );
   }

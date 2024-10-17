@@ -24,7 +24,7 @@ class SettingProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: headerWithIcon("Ubah Profile"),
+      appBar: headerWithIcon("Ubah Profile", backgroundColor: Colors.white),
       body: _buildPageProfileScreen(context),
     );
   }

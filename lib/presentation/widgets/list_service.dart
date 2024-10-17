@@ -5,6 +5,7 @@ import 'package:apllication_book_now/resource/sizes/list_margin.dart';
 import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:apllication_book_now/resource/sizes/list_rounded.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ticket_widget/ticket_widget.dart';
@@ -89,6 +90,143 @@ Widget serviceCard(BuildContext context, String serviceName, String description,
                   overflow: TextOverflow.ellipsis,
                   style: regularStyle.copyWith(
                       color: greyPrimary, fontSize: regularFont, height: 1.5),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    ),
+  );
+}
+
+Widget historyServiceCardDashboard(
+    BuildContext context,
+    String serviceName,
+    String description,
+    String urlImage,
+    String tanggal,
+    String noLoket,
+    String jam,
+    String status) {
+  double sidePadding = 40;
+  double spaceService = 12;
+  double screenWidth = MediaQuery.sizeOf(context).width;
+  double containerWidth = (screenWidth - sidePadding - spaceService) * 0.35;
+  double widthScreen =
+      screenWidth - containerWidth - sidePadding - spaceService;
+  List<Color> colours = [];
+  if (status == 'dipesan') {
+    colours = [bluePrimary, blueSecondary];
+  } else if (status == 'diproses') {
+    colours = [greenActive, Colors.green.shade600];
+  } else if (status == 'selesai') {
+    colours = [orangeActive, Colors.orange.shade400];
+  } else {
+    colours = [Colors.red, Colors.redAccent.shade400];
+  }
+
+  return Padding(
+    padding: verticalPaddingSmall,
+    child: IntrinsicHeight(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: containerWidth,
+            height: double.infinity,
+            decoration: BoxDecoration(
+                color: greyPrimary, borderRadius: roundedMediumGeo),
+            child: ClipRRect(
+              borderRadius: roundedMediumGeo,
+              child: CachedNetworkImage(
+                imageUrl: urlImage,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    Center(child: loadingData("Memuat gambar..")),
+                errorWidget: (context, url, error) => const Icon(
+                  Icons.error,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          spaceWidthMedium,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: widthScreen,
+                child: Text(
+                  '$serviceName | $noLoket',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: semiBoldStyle.copyWith(
+                      color: Colors.black, fontSize: fonth6),
+                ),
+              ),
+              SizedBox(
+                width: widthScreen,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    spaceHeightSmall,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Tanggal : $tanggal",
+                          textAlign: TextAlign.justify,
+                          overflow: TextOverflow.ellipsis,
+                          style: regularStyle.copyWith(
+                              color: greyPrimary,
+                              fontSize: regularFont,
+                              height: 1.5),
+                        ),
+                        Text(
+                          jam.substring(0, 5),
+                          textAlign: TextAlign.justify,
+                          overflow: TextOverflow.ellipsis,
+                          style: semiBoldStyle.copyWith(
+                              color: greyPrimary,
+                              fontSize: regularFont,
+                              height: 1.5),
+                        ),
+                      ],
+                    ),
+                    spaceHeightSmall,
+                    Row(
+                      children: [
+                        Text(
+                          "Status : ",
+                          textAlign: TextAlign.justify,
+                          overflow: TextOverflow.ellipsis,
+                          style: regularStyle.copyWith(
+                              color: greyPrimary,
+                              fontSize: regularFont,
+                              height: 1.5),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(colors: colours),
+                              borderRadius: roundedSmallGeo),
+                          child: Padding(
+                            padding: valuePaddingSmall,
+                            child: Text(
+                              status.toUpperCase(),
+                              textAlign: TextAlign.justify,
+                              overflow: TextOverflow.ellipsis,
+                              style: semiBoldStyle.copyWith(
+                                  color: Colors.white,
+                                  fontSize: smallFont,
+                                  height: 1.5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               )
             ],
@@ -302,7 +440,9 @@ Widget detailHistoryStatus(
       width: double.infinity,
       height: note != 'null'
           ? MediaQuery.of(context).size.height * 0.8
-          : MediaQuery.of(context).size.height * 0.53,
+          : status == 'selesai'
+              ? MediaQuery.of(context).size.height * 0.60
+              : MediaQuery.of(context).size.height * 0.72,
       margin: sidePaddingSmall,
       color: Colors.white,
       isCornerRounded: true,
@@ -333,12 +473,18 @@ Widget detailHistoryStatus(
                 padding: sideVerticalPaddingMedium,
                 child: Text(
                   status.toUpperCase(),
-                  style: mediumStyle.copyWith(color: Colors.white),
+                  style: semiBoldStyle.copyWith(color: Colors.white),
                 ),
               ),
             ),
-            spaceHeightSmall,
-            const Divider(),
+            spaceHeightBig,
+            DottedLine(
+              dashLength: 5,
+              lineThickness: 1.0,
+              dashGapLength: 3,
+              dashRadius: 3,
+              dashColor: greyPrimary,
+            ),
             spaceHeightMedium,
             Text(
               "Nomor Antrian Anda",
@@ -418,13 +564,46 @@ Widget detailHistoryStatus(
                 )
               ],
             ),
+            spaceHeightBig,
+            DottedLine(
+              dashLength: 5,
+              lineThickness: 1.0,
+              dashGapLength: 3,
+              dashRadius: 3,
+              dashColor: greyPrimary,
+            ),
             spaceHeightMedium,
-            const Divider(),
-            note == '' || note == 'null'
+            status == 'dibatalkan' || status == 'selesai'
                 ? Container()
                 : Text(
                     "Catatan",
-                    style: regularStyle.copyWith(color: Colors.black),
+                    style: semiBoldStyle.copyWith(color: Colors.black),
+                  ),
+            spaceHeightMedium,
+            status == 'dibatalkan' || status == 'selesai'
+                ? Container()
+                : Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: bluePrimary.withOpacity(0.5),
+                        border: Border.all(color: bluePrimary),
+                        borderRadius: roundedMediumGeo),
+                    child: Padding(
+                      padding: valuePaddingMedium,
+                      child: Text(
+                        "Harap Datang maximal 30 menit sebelum jam booking yang telah ditentukan untuk menghindari anda ditentukan pada jadwal lain! Terima Kasih",
+                        softWrap: true,
+                        style: regularStyle.copyWith(fontSize: regularFont),
+                        textAlign: TextAlign.justify,
+                      ),
+                    ),
+                  ),
+            spaceHeightMedium,
+            note == '' || note == 'null'
+                ? Container()
+                : Text(
+                    "Alasan Pesanan Ditolak",
+                    style: semiBoldStyle.copyWith(color: Colors.black),
                   ),
             spaceHeightMedium,
             note == '' || note == 'null'

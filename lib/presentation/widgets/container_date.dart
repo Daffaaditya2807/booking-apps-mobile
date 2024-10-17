@@ -19,6 +19,20 @@ Widget selectedDateContainer(
       padding: const EdgeInsets.all(8.0),
       child: TableCalendar(
         focusedDay: focusedDay,
+        // calendarBuilders: CalendarBuilders(
+        //   dowBuilder: (context, day) {
+        //     if (day.weekday == DateTime.sunday) {
+        //       return Center(
+        //         child: Text(
+        //           DateFormat.E().format(day),
+        //           style: regularStyle.copyWith(
+        //               color: Colors.red, fontWeight: FontWeight.bold),
+        //         ),
+        //       );
+        //     }
+        //     return null;
+        //   },
+        // ),
         selectedDayPredicate: (day) => isSameDay(day, focusedDay),
         onDaySelected: daySelected,
         sixWeekMonthsEnforced: true,

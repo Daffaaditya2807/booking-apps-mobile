@@ -45,7 +45,7 @@ class _StatusScreenState extends State<StatusScreen>
   void initState() {
     super.initState();
     controller = TabController(vsync: this, length: 4);
-    controller?.addListener(_handleTabSelection);
+    // controller?.addListener(_handleTabSelection);
     _loadData();
     controllerStatusScreen.idUsers.value =
         controllerUser.user.value!.idUsers.toString();
@@ -75,9 +75,15 @@ class _StatusScreenState extends State<StatusScreen>
   }
 
   void _loadData() {
-    // Memuat data default untuk tab pertama
+    print("Apakah data diload ulang");
     controllerStatusScreen
         .assignAllHistoryPesan(controllerUser.user.value!.idUsers.toString());
+    controllerStatusScreen
+        .assignAllHistoryProses(controllerUser.user.value!.idUsers.toString());
+    controllerStatusScreen
+        .assignHistoryDitolak(controllerUser.user.value!.idUsers.toString());
+    controllerStatusScreen
+        .assignHistorySelesai(controllerUser.user.value!.idUsers.toString());
   }
 
   Future<void> _onRefresh() async {
@@ -90,7 +96,7 @@ class _StatusScreenState extends State<StatusScreen>
   Widget build(BuildContext context) {
     List<Widget> pagesTest = [
       Obx(() {
-        if (controllerStatusScreen.isLoading.value) {
+        if (controllerStatusScreen.isLoadingPesan.value) {
           return Column(
             children: [
               Expanded(child: Container()),
@@ -105,6 +111,8 @@ class _StatusScreenState extends State<StatusScreen>
                   itemCount: controllerStatusScreen.historyPesan.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
+                    print(
+                        "Panjang Data Pesan = ${controllerStatusScreen.historyPesan.length}");
                     final historyPesann =
                         controllerStatusScreen.historyPesan[index];
                     return InkWell(
@@ -129,7 +137,7 @@ class _StatusScreenState extends State<StatusScreen>
         }
       }),
       Obx(() {
-        if (controllerStatusScreen.isLoading.value) {
+        if (controllerStatusScreen.isLoadingProses.value) {
           return Column(
             children: [
               Expanded(child: Container()),
@@ -144,6 +152,8 @@ class _StatusScreenState extends State<StatusScreen>
                   itemCount: controllerStatusScreen.historyProses.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
+                    print(
+                        "Panjang Data Proses = ${controllerStatusScreen.historyProses.length}");
                     final historyProses =
                         controllerStatusScreen.historyProses[index];
                     return InkWell(
@@ -168,7 +178,7 @@ class _StatusScreenState extends State<StatusScreen>
         }
       }),
       Obx(() {
-        if (controllerStatusScreen.isLoading.value) {
+        if (controllerStatusScreen.isLoadingTolak.value) {
           return Column(
             children: [
               Expanded(child: Container()),
@@ -183,6 +193,8 @@ class _StatusScreenState extends State<StatusScreen>
                   itemCount: controllerStatusScreen.historyTolak.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
+                    print(
+                        "Panjang Data Tolak = ${controllerStatusScreen.historyTolak.length}");
                     final historyTolak =
                         controllerStatusScreen.historyTolak[index];
                     return InkWell(
@@ -222,6 +234,8 @@ class _StatusScreenState extends State<StatusScreen>
                   itemCount: controllerStatusScreen.historySelesai.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
+                    print(
+                        "Panjang Data Selesai = ${controllerStatusScreen.historySelesai.length}");
                     final historySelesai =
                         controllerStatusScreen.historySelesai[index];
                     return InkWell(

@@ -24,7 +24,7 @@ class SettingPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: headerWithIcon("Ubah Password"),
+      appBar: headerWithIcon("Ubah Password", backgroundColor: Colors.white),
       body: _buildPageChangePassword(context),
     );
   }

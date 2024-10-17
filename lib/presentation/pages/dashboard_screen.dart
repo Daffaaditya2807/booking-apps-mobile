@@ -41,6 +41,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final ControllerGetService controllerGetService =
       Get.put(ControllerGetService());
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   List<Widget> listWidget(BuildContext context) =>
       List.generate(controllerDashboard.urlImagee.length, (int index) {
         final listUrl = controllerDashboard.urlImagee[index];
@@ -66,7 +71,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               controllerLogin.user.value!.idUsers.toString());
           controllerDashboard.fetchChartData();
           controllerGetService.fetchService();
-          controllerDashboard.assignAllHistoryPesan(
+          controllerDashboard.assignAllHistoryLast(
               controllerLogin.user.value!.idUsers.toString());
         },
         child: _buildDashboardPage(heightContainer, context,
@@ -340,27 +345,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     listWidget(context), _controller)),
           ),
           spaceHeightBig,
-          Padding(
-            padding: sidePaddingBig,
-            child: componenTextHeaderDesc(
-              "Pesanan Baru Dibuat",
-              "Menampilkan 3 Pesanan yang baru dibuat",
-              warna: blueTersier,
-            ),
-          ),
+          Obx(() => controllerDashboard.historyLast.isEmpty
+              ? Container()
+              : Padding(
+                  padding: sidePaddingBig,
+                  child: componenTextHeaderDesc(
+                    "Pesanan Baru Dibuat",
+                    "Menampilkan 3 Pesanan yang baru dibuat",
+                    warna: blueTersier,
+                  ),
+                )),
           Obx(() {
-            if (controllerDashboard.historyPesan.isEmpty) {
+            if (controllerDashboard.isLoadingHistory.value) {
               return loadingData("memuat data");
             } else {
               return ListView.builder(
-                itemCount: controllerDashboard.historyPesan.length > 3
+                itemCount: controllerDashboard.historyLast.length > 3
                     ? 3
-                    : controllerDashboard.historyPesan.length,
+                    : controllerDashboard.historyLast.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  final historyService =
-                      controllerDashboard.historyPesan[index];
+                  final historyService = controllerDashboard.historyLast[index];
                   return InkWell(
                     onTap: () {
                       Get.toNamed(Routes.serviceStatusScreen,
@@ -368,14 +374,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     },
                     child: Padding(
                       padding: sidePaddingBig,
-                      child: historyServiceCard(
+                      child: historyServiceCardDashboard(
                           context,
                           historyService.layanan.name,
                           historyService.layanan.description,
                           '$apiImage${historyService.layanan.image}',
                           historyService.tanggal,
-                          historyService.noLoket,
-                          historyService.jamBooking),
+                          historyService.nomorBooking,
+                          historyService.jamBooking,
+                          historyService.status),
                     ),
                   );
                 },

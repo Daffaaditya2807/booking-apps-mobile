@@ -59,6 +59,7 @@ class ControllerLogin extends GetxController {
 
       final responseBody = json.decode(response.body);
       int code = responseBody['meta']['code'];
+      print("Code nya berapa $code");
       if (code == 200) {
         if (responseBody['meta']['status'] == 'success') {
           user.value = UserModel.fromJson(responseBody['data']['user']);
@@ -75,6 +76,14 @@ class ControllerLogin extends GetxController {
       } else if (code == 403) {
         snackBarError("Gagal Login",
             "Akun yang digunakan sudah terdapat pada device lain!");
+        return false;
+      } else if (code == 400) {
+        user.value = UserModel.fromJson(responseBody['data']['user']);
+        Get.toNamed(Routes.otpInputScreen, arguments: {
+          'email': user.value!.email,
+          'name': user.value!.namaPembeli,
+          'id_user': user.value!.idUsers.toString()
+        });
         return false;
       }
     } catch (e) {
