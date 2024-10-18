@@ -47,6 +47,8 @@ class DefaultFirebaseOptions {
     projectId: 'antriqu-apps',
     authDomain: 'antriqu-apps.firebaseapp.com',
     storageBucket: 'antriqu-apps.appspot.com',
+    databaseURL:
+        "https://antriqu-apps-default-rtdb.asia-southeast1.firebasedatabase.app",
     measurementId: 'G-7FMJP3F4JN',
   );
 
@@ -55,6 +57,8 @@ class DefaultFirebaseOptions {
     appId: '1:318417662678:android:9e0d1cace8b2eeab978f77',
     messagingSenderId: '318417662678',
     projectId: 'antriqu-apps',
+    databaseURL:
+        "https://antriqu-apps-default-rtdb.asia-southeast1.firebasedatabase.app",
     storageBucket: 'antriqu-apps.appspot.com',
   );
 
@@ -63,6 +67,8 @@ class DefaultFirebaseOptions {
     appId: '1:318417662678:ios:1f79483b6eefdd08978f77',
     messagingSenderId: '318417662678',
     projectId: 'antriqu-apps',
+    databaseURL:
+        "https://antriqu-apps-default-rtdb.asia-southeast1.firebasedatabase.app",
     storageBucket: 'antriqu-apps.appspot.com',
     iosBundleId: 'com.example.apllicationBookNow',
   );
@@ -72,6 +78,8 @@ class DefaultFirebaseOptions {
     appId: '1:318417662678:ios:1f79483b6eefdd08978f77',
     messagingSenderId: '318417662678',
     projectId: 'antriqu-apps',
+    databaseURL:
+        "https://antriqu-apps-default-rtdb.asia-southeast1.firebasedatabase.app",
     storageBucket: 'antriqu-apps.appspot.com',
     iosBundleId: 'com.example.apllicationBookNow',
   );
@@ -81,6 +89,8 @@ class DefaultFirebaseOptions {
     appId: '1:318417662678:web:35cd66fbe0367d65978f77',
     messagingSenderId: '318417662678',
     projectId: 'antriqu-apps',
+    databaseURL:
+        "https://antriqu-apps-default-rtdb.asia-southeast1.firebasedatabase.app",
     authDomain: 'antriqu-apps.firebaseapp.com',
     storageBucket: 'antriqu-apps.appspot.com',
     measurementId: 'G-P5ZC65DKM8',

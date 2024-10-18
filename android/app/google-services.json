@@ -2,6 +2,7 @@
   "project_info": {
     "project_number": "318417662678",
     "project_id": "antriqu-apps",
+    "firebase_url" : "https://antriqu-apps-default-rtdb.asia-southeast1.firebasedatabase.app",
     "storage_bucket": "antriqu-apps.appspot.com"
   },
   "client": [

@@ -4,11 +4,10 @@ import 'package:apllication_book_now/config/routes/routes.dart';
 import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/data/models/history_booking_model.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 import '../../data/models/profile_model.dart';
-import 'controller_dashboard.dart';
 
 class ControllerStatusScreen extends GetxController {
   var isLoading = false.obs;
@@ -22,43 +21,41 @@ class ControllerStatusScreen extends GetxController {
   var historyProses = <HistoryBookingModel>[].obs;
   var historySelesai = <HistoryBookingModel>[].obs;
   var historyTolak = <HistoryBookingModel>[].obs;
-  late PusherChannelsFlutter pusher;
   var profileModel = Rxn<ProfileModel>();
+  final DatabaseReference _bookingRef =
+      FirebaseDatabase.instance.ref('booking');
 
-  Future<void> initPusher() async {
-    pusher = PusherChannelsFlutter();
-    try {
-      await pusher.init(
-        apiKey: "e8dd0273a5e8de2d483b",
-        cluster: "ap1",
-        onConnectionStateChange: (currentState, previousState) {
-          print("Connection State Status Screen: $currentState");
-        },
-        onError: (message, code, error) {
-          print("Pusher Error : $message");
-        },
-        onEvent: (PusherEvent event) {
-          // print("Data Update SCREEN STATUS ${event.data}");
-          // print("Tes Data ${event.eventName} and ${event.channelName}");
-          var eventData = jsonDecode(event.data);
-          String eventUserId = eventData['id_users'];
-          if (eventUserId == idUsers.value) {
+  void listenForBookingUpdates() {
+    _bookingRef.onValue.listen((DatabaseEvent event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+      if (data != null) {
+        data.forEach((key, value) {
+          final booking = value as Map<dynamic, dynamic>;
+          if (booking['id_users'] == idUsers.value) {
             assignAllHistoryPesan(idUsers.value);
             assignAllHistoryProses(idUsers.value);
             assignHistorySelesai(idUsers.value);
             assignHistoryDitolak(idUsers.value);
-            ControllerDashboard controllerDashboard =
-                Get.find<ControllerDashboard>();
-            controllerDashboard.assignAllHistoryLast(idUsers.value);
-          } else {
-            print("Event diterima untuk user lain, tidak memperbarui data");
+
+            // Periksa status booking, jika "selesai", hapus data booking
+            if (booking['status'] == 'selesai') {
+              String bookingId = booking['id_booking'];
+              deleteBookingById(bookingId);
+            }
           }
-        },
-      );
-      await pusher.connect();
-      await pusher.subscribe(channelName: "booking-channel");
+        });
+      }
+    });
+  }
+
+  void deleteBookingById(String bookingId) async {
+    try {
+      await _bookingRef
+          .child(bookingId)
+          .remove(); // Hapus node berdasarkan `id_booking`
+      print('Booking with id $bookingId has been removed.');
     } catch (e) {
-      print("Error initializing Pusher : $e");
+      print('Error deleting booking with id $bookingId: $e');
     }
   }
 
@@ -196,14 +193,14 @@ class ControllerStatusScreen extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    initPusher();
+    listenForBookingUpdates();
     getProfileModel();
   }
 
   @override
   void onClose() {
     // TODO: implement onClose
-    // pusher.disconnect();
+    _bookingRef.onDisconnect();
     super.onClose();
   }
 }
