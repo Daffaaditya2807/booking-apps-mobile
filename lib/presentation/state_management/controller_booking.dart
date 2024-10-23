@@ -5,6 +5,7 @@ import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:timezone/timezone.dart' as tz;
 
 class ControllerBooking extends GetxController {
   var isLoading = false.obs;
@@ -136,6 +137,9 @@ class ControllerBooking extends GetxController {
     bool check = checkDataNullBooking(jamBooking!, tanggal!, idPelayanan!);
     if (!check) {
       try {
+        final jakarta = tz.getLocation('Asia/Jakarta');
+        final jakarataDateTime = tz.TZDateTime.now(jakarta);
+        String currentDateTime = jakarataDateTime.toString();
         final response =
             await http.post(Uri.parse('${apiService}insertbooking'),
                 headers: {'Content-Type': 'application/json'},
@@ -144,7 +148,8 @@ class ControllerBooking extends GetxController {
                   'id_layanan': idLayanan,
                   'jam_booking': jamBooking,
                   'tanggal': tanggal,
-                  'id_users': idUser
+                  'id_users': idUser,
+                  'created_at': currentDateTime
                 }));
 
         final responseBody = json.decode(response.body);

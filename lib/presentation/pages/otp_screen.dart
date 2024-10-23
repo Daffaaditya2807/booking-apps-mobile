@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 
+import '../../config/routes/routes.dart';
 import '../widgets/list_text.dart';
 import '../widgets/otp_widget.dart';
 
@@ -27,6 +28,7 @@ class _OtpScreenState extends State<OtpScreen> {
   final String email = Get.arguments['email'];
   final String name = Get.arguments['name'];
   final String idUser = Get.arguments['id_user'];
+  final String page = Get.arguments['page'];
 
   final focusedPinTheme = defaultPinTheme.copyDecorationWith(
     border: Border.all(color: const Color.fromRGBO(114, 178, 238, 1)),
@@ -83,7 +85,12 @@ class _OtpScreenState extends State<OtpScreen> {
                   onCompleted: (value) {
                     if (controllerMail.emailVerificationCode.toString() ==
                         controllerOtp.text) {
-                      controllerMail.verifiedUser(idUser);
+                      if (page == 'register') {
+                        controllerMail.verifiedUser(idUser);
+                      } else {
+                        Get.toNamed(Routes.resetPasswordScreen,
+                            arguments: {"email": email});
+                      }
                     }
                   }),
               spaceHeightBig,
@@ -111,11 +118,8 @@ class _OtpScreenState extends State<OtpScreen> {
                       ? loadingData("kirim Ulang Code")
                       : buttonPrimary("Kirim Ulang Code", () {
                           if (controllerMail.candSendEmail.value) {
-                            print("can send email");
                             controllerMail.sendEmail(context, email, name);
-                          } else {
-                            print("no send email");
-                          }
+                          } else {}
                         });
                 } else {
                   return Container();

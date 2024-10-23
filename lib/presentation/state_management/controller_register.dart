@@ -61,7 +61,8 @@ class ControllerRegister extends GetxController {
           Get.offNamed(Routes.otpInputScreen, arguments: {
             'email': email.toString(),
             'name': name.toString(),
-            'id_user': user.value!.idUsers.toString()
+            'id_user': user.value!.idUsers.toString(),
+            'page': 'register'
           });
         } else if (code == 500) {
           errorMessahe.value =

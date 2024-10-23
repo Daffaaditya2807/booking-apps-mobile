@@ -5,9 +5,6 @@ import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../config/routes/routes.dart';
-import '../../data/data_sources/api.dart';
-
 class ServiceScreen extends StatelessWidget {
   ServiceScreen({super.key});
 
@@ -23,11 +20,11 @@ class ServiceScreen extends StatelessWidget {
           onRefresh: () async {
             controllerGetService.fetchService();
           },
-          child: _buildPageServiceScreen()),
+          child: _buildPageServiceScreen(context)),
     );
   }
 
-  SafeArea _buildPageServiceScreen() {
+  SafeArea _buildPageServiceScreen(BuildContext context) {
     return SafeArea(
         child: Padding(
       padding: sidePaddingBig,
@@ -37,19 +34,24 @@ class ServiceScreen extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         } else {
-          return ListView.builder(
-            itemCount: controllerGetService.serviceList.length,
-            itemBuilder: (context, index) {
-              final service = controllerGetService.serviceList[index];
-              return InkWell(
-                onTap: () {
-                  Get.toNamed(Routes.bookingScreen, arguments: service);
-                },
-                child: serviceCard(context, service.name, service.description,
-                    '$apiImage${service.image}'),
-              );
-            },
+          return Padding(
+            padding: verticalPaddingMedium,
+            child:
+                serviceCardGridView(context, controllerGetService.serviceList),
           );
+          // return ListView.builder(
+          //   itemCount: controllerGetService.serviceList.length,
+          //   itemBuilder: (context, index) {
+          //     final service = controllerGetService.serviceList[index];
+          //     return InkWell(
+          //       onTap: () {
+          //         Get.toNamed(Routes.bookingScreen, arguments: service);
+          //       },
+          //       child: serviceCard(context, service.name, service.description,
+          //           '$apiImage${service.image}'),
+          //     );
+          //   },
+          // );
         }
       }),
     ));

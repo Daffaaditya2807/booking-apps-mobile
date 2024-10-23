@@ -1,4 +1,3 @@
-import 'package:apllication_book_now/data/models/user_model.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_reset_password.dart';
 import 'package:apllication_book_now/presentation/widgets/list_button.dart';
 import 'package:apllication_book_now/presentation/widgets/list_text.dart';
@@ -13,7 +12,8 @@ import '../widgets/list_textfield.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   ResetPasswordScreen({super.key});
-  final user = Get.arguments as UserModel;
+  // final user = Get.arguments as UserModel;
+  final String email = Get.arguments['email'];
   final ShowHidePassword controllerShowHide = Get.put(ShowHidePassword());
   final ControllerResetPassword controllerResetPassword =
       Get.put(ControllerResetPassword());
@@ -60,7 +60,7 @@ class ResetPasswordScreen extends StatelessWidget {
                     ? loadingData("mengubah password")
                     : buttonPrimary("Simpan", () {
                         controllerResetPassword.resetPassword(
-                            user.email, _password.text, _confirmPassword.text);
+                            email, _password.text, _confirmPassword.text);
                       }),
               ),
               spaceHeightBig

@@ -1,3 +1,4 @@
+import 'package:apllication_book_now/data/models/service_model.dart';
 import 'package:apllication_book_now/resource/fonts_style/fonts_style.dart';
 import 'package:apllication_book_now/resource/list_color/colors.dart';
 import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
@@ -7,9 +8,12 @@ import 'package:apllication_book_now/resource/sizes/list_rounded.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ticket_widget/ticket_widget.dart';
 
+import '../../config/routes/routes.dart';
+import '../../data/data_sources/api.dart';
 import 'information.dart';
 import 'list_text.dart';
 import 'loading_data.dart';
@@ -24,6 +28,95 @@ String tanggal(String tanggal) {
   DateTime parsedDate = DateTime.parse(tanggal);
   String convTanggal = DateFormat('dd MMMM yyyy').format(parsedDate);
   return convTanggal;
+}
+
+String tanggalJam(String tanggal) {
+  DateTime parsedDate = DateTime.parse(tanggal);
+  String convTanggal = DateFormat('dd MMMM yyyy HH:mm').format(parsedDate);
+  return convTanggal;
+}
+
+Widget serviceCardGridView(BuildContext context, List<ServiceModel> model) {
+  return GridView.builder(
+    itemCount: model.length,
+    shrinkWrap: true,
+    physics: const BouncingScrollPhysics(),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 10,
+      childAspectRatio: 1.2,
+      mainAxisExtent: 200,
+    ),
+    itemBuilder: (context, index) {
+      final services = model[index];
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          return InkWell(
+            onTap: () {
+              Get.toNamed(Routes.bookingScreen, arguments: services);
+            },
+            child: Container(
+              width: constraints.maxWidth,
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade100.withOpacity(0.5),
+                  border: Border.all(color: greyTersier),
+                  borderRadius: roundedMediumGeo),
+              child: Padding(
+                padding: valuePaddingBigSize,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ClipRRect(
+                          borderRadius: roundedMediumGeo,
+                          child: CachedNetworkImage(
+                            imageUrl: '$apiImage${services.image}',
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Center(
+                                child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: bluePrimary,
+                                strokeWidth: 2.0,
+                              ),
+                            )),
+                            errorWidget: (context, url, error) => const Icon(
+                              Icons.error,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    spaceHeightSmall,
+                    Text(
+                      services.name,
+                      style: semiBoldStyle.copyWith(
+                          color: Colors.black, fontSize: fonth6),
+                    ),
+                    spaceHeightSmall,
+                    Text(
+                      services.description,
+                      style: regularStyle.copyWith(
+                          color: Colors.black, fontSize: regularFont),
+                      maxLines: 3,
+                      textAlign: TextAlign.justify,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
 Widget serviceCard(BuildContext context, String serviceName, String description,
@@ -175,38 +268,58 @@ Widget historyServiceCardDashboard(
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Tanggal : $tanggal",
-                          textAlign: TextAlign.justify,
-                          overflow: TextOverflow.ellipsis,
-                          style: regularStyle.copyWith(
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.date_range,
                               color: greyPrimary,
-                              fontSize: regularFont,
-                              height: 1.5),
+                              size: 15,
+                            ),
+                            spaceWidthSmall,
+                            Text(
+                              tanggal,
+                              textAlign: TextAlign.justify,
+                              overflow: TextOverflow.ellipsis,
+                              style: semiBoldStyle.copyWith(
+                                  color: greyPrimary,
+                                  fontSize: regularFont,
+                                  height: 1.5),
+                            ),
+                          ],
                         ),
-                        Text(
-                          jam.substring(0, 5),
-                          textAlign: TextAlign.justify,
-                          overflow: TextOverflow.ellipsis,
-                          style: semiBoldStyle.copyWith(
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
                               color: greyPrimary,
-                              fontSize: regularFont,
-                              height: 1.5),
+                              size: 15,
+                            ),
+                            spaceWidthSmall,
+                            Text(
+                              jam.substring(0, 5),
+                              textAlign: TextAlign.justify,
+                              overflow: TextOverflow.ellipsis,
+                              style: semiBoldStyle.copyWith(
+                                  color: greyPrimary,
+                                  fontSize: regularFont,
+                                  height: 1.5),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                     spaceHeightSmall,
                     Row(
                       children: [
-                        Text(
-                          "Status : ",
-                          textAlign: TextAlign.justify,
-                          overflow: TextOverflow.ellipsis,
-                          style: regularStyle.copyWith(
-                              color: greyPrimary,
-                              fontSize: regularFont,
-                              height: 1.5),
-                        ),
+                        // Text(
+                        //   "Status : ",
+                        //   textAlign: TextAlign.justify,
+                        //   overflow: TextOverflow.ellipsis,
+                        //   style: regularStyle.copyWith(
+                        //       color: greyPrimary,
+                        //       fontSize: regularFont,
+                        //       height: 1.5),
+                        // ),
                         Container(
                           decoration: BoxDecoration(
                               gradient: LinearGradient(colors: colours),
@@ -310,15 +423,6 @@ Widget historyServiceCard(
                               fontSize: regularFont,
                               height: 1.5),
                         ),
-                        // Text(
-                        //   "No : $noLoket",
-                        //   textAlign: TextAlign.justify,
-                        //   overflow: TextOverflow.ellipsis,
-                        //   style: regularStyle.copyWith(
-                        //       color: greyPrimary,
-                        //       fontSize: regularFont,
-                        //       height: 1.5),
-                        // ),
                       ],
                     ),
                     spaceHeightSmall,
@@ -425,7 +529,8 @@ Widget detailHistoryStatus(
     String time,
     String loket,
     String idBooking,
-    String note) {
+    String note,
+    String tanggalBuatBooking) {
   List<Color> colours = [];
   if (status == 'dipesan') {
     colours = [bluePrimary, blueSecondary];
@@ -438,11 +543,7 @@ Widget detailHistoryStatus(
   }
   return TicketWidget(
       width: double.infinity,
-      height: note != 'null'
-          ? MediaQuery.of(context).size.height * 0.8
-          : status == 'selesai'
-              ? MediaQuery.of(context).size.height * 0.60
-              : MediaQuery.of(context).size.height * 0.72,
+      height: MediaQuery.of(context).size.height * 0.82,
       margin: sidePaddingSmall,
       color: Colors.white,
       isCornerRounded: true,
@@ -564,6 +665,20 @@ Widget detailHistoryStatus(
                 )
               ],
             ),
+            spaceHeightMedium,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Dibuat",
+                  style: regularStyle.copyWith(color: Colors.black),
+                ),
+                Text(
+                  tanggalJam(tanggalBuatBooking),
+                  style: semiBoldStyle.copyWith(color: Colors.black),
+                )
+              ],
+            ),
             spaceHeightBig,
             DottedLine(
               dashLength: 5,
@@ -585,15 +700,16 @@ Widget detailHistoryStatus(
                 : Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        color: bluePrimary.withOpacity(0.5),
-                        border: Border.all(color: bluePrimary),
+                        color: Colors.grey.shade200.withOpacity(0.5),
+                        border: Border.all(color: greyTersier),
                         borderRadius: roundedMediumGeo),
                     child: Padding(
                       padding: valuePaddingMedium,
                       child: Text(
                         "Harap Datang maximal 30 menit sebelum jam booking yang telah ditentukan untuk menghindari anda ditentukan pada jadwal lain! Terima Kasih",
                         softWrap: true,
-                        style: regularStyle.copyWith(fontSize: regularFont),
+                        style: regularStyle.copyWith(
+                            fontSize: regularFont, color: Colors.black),
                         textAlign: TextAlign.justify,
                       ),
                     ),
@@ -611,8 +727,8 @@ Widget detailHistoryStatus(
                 : Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        color: bluePrimary.withOpacity(0.5),
-                        border: Border.all(color: bluePrimary),
+                        color: Colors.redAccent.shade200.withOpacity(0.5),
+                        border: Border.all(color: Colors.redAccent.shade200),
                         borderRadius: roundedMediumGeo),
                     child: Padding(
                       padding: valuePaddingMedium,

@@ -4,7 +4,6 @@ import 'package:apllication_book_now/presentation/state_management/controller_bo
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
 import 'package:apllication_book_now/presentation/widgets/clock_inputs.dart';
 import 'package:apllication_book_now/presentation/widgets/list_button.dart';
-import 'package:apllication_book_now/presentation/widgets/list_loket.dart';
 import 'package:apllication_book_now/presentation/widgets/list_text.dart';
 import 'package:apllication_book_now/presentation/widgets/loading_data.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
@@ -178,7 +177,8 @@ class BookingScreen extends StatelessWidget {
                           Obx(() => controllerBooking.isLoadingLoket.value
                               ? loadingData("memuat loket tersedia")
                               : SizedBox(
-                                  height: 30,
+                                  height: MediaQuery.of(context).size.height *
+                                      0.050,
                                   child: Obx(() => ListView.builder(
                                         itemCount: controllerBooking
                                             .availableLoket.length,
@@ -193,23 +193,30 @@ class BookingScreen extends StatelessWidget {
                                                     controllerBooking
                                                         .availableLoket[index]
                                                         .toString();
-                                            return InkWell(
-                                              onTap: () {
-                                                controllerBooking
-                                                        .selectedLocket.value =
-                                                    controllerBooking
-                                                        .availableLoket[index]
-                                                        .toString();
-                                              },
-                                              child: isSelectedLocket
-                                                  ? selectedLocket(
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 5),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  controllerBooking
+                                                          .selectedLocket
+                                                          .value =
                                                       controllerBooking
                                                           .availableLoket[index]
-                                                          .toString())
-                                                  : availableLoket(
-                                                      controllerBooking
-                                                          .availableLoket[index]
-                                                          .toString()),
+                                                          .toString();
+                                                },
+                                                child: isSelectedLocket
+                                                    ? selectedTime(
+                                                        controllerBooking
+                                                            .availableLoket[
+                                                                index]
+                                                            .toString())
+                                                    : availableTime(
+                                                        controllerBooking
+                                                            .availableLoket[
+                                                                index]
+                                                            .toString()),
+                                              ),
                                             );
                                           });
                                         },

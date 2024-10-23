@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:apllication_book_now/data/data_sources/notification_helper.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
+import 'package:apllication_book_now/presentation/state_management/controller_status_screen.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
 import 'package:apllication_book_now/resource/list_color/colors.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -11,6 +12,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../data/data_sources/api.dart';
 
@@ -30,15 +32,130 @@ class ControllerDashboard extends GetxController {
   var layanan = <Map<String, dynamic>>[].obs;
   var maxY = 0.0.obs;
   var historyLast = <HistoryBookingModel>[].obs;
+  var selectedDate = Rx<DateTime?>(null);
   List urlImagee = [].obs;
   final ControllerLogin controllerLogin = Get.put(ControllerLogin());
+  final ControllerStatusScreen controllerStatusScreen =
+      Get.put(ControllerStatusScreen());
   NotificationHelper notificationHelper = NotificationHelper();
 
   final DatabaseReference _bookingRef =
       FirebaseDatabase.instance.ref('booking');
+  final DatabaseReference _updateChartRef =
+      FirebaseDatabase.instance.ref('UpdateChart');
 
   void getIndex(int current) {
     currentIndex.value = current;
+  }
+
+  Future<void> fetchChartDataByDate(String date) async {
+    try {
+      isLoadingChart(true);
+      await cleanupOldData();
+
+      final response = await http.post(
+        Uri.parse('${apiService}getbookuserdate'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'date': date}),
+      );
+
+      if (response.statusCode == 200) {
+        var jsonData = json.decode(response.body);
+        jamLayanan.value = List<String>.from(jsonData['data']['hours']);
+        layanan.value =
+            List<Map<String, dynamic>>.from(jsonData['data']['layanan']);
+
+        var bookingsData = jsonData['data']['data'];
+        List<BarChartGroupData> loadedBarGroups = [];
+        double highestBookingCount = 0.0;
+
+        for (var data in bookingsData) {
+          List<BarChartRodData> rods = [];
+          List<int> indicators = [];
+          for (var i = 0; i < data['bookings'].length; i++) {
+            var booking = data['bookings'][i];
+            double bookingCount =
+                double.parse(booking['booking_count'].toString());
+            if (bookingCount > highestBookingCount) {
+              highestBookingCount = bookingCount;
+            }
+            rods.add(
+              BarChartRodData(
+                toY: double.parse(booking['booking_count'].toString()),
+                color: getColorForService(booking['service_id']),
+                borderRadius: BorderRadius.circular(0),
+              ),
+            );
+            if (bookingCount > 0) {
+              indicators.add(i);
+            }
+          }
+          loadedBarGroups.add(BarChartGroupData(
+              x: data['x'],
+              barRods: rods,
+              showingTooltipIndicators: indicators));
+        }
+
+        barGroups.value = loadedBarGroups;
+        maxY.value = highestBookingCount;
+      }
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      isLoadingChart(false);
+    }
+  }
+
+  void resetDate() {
+    selectedDate.value = null;
+    fetchChartData();
+  }
+
+  Future<void> cleanupOldData() async {
+    try {
+      // Get current date in the same format as updated_at
+      final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+      final DatabaseEvent event = await _updateChartRef.once();
+      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+
+      if (data != null) {
+        data.forEach((key, value) {
+          final updateChart = value as Map<dynamic, dynamic>;
+          final updatedAt = updateChart['updated_at'] as String;
+
+          // Extract date part from updated_at
+          final updateDate = updatedAt.split(' ')[0];
+
+          // If date is not today, remove the entry
+          if (updateDate != today) {
+            _updateChartRef
+                .child(key.toString())
+                .remove()
+                .then((_) => print('Removed old entry: $key'))
+                .catchError((error) => print('Error removing entry: $error'));
+          }
+        });
+      }
+    } catch (e) {
+      print('Error cleaning up old data: $e');
+    }
+  }
+
+  void listenForChartUpdates() {
+    _updateChartRef.onValue.listen((DatabaseEvent event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+
+      if (data != null) {
+        data.forEach((key, value) {
+          final updateChart = value as Map<dynamic, dynamic>;
+          if (updateChart['status'] == 'dipesan') {
+            // Jika ada update di `UpdateChart`, jalankan ulang fetchChartData
+            fetchChartDataRealtime();
+          }
+        });
+      }
+    });
   }
 
   void listenForBookingUpdates(String idUser) {
@@ -49,6 +166,9 @@ class ControllerDashboard extends GetxController {
           final booking = value as Map<dynamic, dynamic>;
           if (booking['id_users'] == idUser) {
             assignAllHistoryLast(idUser);
+            String statusPesananUser = booking['status'];
+            print("STATUS = $statusPesananUser");
+            controllerStatusScreen.statusPesanan.value = statusPesananUser;
             // Periksa status booking, jika "selesai", hapus data booking
             if (booking['status'] == 'selesai') {
               String bookingId = booking['id_booking'];
@@ -182,9 +302,9 @@ class ControllerDashboard extends GetxController {
     await fetchGetTicketUser(idUser);
   }
 
-  Future<void> fetchChartData() async {
+  Future<void> fetchChartDataRealtime() async {
     try {
-      isLoadingChart(true);
+      await cleanupOldData();
       final response = await http.get(Uri.parse('${apiService}getbookuser'));
 
       if (response.statusCode == 200) {
@@ -229,10 +349,66 @@ class ControllerDashboard extends GetxController {
         barGroups.value = loadedBarGroups;
         maxY.value = highestBookingCount;
       } else {
-        Get.snackbar('Error', 'Failed to fetch chart data');
+        // Get.snackbar('Error', 'Failed to fetch chart data');
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      // Get.snackbar('Error', e.toString());
+      print(e.toString());
+    } finally {}
+  }
+
+  Future<void> fetchChartData() async {
+    try {
+      isLoadingChart(true);
+      await cleanupOldData();
+      final response = await http.get(Uri.parse('${apiService}getbookuser'));
+
+      if (response.statusCode == 200) {
+        var jsonData = json.decode(response.body);
+        jamLayanan.value = List<String>.from(jsonData['data']['hours']);
+        // namaLayanan.value = List<String>.from(jsonData['data']['layanan']);
+        layanan.value =
+            List<Map<String, dynamic>>.from(jsonData['data']['layanan']);
+
+        var bookingsData = jsonData['data']['data'];
+        List<BarChartGroupData> loadedBarGroups = [];
+        double highestBookingCount = 0.0;
+
+        for (var data in bookingsData) {
+          List<BarChartRodData> rods = [];
+          List<int> indicators = [];
+          for (var i = 0; i < data['bookings'].length; i++) {
+            var booking = data['bookings'][i];
+            double bookingCount =
+                double.parse(booking['booking_count'].toString());
+            if (bookingCount > highestBookingCount) {
+              highestBookingCount = bookingCount;
+            }
+            rods.add(
+              BarChartRodData(
+                toY: double.parse(booking['booking_count'].toString()),
+                color: getColorForService(
+                    booking['service_id']), // Warna berdasarkan ID layanan
+                borderRadius: BorderRadius.circular(0),
+              ),
+            );
+            if (bookingCount > 0) {
+              indicators.add(i);
+            }
+          }
+          loadedBarGroups.add(BarChartGroupData(
+              x: data['x'],
+              barRods: rods,
+              showingTooltipIndicators: indicators));
+        }
+
+        barGroups.value = loadedBarGroups;
+        maxY.value = highestBookingCount;
+      } else {
+        // Get.snackbar('Error', 'Failed to fetch chart data');
+      }
+    } catch (e) {
+      // Get.snackbar('Error', e.toString());
       print(e.toString());
     } finally {
       isLoadingChart(false);
@@ -272,6 +448,7 @@ class ControllerDashboard extends GetxController {
     super.onInit();
     urlImageBanners();
     fetchChartData();
+    listenForChartUpdates();
 
     if (controllerLogin.user.value?.idUsers.toString() != null) {
       final String userId =

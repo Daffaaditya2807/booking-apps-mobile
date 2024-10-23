@@ -82,7 +82,8 @@ class ControllerLogin extends GetxController {
         Get.toNamed(Routes.otpInputScreen, arguments: {
           'email': user.value!.email,
           'name': user.value!.namaPembeli,
-          'id_user': user.value!.idUsers.toString()
+          'id_user': user.value!.idUsers.toString(),
+          'page': 'register'
         });
         return false;
       }

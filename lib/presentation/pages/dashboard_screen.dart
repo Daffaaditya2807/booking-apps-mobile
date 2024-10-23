@@ -89,6 +89,66 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return totalWidth;
   }
 
+  Widget _buildDatePicker() {
+    return Padding(
+      padding: sidePaddingBig,
+      child: Row(
+        children: [
+          spaceWidthMedium,
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                border: Border.all(color: blueTersier),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Obx(() => InkWell(
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: controllerDashboard.selectedDate.value ??
+                            DateTime.now(),
+                        initialDatePickerMode: DatePickerMode.day,
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2025),
+                      );
+                      if (picked != null) {
+                        controllerDashboard.selectedDate.value = picked;
+                        final formattedDate =
+                            DateFormat('yyyy-MM-dd').format(picked);
+                        controllerDashboard.fetchChartDataByDate(formattedDate);
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          controllerDashboard.selectedDate.value != null
+                              ? DateFormat('dd MMMM yyyy').format(
+                                  controllerDashboard.selectedDate.value!)
+                              : 'Pilih Tanggal',
+                          style: regularStyle.copyWith(
+                            fontSize: regularFont,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Icon(Icons.calendar_today, color: bluePrimary),
+                      ],
+                    ),
+                  )),
+            ),
+          ),
+          Obx(() => controllerDashboard.selectedDate.value != null
+              ? IconButton(
+                  onPressed: () => controllerDashboard.resetDate(),
+                  icon: Icon(Icons.close, color: bluePrimary),
+                )
+              : Container())
+        ],
+      ),
+    );
+  }
+
   SafeArea _buildDashboardPage(
       double heightContainer, BuildContext context, String nameUser) {
     return SafeArea(
@@ -184,6 +244,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 "Kepadatan Antrian", "Segera booking layanan anda",
                 warna: blueTersier),
           ),
+          spaceHeightBig,
+          _buildDatePicker(),
           spaceHeightBig,
           Obx(() {
             if (controllerDashboard.isLoadingChart.value) {
@@ -301,12 +363,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
             width: double.infinity,
             child: Padding(
               padding: sidePaddingBig,
-              child: Text(
-                "Tanggal : ${DateFormat('dd MMMM yyyy').format(DateTime.now())}",
-                textAlign: TextAlign.center,
-                style: regularStyle.copyWith(
-                    color: Colors.black, fontSize: regularFont),
-              ),
+              child: Obx(() => controllerDashboard.selectedDate.value != null
+                  ? Text(
+                      "Tanggal : ${DateFormat('dd MMMM yyyy').format(DateTime.parse(controllerDashboard.selectedDate.value.toString()))}",
+                      textAlign: TextAlign.center,
+                      style: regularStyle.copyWith(
+                          color: Colors.black, fontSize: regularFont),
+                    )
+                  : Text(
+                      "Tanggal : ${DateFormat('dd MMMM yyyy').format(DateTime.now())}",
+                      textAlign: TextAlign.center,
+                      style: regularStyle.copyWith(
+                          color: Colors.black, fontSize: regularFont),
+                    )),
             ),
           ),
           spaceHeightMedium,
@@ -392,27 +461,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
           spaceHeightMedium,
           Padding(
             padding: sidePaddingBig,
-            child: componentTextHeader("Layanan",
-                warna: blueTersier, size: fonth5),
+            child: componenTextHeaderDesc(
+              "Layanan",
+              "Silakan memilih salah layanan yang tersedia",
+              warna: blueTersier,
+            ),
           ),
+          spaceHeightBig,
           Padding(
             padding: sidePaddingBig,
-            child: ListView.builder(
-              itemCount: controllerGetService.serviceList.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final services = controllerGetService.serviceList[index];
-                return InkWell(
-                  onTap: () {
-                    Get.toNamed(Routes.bookingScreen, arguments: services);
-                  },
-                  child: serviceCard(context, services.name,
-                      services.description, '$apiImage${services.image}'),
-                );
-              },
-            ),
-          )
+            child:
+                serviceCardGridView(context, controllerGetService.serviceList),
+          ),
+          spaceHeightBig
         ],
       ),
     ));

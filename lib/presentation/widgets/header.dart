@@ -64,7 +64,7 @@ AppBar headerWithTabBar(
 Widget bodyTabBar(List<Widget> pages, TabController controller) {
   return TabBarView(
     controller: controller,
-    physics: const NeverScrollableScrollPhysics(),
+    // physics: const NeverScrollableScrollPhysics(),
     children: pages.map((widget) {
       return ScrollConfiguration(
           behavior: const ScrollBehavior(),

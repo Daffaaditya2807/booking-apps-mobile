@@ -1,29 +1,65 @@
 import 'package:apllication_book_now/presentation/state_management/controller_status_screen.dart';
-import 'package:apllication_book_now/presentation/widgets/header.dart';
 import 'package:apllication_book_now/presentation/widgets/list_service.dart';
 import 'package:apllication_book_now/resource/fonts_style/fonts_style.dart';
-import 'package:apllication_book_now/resource/list_color/colors.dart';
 import 'package:apllication_book_now/resource/sizes/list_margin.dart';
 import 'package:apllication_book_now/resource/sizes/list_padding.dart';
-import 'package:apllication_book_now/resource/sizes/list_rounded.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../data/models/history_booking_model.dart';
+import '../../resource/sizes/list_font_size.dart';
+import '../widgets/list_button.dart';
 
 // ignore: must_be_immutable
 class StatusServiceScreen extends StatelessWidget {
   StatusServiceScreen({super.key});
-  final status = Get.arguments as HistoryBookingModel;
+  final Rx<HistoryBookingModel> status =
+      (Get.arguments as HistoryBookingModel).obs;
   ControllerStatusScreen controllerStatusScreen =
       Get.put(ControllerStatusScreen());
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade200,
-      appBar: headerWithIcon("Status Antrian",
-          backgroundColor: Colors.grey.shade200),
-      body: _buildPageServiceScreen(context),
+    return WillPopScope(
+      onWillPop: () async {
+        controllerStatusScreen.statusPesanan.value = '';
+        Get.back();
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: headerWithIcon("Status Antrian",
+            backgroundColor: Colors.grey.shade200),
+        body: _buildPageServiceScreen(context),
+      ),
+    );
+  }
+
+  AppBar headerWithIcon(String label, {Color? backgroundColor}) {
+    backgroundColor ?? Colors.white;
+    return AppBar(
+      title: Text(
+        label,
+        style: semiBoldStyle.copyWith(color: Colors.black, fontSize: fonth4),
+      ),
+      leading: Padding(
+        padding: valuePaddingBig,
+        child: backOutline(() {
+          controllerStatusScreen.statusPesanan.value = '';
+          Get.back();
+        }),
+      ),
+      centerTitle: true,
+      elevation: 0,
+      surfaceTintColor: Colors.white,
+      bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(10),
+          child: Padding(
+            padding: sidePaddingSmall,
+            child: const Divider(
+              thickness: 1.0,
+            ),
+          )),
+      backgroundColor: backgroundColor,
     );
   }
 
@@ -34,42 +70,6 @@ class StatusServiceScreen extends StatelessWidget {
       child: Column(
         children: [
           Expanded(child: Container()),
-          spaceHeightBig,
-          InkWell(
-            onTap: () {
-              String idUser = status.idUser;
-              if (status.status == 'dipesan') {
-                controllerStatusScreen.assignAllHistoryPesan(idUser);
-              } else if (status.status == 'diproses') {
-                controllerStatusScreen.assignAllHistoryProses(idUser);
-              } else if (status.status == 'selesai') {
-                controllerStatusScreen.assignHistorySelesai(idUser);
-              } else {
-                controllerStatusScreen.assignHistoryDitolak(idUser);
-              }
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: roundedMediumGeo),
-              child: Padding(
-                padding: valuePaddingMedium,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Muat Ulang",
-                      style: semiBoldStyle.copyWith(color: bluePrimary),
-                    ),
-                    Icon(
-                      Icons.refresh,
-                      color: bluePrimary,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
           spaceHeightMedium,
           Obx(() {
             if (controllerStatusScreen.profileModel.value == null) {
@@ -78,19 +78,22 @@ class StatusServiceScreen extends StatelessWidget {
               return detailHistoryStatus(
                   context,
                   controllerStatusScreen.profileModel.value!.namaUsaha,
-                  status.layanan.name,
-                  status.status,
-                  status.nomorBooking,
-                  status.tanggal,
-                  status.tanggal,
-                  status.jamBooking,
-                  status.noLoket,
-                  status.idBooking,
-                  status.catatan!);
+                  status.value.layanan.name,
+                  controllerStatusScreen.statusPesanan.value == ''
+                      ? status.value.status
+                      : controllerStatusScreen.statusPesanan.value,
+                  status.value.nomorBooking,
+                  status.value.tanggal,
+                  status.value.tanggal,
+                  status.value.jamBooking,
+                  status.value.noLoket,
+                  status.value.idBooking,
+                  status.value.catatan!,
+                  status.value.createdAt.toString());
             }
           }),
           Expanded(child: Container()),
-          spaceHeightBig,
+          spaceHeightMedium
         ],
       ),
     ));

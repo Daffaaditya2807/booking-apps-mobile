@@ -27,7 +27,13 @@ class ControllerForgetPassword extends GetxController {
       int code = responseBody['meta']['code'];
       if (code == 200) {
         user.value = UserModel.fromJson(responseBody['data']['user']);
-        Get.toNamed(Routes.resetPasswordScreen, arguments: user.value);
+
+        Get.offNamed(Routes.otpInputScreen, arguments: {
+          'email': user.value!.email,
+          'name': user.value!.namaPembeli,
+          'id_user': user.value!.idUsers.toString(),
+          'page': 'lupa_sandi'
+        });
       } else if (code == 404) {
         snackBarError("User tidak tersedia",
             "Tidak dapat melakukan reset password karena akun user tidak tersedia");

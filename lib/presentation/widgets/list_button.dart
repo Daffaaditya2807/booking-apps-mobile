@@ -73,18 +73,19 @@ Widget buttonSecondary(String text, VoidCallback funcion) {
       ));
 }
 
-Widget miniButtonOutline(String text, VoidCallback funcion) {
+Widget miniButtonOutline(String text, VoidCallback funcion, {Color? bgColor}) {
   return ElevatedButton(
       style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           padding: valuePaddingBig,
           shape: RoundedRectangleBorder(
               borderRadius: roundedMediumGeo,
-              side: BorderSide(color: bluePrimary, width: 1.5))),
+              side: BorderSide(color: bgColor ?? bluePrimary, width: 1.5))),
       onPressed: funcion,
       child: Text(
         text,
-        style: mediumStyle.copyWith(fontSize: regularFont, color: bluePrimary),
+        style: mediumStyle.copyWith(
+            fontSize: regularFont, color: bgColor ?? bluePrimary),
       ));
 }
 
