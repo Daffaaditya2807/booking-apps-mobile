@@ -13,6 +13,7 @@ import 'package:apllication_book_now/presentation/pages/setting_password_screen.
 import 'package:apllication_book_now/presentation/pages/setting_profile_screen.dart';
 import 'package:apllication_book_now/presentation/pages/setting_screen.dart';
 import 'package:apllication_book_now/presentation/pages/splash_screen.dart';
+import 'package:apllication_book_now/presentation/pages/status_lewati_screen.dart';
 import 'package:apllication_book_now/presentation/pages/status_screen.dart';
 import 'package:apllication_book_now/presentation/pages/status_service_screen.dart';
 import 'package:apllication_book_now/presentation/pages/update_status_done_screen.dart';
@@ -37,6 +38,7 @@ class Routes {
   static String otpInputScreen = '/otpScreen';
   static String resetPasswordScreen = '/resetPasswordScreen';
   static String forgetPasswordScreen = '/forgetPasswordScreen';
+  static String statusLewatiScreen = '/statusLewatiScreen';
 
   static String initalRoutes = splashScreen;
   static final List<GetPage> routesList = [
@@ -80,6 +82,7 @@ class Routes {
         page: () => const ScreenUpdateStatusDone()),
     GetPage(name: otpInputScreen, page: () => OtpScreen()),
     GetPage(name: forgetPasswordScreen, page: () => ForgetPasswordScreen()),
-    GetPage(name: resetPasswordScreen, page: () => ResetPasswordScreen())
+    GetPage(name: resetPasswordScreen, page: () => ResetPasswordScreen()),
+    GetPage(name: statusLewatiScreen, page: () => StatusLewatiScreen())
   ];
 }

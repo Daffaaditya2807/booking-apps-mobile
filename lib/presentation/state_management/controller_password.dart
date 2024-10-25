@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -72,5 +73,22 @@ class ControllerPassword extends GetxController {
       return true;
     }
     return false;
+  }
+
+  bool validatePassword(BuildContext context, String password) {
+    bool hasUpperCase = password.contains(RegExp(r'[A-Z]'));
+    bool hasNumber = password.contains(RegExp(r'[0-9]'));
+    bool hasMinLength = password.length > 7;
+
+    if (!hasUpperCase || !hasNumber || !hasMinLength) {
+      String errorMessage = 'Password harus:\n';
+      if (!hasMinLength) errorMessage += '- Minimal 8 karakter\n';
+      if (!hasUpperCase) errorMessage += '- Mengandung minimal 1 huruf besar\n';
+      if (!hasNumber) errorMessage += '- Mengandung minimal 1 angka';
+      snackBarError("Gagal Mengubah Password", errorMessage);
+      return false;
+    } else {
+      return true;
+    }
   }
 }

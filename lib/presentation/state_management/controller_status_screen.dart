@@ -84,11 +84,14 @@ class ControllerStatusScreen extends GetxController {
   }
 
   void listenForBookingUpdates() {
-    _bookingRef.onValue.listen((DatabaseEvent event) {
+    _bookingRef
+        .orderByChild('updated_at')
+        .limitToLast(1)
+        .onValue
+        .listen((DatabaseEvent event) {
       final data = event.snapshot.value as Map<dynamic, dynamic>?;
       if (data != null) {
         try {
-          // Mencari data pertama yang sesuai
           final entry = data.entries.firstWhere(
             (entry) =>
                 (entry.value as Map<dynamic, dynamic>)['id_users'] ==

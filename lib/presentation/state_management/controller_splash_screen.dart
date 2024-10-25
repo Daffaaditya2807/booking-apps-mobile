@@ -55,12 +55,11 @@ class ControllerSplashScreen extends GetxController {
   }
 
   Future<void> navigateSplashScreen() async {
-    Get.offNamed(Routes.introductionFirst);
-    // await Future.delayed(const Duration(milliseconds: 2000));
-    // if (controllerLogin.user.value != null) {
-    //   Get.offNamed(Routes.navbarMenu);
-    // } else {
-    //   Get.offNamed(Routes.introductionFirst);
-    // }
+    await Future.delayed(const Duration(milliseconds: 2000));
+    if (controllerLogin.user.value != null) {
+      Get.offNamed(Routes.navbarMenu);
+    } else {
+      Get.offNamed(Routes.introductionFirst);
+    }
   }
 }

@@ -12,10 +12,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 import 'package:get/get.dart';
+import 'package:badges/badges.dart' as badges;
 
 import '../../config/routes/routes.dart';
 import '../../data/data_sources/api.dart';
 import '../state_management/controller_login.dart';
+import '../state_management/controller_status_lewati.dart';
 import '../widgets/list_service.dart';
 
 class StatusScreen extends StatefulWidget {
@@ -30,6 +32,7 @@ class _StatusScreenState extends State<StatusScreen>
   TabController? controller;
   final ControllerStatusScreen controllerStatusScreen =
       Get.put(ControllerStatusScreen());
+  final statusLewatiController = Get.put(ControllerStatusLewati());
   final ControllerLogin controllerUser =
       Get.put(ControllerLogin(), permanent: true);
   var refreshKey = GlobalKey<RefreshIndicatorState>();
@@ -253,7 +256,15 @@ class _StatusScreenState extends State<StatusScreen>
     ];
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: headerWithTabBar("Status", controller!, menuTab),
+      appBar: headerWithTabBars(
+        "Status",
+        controller!,
+        menuTab,
+        useBadges: true,
+        onTapBadges: () {
+          Get.toNamed(Routes.statusLewatiScreen);
+        },
+      ),
       floatingActionButton: CircleAvatar(
         backgroundColor: bluePrimary,
         child: IconButton(
@@ -475,6 +486,72 @@ class _StatusScreenState extends State<StatusScreen>
             icon: const Icon(CupertinoIcons.slider_horizontal_3)),
       ),
       body: bodyTabBar(pagesTest, controller!),
+    );
+  }
+
+  AppBar headerWithTabBars(
+      String label, TabController controller, List<Tab> menuTabBar,
+      {bool? useBadges = false, VoidCallback? onTapBadges}) {
+    statusLewatiController.listenToUnreadNotifications(
+        controllerUser.user.value!.idUsers.toString());
+    return AppBar(
+      title: Text(
+        label,
+        style: semiBoldStyle.copyWith(color: Colors.black, fontSize: fonth4),
+      ),
+      centerTitle: true,
+      actions: [
+        useBadges == true
+            ? Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: badges.Badge(
+                  badgeContent: Obx(() => Text(
+                        "${statusLewatiController.unreadCount}",
+                        style: semiBoldStyle.copyWith(
+                          color: Colors.white,
+                          fontSize: smallFont,
+                        ),
+                      )),
+                  position: badges.BadgePosition.topEnd(top: 4, end: 9),
+                  badgeAnimation: const badges.BadgeAnimation.rotation(
+                    animationDuration: Duration(seconds: 1),
+                    colorChangeAnimationDuration: Duration(seconds: 1),
+                    loopAnimation: false,
+                    curve: Curves.fastOutSlowIn,
+                    colorChangeAnimationCurve: Curves.easeInCubic,
+                  ),
+                  badgeStyle: const badges.BadgeStyle(
+                    shape: badges.BadgeShape.circle,
+                    badgeColor: Colors.blue,
+                    padding: EdgeInsets.all(5),
+                    elevation: 0,
+                  ),
+                  child: IconButton(
+                      onPressed: () {
+                        statusLewatiController.markNotificationsAsRead(
+                            controllerUser.user.value!.idUsers.toString());
+                        onTapBadges?.call();
+                      },
+                      icon: const Icon(Icons.notifications)),
+                ),
+              )
+            : Container()
+      ],
+      elevation: 0,
+      bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: TabBar(
+              controller: controller,
+              labelStyle: semiBoldStyle.copyWith(
+                  color: blueSecondary, fontSize: regularFont),
+              labelColor: blueSecondary,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorWeight: 4,
+              unselectedLabelColor: greySecondary,
+              indicatorColor: Colors.amber,
+              tabs: menuTabBar)),
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:apllication_book_now/presentation/state_management/controller_password.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_register.dart';
 import 'package:apllication_book_now/presentation/widgets/list_button.dart';
 import 'package:apllication_book_now/presentation/widgets/list_text.dart';
@@ -18,6 +19,7 @@ class RegisterScreen extends StatelessWidget {
 
   final ShowHidePassword controllerShowHide = Get.put(ShowHidePassword());
   final ControllerRegister controllerRegister = Get.put(ControllerRegister());
+  final ControllerPassword controllerPassword = Get.put(ControllerPassword());
 
   final TextEditingController _nama = TextEditingController();
   final TextEditingController _username = TextEditingController();
@@ -104,12 +106,21 @@ class RegisterScreen extends StatelessWidget {
 
                   // String tokenPhone =
                   //     "dJgBJaowT9yQ2DmChnFvKV:APA91bElUt1CqxlfjWsmHsHLZHNRrWLDC3x2C3BgVgGHLdzyVgZmi-5ttGK8m6VY2QGP8IAbOHtZ8VNfDGnncignLXM48nAvIp16xGowmNcYDTVtGj4DxV-1XqdtSELq8GlI-hNTzbZ3";
-                  bool checkField = controllerRegister.checkDataNullRegister(
-                      nama, email, username, password, confirmPassword, phone);
+                  bool passwordValidate = controllerPassword.validatePassword(
+                      context, confirmPassword);
+                  if (passwordValidate) {
+                    bool checkField = controllerRegister.checkDataNullRegister(
+                        nama,
+                        email,
+                        username,
+                        password,
+                        confirmPassword,
+                        phone);
 
-                  if (!checkField) {
-                    controllerRegister.register(
-                        nama, email, username, password, phone);
+                    if (!checkField) {
+                      controllerRegister.register(
+                          nama, email, username, password, phone);
+                    }
                   }
                 });
               }

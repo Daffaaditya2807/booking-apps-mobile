@@ -59,8 +59,8 @@ class ResetPasswordScreen extends StatelessWidget {
                 () => controllerResetPassword.isLoading.value
                     ? loadingData("mengubah password")
                     : buttonPrimary("Simpan", () {
-                        controllerResetPassword.resetPassword(
-                            email, _password.text, _confirmPassword.text);
+                        controllerResetPassword.resetPassword(email,
+                            _password.text, _confirmPassword.text, context);
                       }),
               ),
               spaceHeightBig

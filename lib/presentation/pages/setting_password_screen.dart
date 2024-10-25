@@ -79,23 +79,25 @@ class SettingPasswordScreen extends StatelessWidget {
                 String oldPassword = _oldPassword.text;
                 String newPassword = _password.text;
                 String confirmPassword = _confirmPassword.text;
-                // print(
-                //     "password : $oldPassword dan old password : $confirmPassword dan $newPassword dan Id User : $idUser");
 
-                bool checkField = controllerPassword.checkDataPassword(
-                    oldPassword, newPassword, confirmPassword);
+                bool passwordValidate = controllerPassword.validatePassword(
+                    context, confirmPassword);
+                if (passwordValidate) {
+                  bool checkField = controllerPassword.checkDataPassword(
+                      oldPassword, newPassword, confirmPassword);
 
-                if (!checkField) {
-                  controllerPassword
-                      .updatePassword(
-                          idUser, oldPassword, confirmPassword, newPassword)
-                      .then((value) {
-                    if (value) {
-                      _oldPassword.text = '';
-                      _password.text = '';
-                      _confirmPassword.text = '';
-                    }
-                  });
+                  if (!checkField) {
+                    controllerPassword
+                        .updatePassword(
+                            idUser, oldPassword, confirmPassword, newPassword)
+                        .then((value) {
+                      if (value) {
+                        _oldPassword.text = '';
+                        _password.text = '';
+                        _confirmPassword.text = '';
+                      }
+                    });
+                  }
                 }
               });
             }

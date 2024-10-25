@@ -150,7 +150,6 @@ class ControllerDashboard extends GetxController {
         data.forEach((key, value) {
           final updateChart = value as Map<dynamic, dynamic>;
           if (updateChart['status'] == 'dipesan') {
-            // Jika ada update di `UpdateChart`, jalankan ulang fetchChartData
             fetchChartDataRealtime();
           }
         });
@@ -159,25 +158,55 @@ class ControllerDashboard extends GetxController {
   }
 
   void listenForBookingUpdates(String idUser) {
-    _bookingRef.onValue.listen((DatabaseEvent event) {
+    _bookingRef
+        .orderByChild('updated_at')
+        .limitToLast(1)
+        .onValue
+        .listen((DatabaseEvent event) {
       final data = event.snapshot.value as Map<dynamic, dynamic>?;
       if (data != null) {
-        data.forEach((key, value) {
-          final booking = value as Map<dynamic, dynamic>;
-          if (booking['id_users'] == idUser) {
-            assignAllHistoryLast(idUser);
-            String statusPesananUser = booking['status'];
-            print("STATUS = $statusPesananUser");
-            controllerStatusScreen.statusPesanan.value = statusPesananUser;
-            // Periksa status booking, jika "selesai", hapus data booking
-            if (booking['status'] == 'selesai') {
-              String bookingId = booking['id_booking'];
-              deleteBookingById(bookingId);
-            }
+        try {
+          final entry = data.entries.firstWhere(
+            (entry) =>
+                (entry.value as Map<dynamic, dynamic>)['id_users'] == idUser,
+          );
+          final booking = entry.value as Map<dynamic, dynamic>;
+          String idUserss = booking['id_users'];
+          print("ID USER STATUS SCREEN == $idUserss dan ID USER $idUser");
+
+          assignAllHistoryLast(idUser);
+          String statusPesananUser = booking['status'];
+          print("STATUS = $statusPesananUser");
+          controllerStatusScreen.statusPesanan.value = statusPesananUser;
+          if (booking['status'] == 'selesai') {
+            String bookingId = booking['id_booking'];
+            deleteBookingById(bookingId);
           }
-        });
+        } catch (e) {
+          // Tidak ditemukan data yang sesuai
+          print("Tidak ada data booking yang sesuai");
+        }
       }
     });
+    // _bookingRef.onValue.listen((DatabaseEvent event) {
+    //   final data = event.snapshot.value as Map<dynamic, dynamic>?;
+    //   if (data != null) {
+    //     data.forEach((key, value) {
+    //       final booking = value as Map<dynamic, dynamic>;
+    //       if (booking['id_users'] == idUser) {
+    //         assignAllHistoryLast(idUser);
+    //         String statusPesananUser = booking['status'];
+    //         print("STATUS = $statusPesananUser");
+    //         controllerStatusScreen.statusPesanan.value = statusPesananUser;
+    //         // Periksa status booking, jika "selesai", hapus data booking
+    //         if (booking['status'] == 'selesai') {
+    //           String bookingId = booking['id_booking'];
+    //           deleteBookingById(bookingId);
+    //         }
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   void deleteBookingById(String bookingId) async {
