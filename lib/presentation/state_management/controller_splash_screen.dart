@@ -1,22 +1,34 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:apllication_book_now/config/routes/routes.dart';
 import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/data/data_sources/notification_helper.dart';
 import 'package:apllication_book_now/data/models/profile_model.dart';
+import 'package:apllication_book_now/presentation/state_management/controller_connection.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class ControllerSplashScreen extends GetxController {
   final ControllerLogin controllerLogin = Get.put(ControllerLogin());
+  final ControllerConnection controllerConnection =
+      Get.put(ControllerConnection());
   NotificationHelper notificationHelper = NotificationHelper();
   var profileModel = Rxn<ProfileModel>();
 
   @override
   void onInit() {
     super.onInit();
-    initializeSplashScreen();
+    // initializeSplashScreen();
+    controllerConnection.listenConnectivity(
+      onConnected: () {
+        if (controllerConnection.isConnected.value == true) {
+          print("object");
+          initializeSplashScreen();
+        }
+      },
+    );
   }
 
   Future<void> initializeSplashScreen() async {
@@ -43,6 +55,8 @@ class ControllerSplashScreen extends GetxController {
       } else {
         return Future.error("Failed to retrive");
       }
+    } on SocketException {
+      return Future.error("Error: koneksi internet tidak ada");
     } catch (e) {
       print(e.toString());
       return Future.error("Error: $e");
@@ -61,5 +75,12 @@ class ControllerSplashScreen extends GetxController {
     } else {
       Get.offNamed(Routes.introductionFirst);
     }
+  }
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+    controllerConnection.connectivitySubscription?.cancel();
   }
 }

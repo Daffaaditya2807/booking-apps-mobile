@@ -88,7 +88,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       if (page == 'register') {
                         controllerMail.verifiedUser(idUser);
                       } else {
-                        Get.toNamed(Routes.resetPasswordScreen,
+                        Get.offNamed(Routes.resetPasswordScreen,
                             arguments: {"email": email});
                       }
                     }

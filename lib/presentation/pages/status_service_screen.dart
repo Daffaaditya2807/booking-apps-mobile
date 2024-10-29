@@ -89,7 +89,8 @@ class StatusServiceScreen extends StatelessWidget {
                   status.value.noLoket,
                   status.value.idBooking,
                   status.value.catatan!,
-                  status.value.createdAt.toString());
+                  status.value.createdAt.toString(),
+                  status.value.statusLewati);
             }
           }),
           Expanded(child: Container()),

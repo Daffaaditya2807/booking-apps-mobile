@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/data/models/user_model.dart';
@@ -75,6 +76,8 @@ class ControllerRegister extends GetxController {
       } else if (code == 401) {
         snackBarError("Gagal Register", "Email telah tersedia");
       }
+    } on SocketException {
+      snackBarError("Gagal Login", "Periksa koneksi internet anda");
     } catch (e) {
       errorMessahe.value = 'Error: ${e}';
     } finally {

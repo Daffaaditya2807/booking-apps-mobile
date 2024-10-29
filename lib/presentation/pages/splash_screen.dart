@@ -1,4 +1,5 @@
 import 'package:apllication_book_now/presentation/state_management/controller_splash_screen.dart';
+import 'package:apllication_book_now/presentation/widgets/no_internet.dart';
 import 'package:apllication_book_now/resource/fonts_style/fonts_style.dart';
 import 'package:apllication_book_now/resource/list_color/colors.dart';
 import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
@@ -19,7 +20,10 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: _buildPageSplashScreen(context),
+      body: Obx(() =>
+          controllerSplashScreen.controllerConnection.isConnected.value
+              ? _buildPageSplashScreen(context)
+              : noInternetConnection()),
     );
   }
 
@@ -47,6 +51,9 @@ class SplashScreen extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: controllerSplashScreen.profileModel.value!.logo,
                 fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             spaceHeightBig,

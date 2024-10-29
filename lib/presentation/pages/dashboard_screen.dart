@@ -94,14 +94,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       padding: sidePaddingBig,
       child: Row(
         children: [
-          spaceWidthMedium,
+          // spaceWidthMedium,
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                border: Border.all(color: blueTersier),
-                borderRadius: BorderRadius.circular(8),
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+              // decoration: BoxDecoration(
+              //   border: Border.all(color: greyTersier),
+              //   borderRadius: BorderRadius.circular(8),
+              // ),
               child: Obx(() => InkWell(
                     onTap: () async {
                       final DateTime? picked = await showDatePicker(
@@ -120,19 +120,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       }
                     },
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        Icon(Icons.calendar_today, color: blueTersier),
+                        spaceWidthMedium,
                         Text(
                           controllerDashboard.selectedDate.value != null
                               ? DateFormat('dd MMMM yyyy').format(
                                   controllerDashboard.selectedDate.value!)
                               : 'Pilih Tanggal',
-                          style: regularStyle.copyWith(
+                          style: semiBoldStyle.copyWith(
                             fontSize: regularFont,
-                            color: Colors.black,
+                            color: blueTersier,
                           ),
                         ),
-                        Icon(Icons.calendar_today, color: bluePrimary),
                       ],
                     ),
                   )),
@@ -141,7 +142,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Obx(() => controllerDashboard.selectedDate.value != null
               ? IconButton(
                   onPressed: () => controllerDashboard.resetDate(),
-                  icon: Icon(Icons.close, color: bluePrimary),
+                  icon: Icon(Icons.close, color: blueTersier),
                 )
               : Container())
         ],
@@ -244,9 +245,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 "Kepadatan Antrian", "Segera booking layanan anda",
                 warna: blueTersier),
           ),
-          spaceHeightBig,
+          // spaceHeightBig,
           _buildDatePicker(),
           spaceHeightBig,
+          spaceHeightMedium,
           Obx(() {
             if (controllerDashboard.isLoadingChart.value) {
               return loadingData('memuat data chart');

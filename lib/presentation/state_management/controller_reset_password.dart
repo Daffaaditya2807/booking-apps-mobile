@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:apllication_book_now/config/routes/routes.dart';
 import 'package:apllication_book_now/data/data_sources/api.dart';
@@ -34,6 +35,9 @@ class ControllerResetPassword extends GetxController {
             snackBarError(
                 "Gagal Reset Password", "terjadi error saat merubah password");
           }
+        } on SocketException {
+          snackBarError(
+              "Gagal mereset password anda", "Periksa koneksi internet anda");
         } catch (e) {
           print(e.toString());
         } finally {

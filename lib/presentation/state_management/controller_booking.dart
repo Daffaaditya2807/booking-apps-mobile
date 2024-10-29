@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:apllication_book_now/config/routes/routes.dart';
 import 'package:apllication_book_now/data/data_sources/api.dart';
@@ -80,6 +81,11 @@ class ControllerBooking extends GetxController {
       } else {
         // Handle error
       }
+    } on SocketException {
+      snackBarError("Perika Koneksi Internet",
+          "Gagal mendapatkan data harap periksa koneksi internet");
+
+      times.clear();
     } catch (e) {
       print(e);
     } finally {
@@ -118,6 +124,11 @@ class ControllerBooking extends GetxController {
           print('Error loading data: ${response.statusCode}');
           availableLoket.clear();
         }
+      } on SocketException {
+        snackBarError("Perika Koneksi Internet",
+            "Gagal mendapatkan data harap periksa koneksi internet");
+
+        availableLoket.clear();
       } catch (e) {
         print('mengalami error : $e');
       } finally {
@@ -167,6 +178,9 @@ class ControllerBooking extends GetxController {
           snackBarError("Gagal buat booking pesanan",
               "Tanggal tersebut dan loket tersebut sudah terdapat data booking mohon cari yang lain");
         }
+      } on SocketException {
+        snackBarError("Perika Koneksi Internet",
+            "Gagal mengirim data harap periksa koneksi internet");
       } catch (e) {
         print(e);
       } finally {

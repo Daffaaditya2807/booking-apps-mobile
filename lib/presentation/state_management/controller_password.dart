@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
@@ -41,6 +42,9 @@ class ControllerPassword extends GetxController {
           snackBarError("Error", errorMessage.value);
           return false;
         }
+      } on SocketException {
+        snackBarError(
+            "Gagal Mengubah Password", "Periksa koneksi internet anda");
       } catch (e) {
         errorMessage.value = 'Error: $e';
         snackBarError("Error", errorMessage.value);

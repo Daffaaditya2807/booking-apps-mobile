@@ -87,6 +87,8 @@ class ControllerLogin extends GetxController {
         });
         return false;
       }
+    } on SocketException {
+      snackBarError("Gagal Login", "Periksa koneksi internet anda");
     } catch (e) {
       errorMessage.value = 'Error: $e';
       return false;
@@ -101,7 +103,7 @@ class ControllerLogin extends GetxController {
       snackBarError("Kolom nama kosong", "harap mengisi kolom nama");
       return true;
     } else if (password.isEmpty) {
-      snackBarSucces("Kolom password kosong", "harap mengisi kolom password");
+      snackBarError("Kolom password kosong", "harap mengisi kolom password");
       return true;
     } else {
       return false;

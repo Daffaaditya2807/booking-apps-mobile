@@ -104,7 +104,7 @@ Widget serviceCardGridView(BuildContext context, List<ServiceModel> model) {
                       services.description,
                       style: regularStyle.copyWith(
                           color: Colors.black, fontSize: regularFont),
-                      maxLines: 3,
+                      maxLines: 2,
                       textAlign: TextAlign.justify,
                       overflow: TextOverflow.ellipsis,
                     )
@@ -530,7 +530,8 @@ Widget detailHistoryStatus(
     String loket,
     String idBooking,
     String note,
-    String tanggalBuatBooking) {
+    String tanggalBuatBooking,
+    String statusLewati) {
   List<Color> colours = [];
   if (status == 'dipesan') {
     colours = [bluePrimary, blueSecondary];
@@ -549,200 +550,221 @@ Widget detailHistoryStatus(
       isCornerRounded: true,
       child: Padding(
         padding: sideVerticalPaddingBig,
-        child: Column(
-          children: [
-            spaceHeightMedium,
-            Text(
-              name,
-              style: boldStyle.copyWith(color: Colors.black),
-            ),
-            spaceHeightSmall,
-            Text(
-              serviceName,
-              style: regularStyle.copyWith(color: Colors.black),
-            ),
-            spaceHeightMedium,
-            Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: colours,
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              spaceHeightMedium,
+              Text(
+                name,
+                style: boldStyle.copyWith(color: Colors.black),
+              ),
+              spaceHeightSmall,
+              Text(
+                serviceName,
+                style: regularStyle.copyWith(color: Colors.black),
+              ),
+              spaceHeightMedium,
+              Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: colours,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: roundedMediumGeo),
+                child: Padding(
+                  padding: sideVerticalPaddingMedium,
+                  child: Text(
+                    status.toUpperCase(),
+                    style: semiBoldStyle.copyWith(color: Colors.white),
                   ),
-                  borderRadius: roundedMediumGeo),
-              child: Padding(
-                padding: sideVerticalPaddingMedium,
-                child: Text(
-                  status.toUpperCase(),
-                  style: semiBoldStyle.copyWith(color: Colors.white),
                 ),
               ),
-            ),
-            spaceHeightBig,
-            DottedLine(
-              dashLength: 5,
-              lineThickness: 1.0,
-              dashGapLength: 3,
-              dashRadius: 3,
-              dashColor: greyPrimary,
-            ),
-            spaceHeightMedium,
-            Text(
-              "Nomor Antrian Anda",
-              style: semiBoldStyle.copyWith(
-                  color: Colors.black, fontSize: regularFont),
-            ),
-            Text(
-              codeBooking,
-              style: boldStyle.copyWith(fontSize: 40, color: bluePrimary),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Hari",
-                  style: regularStyle.copyWith(color: Colors.black),
-                ),
-                Text(
-                  hari(day),
-                  style: semiBoldStyle.copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            spaceHeightMedium,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Tanggal",
-                  style: regularStyle.copyWith(color: Colors.black),
-                ),
-                Text(
-                  tanggal(date),
-                  style: semiBoldStyle.copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            spaceHeightMedium,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Jam Booking",
-                  style: regularStyle.copyWith(color: Colors.black),
-                ),
-                Text(
-                  time,
-                  style: semiBoldStyle.copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            spaceHeightMedium,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Nomer Loket",
-                  style: regularStyle.copyWith(color: Colors.black),
-                ),
-                Text(
-                  loket,
-                  style: semiBoldStyle.copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            spaceHeightMedium,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Kode Booking",
-                  style: regularStyle.copyWith(color: Colors.black),
-                ),
-                Text(
-                  idBooking,
-                  style: semiBoldStyle.copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            spaceHeightMedium,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Dibuat",
-                  style: regularStyle.copyWith(color: Colors.black),
-                ),
-                Text(
-                  tanggalJam(tanggalBuatBooking),
-                  style: semiBoldStyle.copyWith(color: Colors.black),
-                )
-              ],
-            ),
-            spaceHeightBig,
-            DottedLine(
-              dashLength: 5,
-              lineThickness: 1.0,
-              dashGapLength: 3,
-              dashRadius: 3,
-              dashColor: greyPrimary,
-            ),
-            spaceHeightMedium,
-            status == 'dibatalkan' || status == 'selesai'
-                ? Container()
-                : Text(
-                    "Catatan",
+              spaceHeightBig,
+              DottedLine(
+                dashLength: 5,
+                lineThickness: 1.0,
+                dashGapLength: 3,
+                dashRadius: 3,
+                dashColor: greyPrimary,
+              ),
+              spaceHeightMedium,
+              Text(
+                "Nomor Antrian Anda",
+                style: semiBoldStyle.copyWith(
+                    color: Colors.black, fontSize: regularFont),
+              ),
+              Text(
+                codeBooking,
+                style: boldStyle.copyWith(fontSize: 40, color: bluePrimary),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Hari",
+                    style: regularStyle.copyWith(color: Colors.black),
+                  ),
+                  Text(
+                    hari(day),
                     style: semiBoldStyle.copyWith(color: Colors.black),
-                  ),
-            spaceHeightMedium,
-            status == 'dibatalkan' || status == 'selesai'
-                ? Container()
-                : Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade200.withOpacity(0.5),
-                        border: Border.all(color: greyTersier),
-                        borderRadius: roundedMediumGeo),
-                    child: Padding(
-                      padding: valuePaddingMedium,
-                      child: Text(
-                        "Harap Datang maximal 30 menit sebelum jam booking yang telah ditentukan untuk menghindari anda ditentukan pada jadwal lain! Terima Kasih",
-                        softWrap: true,
-                        style: regularStyle.copyWith(
-                            fontSize: regularFont, color: Colors.black),
-                        textAlign: TextAlign.justify,
-                      ),
-                    ),
-                  ),
-            spaceHeightMedium,
-            note == '' || note == 'null'
-                ? Container()
-                : Text(
-                    "Alasan Pesanan Ditolak",
-                    style: semiBoldStyle.copyWith(color: Colors.black),
-                  ),
-            spaceHeightMedium,
-            note == '' || note == 'null'
-                ? Container()
-                : Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: Colors.redAccent.shade200.withOpacity(0.5),
-                        border: Border.all(color: Colors.redAccent.shade200),
-                        borderRadius: roundedMediumGeo),
-                    child: Padding(
-                      padding: valuePaddingMedium,
-                      child: Text(
-                        note,
-                        softWrap: true,
-                        style: regularStyle.copyWith(fontSize: regularFont),
-                        textAlign: TextAlign.justify,
-                      ),
-                    ),
                   )
-          ],
+                ],
+              ),
+              spaceHeightMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Tanggal",
+                    style: regularStyle.copyWith(color: Colors.black),
+                  ),
+                  Text(
+                    tanggal(date),
+                    style: semiBoldStyle.copyWith(color: Colors.black),
+                  )
+                ],
+              ),
+              spaceHeightMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Jam Booking",
+                    style: regularStyle.copyWith(color: Colors.black),
+                  ),
+                  Text(
+                    time,
+                    style: semiBoldStyle.copyWith(color: Colors.black),
+                  )
+                ],
+              ),
+              spaceHeightMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Nomer Loket",
+                    style: regularStyle.copyWith(color: Colors.black),
+                  ),
+                  Text(
+                    loket,
+                    style: semiBoldStyle.copyWith(color: Colors.black),
+                  )
+                ],
+              ),
+              spaceHeightMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Kode Booking",
+                    style: regularStyle.copyWith(color: Colors.black),
+                  ),
+                  Text(
+                    idBooking,
+                    style: semiBoldStyle.copyWith(color: Colors.black),
+                  )
+                ],
+              ),
+              spaceHeightMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Dibuat",
+                    style: regularStyle.copyWith(color: Colors.black),
+                  ),
+                  Text(
+                    tanggalJam(tanggalBuatBooking),
+                    style: semiBoldStyle.copyWith(color: Colors.black),
+                  )
+                ],
+              ),
+              spaceHeightBig,
+              DottedLine(
+                dashLength: 5,
+                lineThickness: 1.0,
+                dashGapLength: 3,
+                dashRadius: 3,
+                dashColor: greyPrimary,
+              ),
+              spaceHeightMedium,
+              //CATATAN KONDISI
+              status == 'dibatalkan' || status == 'selesai'
+                  ? Container()
+                  : Text(
+                      "Catatan",
+                      style: semiBoldStyle.copyWith(color: Colors.black),
+                    ),
+              spaceHeightMedium,
+              status == 'dibatalkan' || status == 'selesai'
+                  ? Container()
+                  : notedd(
+                      "Harap Datang maximal 30 menit sebelum jam booking yang telah ditentukan untuk menghindari anda ditentukan pada jadwal lain! Terima Kasih"),
+              spaceHeightMedium,
+              // PESANAN DILEWATI KONDISI
+              statusLewati == '0'
+                  ? Container()
+                  : Text(
+                      "Pesanan Dilewati",
+                      style: semiBoldStyle.copyWith(color: Colors.black),
+                    ),
+              statusLewati == '0'
+                  ? Container()
+                  : notedd(
+                      "Pesanan anda telah dilewati sebanyak $statusLewati antrian"),
+              // KONDISI PESANNA DITOLAK
+              spaceHeightMedium,
+              note == '' || note == 'null'
+                  ? Container()
+                  : Text(
+                      "Alasan Pesanan Ditolak",
+                      style: semiBoldStyle.copyWith(color: Colors.black),
+                    ),
+              spaceHeightMedium,
+              note == '' || note == 'null'
+                  ? Container()
+                  : Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          color: Colors.redAccent.shade200.withOpacity(0.5),
+                          border: Border.all(color: Colors.redAccent.shade200),
+                          borderRadius: roundedMediumGeo),
+                      child: Padding(
+                        padding: valuePaddingMedium,
+                        child: Text(
+                          note,
+                          softWrap: true,
+                          style: regularStyle.copyWith(fontSize: regularFont),
+                          textAlign: TextAlign.justify,
+                        ),
+                      ),
+                    )
+            ],
+          ),
         ),
       ));
+}
+
+Container notedd(String notee) {
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+        color: Colors.grey.shade200.withOpacity(0.5),
+        border: Border.all(color: greyTersier),
+        borderRadius: roundedMediumGeo),
+    child: Padding(
+      padding: valuePaddingMedium,
+      child: Text(
+        notee,
+        softWrap: true,
+        style:
+            regularStyle.copyWith(fontSize: regularFont, color: Colors.black),
+        textAlign: TextAlign.justify,
+      ),
+    ),
+  );
 }
 
 Widget detailStatusService(

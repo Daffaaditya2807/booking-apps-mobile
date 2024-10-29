@@ -19,6 +19,7 @@ class StatusLewatiScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: header("Pesanan Dilewati"),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: sidePaddingBig,

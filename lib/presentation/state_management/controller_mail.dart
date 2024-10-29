@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:apllication_book_now/config/routes/routes.dart';
@@ -67,6 +68,8 @@ class ControllerMail extends GetxController {
         candSendEmail(false);
         startTimer();
       }
+    } on SocketException {
+      snackBarError("Gagal Mengirim email", "Periksa koneksi internet anda");
     } on MailerException catch (e) {
       print('Message not sent.');
       print(e.message);
@@ -94,6 +97,8 @@ class ControllerMail extends GetxController {
       } else if (code == 500) {
         snackBarError("Gagal verified User", "Ada sesuatu yang error");
       }
+    } on SocketException {
+      snackBarError("Gagal Verifikasi User", "Periksa koneksi internet anda");
     } catch (e) {
       snackBarError("Error", e.toString());
     } finally {

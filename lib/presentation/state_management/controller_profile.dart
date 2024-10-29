@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/data/models/user_model.dart';
@@ -36,6 +37,8 @@ class ControllerProfile extends GetxController {
           snackBarSucces("Berhasil", "Profil anda berhasil diupdate");
         }
       }
+    } on SocketException {
+      snackBarError("Gagal Mengubah Profil", "Periksa koneksi internet anda");
     } catch (e) {
       errorMessage.value = 'Error: $e';
     } finally {

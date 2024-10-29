@@ -12,6 +12,8 @@ Widget selectedDateContainer(
     Function(DateTime) pageChanged,
     Function(DateTime, DateTime) daySelected,
     bool Function(DateTime) isSelectable) {
+  final DateTime currentMonth =
+      DateTime(DateTime.now().year, DateTime.now().month, 1);
   return Container(
     decoration: BoxDecoration(
         borderRadius: borderRoundedBig, border: Border.all(color: blueTersier)),
@@ -40,7 +42,7 @@ Widget selectedDateContainer(
         availableGestures: AvailableGestures.horizontalSwipe,
         startingDayOfWeek: StartingDayOfWeek.monday,
         enabledDayPredicate: isSelectable,
-        firstDay: DateTime.utc(2010, 10, 16),
+        firstDay: currentMonth,
         lastDay: DateTime.utc(2030, 3, 14),
         rowHeight: 45,
         headerStyle: HeaderStyle(
@@ -55,7 +57,10 @@ Widget selectedDateContainer(
           rightChevronMargin: sidePaddingMedium,
           leftChevronIcon: Container(
             decoration: BoxDecoration(
-                color: yellowActive, borderRadius: roundedMediumGeo),
+                color: isSameMonth(focusedDay, currentMonth)
+                    ? greyTersier
+                    : yellowActive,
+                borderRadius: roundedMediumGeo),
             child: const Padding(
               padding: EdgeInsets.all(2.0),
               child: Icon(
@@ -104,4 +109,8 @@ Widget selectedDateContainer(
       ),
     ),
   );
+}
+
+bool isSameMonth(DateTime date1, DateTime date2) {
+  return date1.year == date2.year && date1.month == date2.month;
 }

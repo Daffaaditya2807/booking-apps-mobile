@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:apllication_book_now/config/routes/routes.dart';
 import 'package:apllication_book_now/data/data_sources/api.dart';
@@ -38,6 +39,9 @@ class ControllerForgetPassword extends GetxController {
         snackBarError("User tidak tersedia",
             "Tidak dapat melakukan reset password karena akun user tidak tersedia");
       }
+    } on SocketException {
+      snackBarError(
+          "Gagal mendapatkan data user", "Periksa koneksi internet anda");
     } catch (e) {
       print(e.toString());
     } finally {

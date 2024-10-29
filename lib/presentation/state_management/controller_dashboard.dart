@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:apllication_book_now/data/data_sources/notification_helper.dart';
+import 'package:apllication_book_now/presentation/state_management/controller_connection.dart';
+import 'package:apllication_book_now/presentation/state_management/controller_get_service.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_status_screen.dart';
 import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
@@ -13,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:restart_app/restart_app.dart';
 
 import '../../data/data_sources/api.dart';
 
@@ -25,6 +28,7 @@ class ControllerDashboard extends GetxController {
   var isLoadingHistory = false.obs;
   var message = ''.obs;
   var idUsers = ''.obs;
+  var avatarLostConnedted = ''.obs;
   var ticketUser = <HistoryBookingModel>[].obs;
   var barGroups = <BarChartGroupData>[].obs;
   var jamLayanan = <String>[].obs;
@@ -35,8 +39,12 @@ class ControllerDashboard extends GetxController {
   var selectedDate = Rx<DateTime?>(null);
   List urlImagee = [].obs;
   final ControllerLogin controllerLogin = Get.put(ControllerLogin());
+  final ControllerGetService controllerGetService =
+      Get.put(ControllerGetService());
   final ControllerStatusScreen controllerStatusScreen =
       Get.put(ControllerStatusScreen());
+  final ControllerConnection controllerConnection =
+      Get.put(ControllerConnection());
   NotificationHelper notificationHelper = NotificationHelper();
 
   final DatabaseReference _bookingRef =
@@ -188,32 +196,11 @@ class ControllerDashboard extends GetxController {
         }
       }
     });
-    // _bookingRef.onValue.listen((DatabaseEvent event) {
-    //   final data = event.snapshot.value as Map<dynamic, dynamic>?;
-    //   if (data != null) {
-    //     data.forEach((key, value) {
-    //       final booking = value as Map<dynamic, dynamic>;
-    //       if (booking['id_users'] == idUser) {
-    //         assignAllHistoryLast(idUser);
-    //         String statusPesananUser = booking['status'];
-    //         print("STATUS = $statusPesananUser");
-    //         controllerStatusScreen.statusPesanan.value = statusPesananUser;
-    //         // Periksa status booking, jika "selesai", hapus data booking
-    //         if (booking['status'] == 'selesai') {
-    //           String bookingId = booking['id_booking'];
-    //           deleteBookingById(bookingId);
-    //         }
-    //       }
-    //     });
-    //   }
-    // });
   }
 
   void deleteBookingById(String bookingId) async {
     try {
-      await _bookingRef
-          .child(bookingId)
-          .remove(); // Hapus node berdasarkan `id_booking`
+      await _bookingRef.child(bookingId).remove();
       print('Booking with id $bookingId has been removed.');
     } catch (e) {
       print('Error deleting booking with id $bookingId: $e');
@@ -238,6 +225,12 @@ class ControllerDashboard extends GetxController {
         return ticketUser;
       } else if (code == 404) {
         message.value = "tidak ada ticket booking";
+        return [];
+      } else if (response.statusCode == 429) {
+        int retryAfter = responseBody['meta']['retry_after'] ?? 10;
+        message.value = 'Terlalu Banyak response. Coba lagi nanti';
+        await Future.delayed(Duration(seconds: retryAfter));
+        Restart.restartApp();
         return [];
       } else {
         message.value = "Failed to load ticket booking";
@@ -315,12 +308,11 @@ class ControllerDashboard extends GetxController {
           return [];
         }
       } else {
-        snackBarError("Gagal mendapatkan list banner",
-            "HTTP Error: ${response.statusCode}");
+        print("Error dengan : ${response.statusCode}");
         return [];
       }
     } catch (e) {
-      snackBarError("Error", "Terjadi kesalahan: $e");
+      print("Terjadi kesalahan: $e");
       return [];
     } finally {
       isLoading(false);
@@ -482,17 +474,49 @@ class ControllerDashboard extends GetxController {
     if (controllerLogin.user.value?.idUsers.toString() != null) {
       final String userId =
           controllerLogin.user.value?.idUsers.toString() ?? '';
+
       assignTicketUser(userId);
       assignAllHistoryLast(userId);
       listenForBookingUpdates(userId);
+
+      //Dijalankan waktu koneksi berubah
+      controllerConnection.listenConnectivity(
+        onConnected: () {
+          print("On Connected Dashboard 1");
+          urlImageBanners();
+          fetchChartData();
+          listenForChartUpdates();
+          assignTicketUser(userId);
+          assignAllHistoryLast(userId);
+          listenForBookingUpdates(userId);
+          controllerGetService.fetchServices();
+          avatarLostConnedted.value = controllerLogin.user.value!.avatarUrl;
+        },
+      );
     }
 
     controllerLogin.user.listen((userModel) {
       if (userModel != null) {
         final String userId = userModel.idUsers.toString();
+
         assignTicketUser(userId);
         assignAllHistoryLast(userId);
         listenForBookingUpdates(userId);
+
+        //Dijalankan waktu koneksi berubah
+        controllerConnection.listenConnectivity(
+          onConnected: () {
+            print("On Connected Dashboard 2");
+            urlImageBanners();
+            fetchChartData();
+            listenForChartUpdates();
+            assignTicketUser(userId);
+            assignAllHistoryLast(userId);
+            listenForBookingUpdates(userId);
+            controllerGetService.fetchServices();
+            avatarLostConnedted.value = controllerLogin.user.value!.avatarUrl;
+          },
+        );
       } else {
         ticketUser.clear();
       }
@@ -508,5 +532,6 @@ class ControllerDashboard extends GetxController {
     // TODO: implement onClose
     super.onClose();
     _bookingRef.onDisconnect();
+    controllerConnection.connectivitySubscription?.cancel();
   }
 }
