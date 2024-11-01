@@ -36,7 +36,8 @@ class ControllerDashboard extends GetxController {
   var layanan = <Map<String, dynamic>>[].obs;
   var maxY = 0.0.obs;
   var historyLast = <HistoryBookingModel>[].obs;
-  var selectedDate = Rx<DateTime?>(null);
+  var selectedDateNull = Rx<DateTime?>(null);
+  var selectedDate = DateTime.now().obs;
   List urlImagee = [].obs;
   final ControllerLogin controllerLogin = Get.put(ControllerLogin());
   final ControllerGetService controllerGetService =
@@ -51,9 +52,20 @@ class ControllerDashboard extends GetxController {
       FirebaseDatabase.instance.ref('booking');
   final DatabaseReference _updateChartRef =
       FirebaseDatabase.instance.ref('UpdateChart');
+  final DateTime firstDate = DateTime.now().subtract(const Duration(days: 350));
+  final DateTime lastDate = DateTime.now().add(const Duration(days: 350));
 
   void getIndex(int current) {
     currentIndex.value = current;
+  }
+
+  void onSelectedDateChanged(DateTime newDate) {
+    selectedDate.value = newDate;
+    selectedDateNull.value = newDate;
+    final formattedDate = DateFormat('yyyy-MM-dd').format(newDate);
+    fetchChartDataByDate(formattedDate);
+    update();
+    // Get.back();
   }
 
   Future<void> fetchChartDataByDate(String date) async {
@@ -115,7 +127,8 @@ class ControllerDashboard extends GetxController {
   }
 
   void resetDate() {
-    selectedDate.value = null;
+    selectedDateNull.value = null;
+    selectedDate.value = DateTime.now();
     fetchChartData();
   }
 

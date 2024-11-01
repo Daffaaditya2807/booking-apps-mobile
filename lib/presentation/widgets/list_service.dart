@@ -104,7 +104,7 @@ Widget serviceCardGridView(BuildContext context, List<ServiceModel> model) {
                       services.description,
                       style: regularStyle.copyWith(
                           color: Colors.black, fontSize: regularFont),
-                      maxLines: 2,
+                      maxLines: 3,
                       textAlign: TextAlign.justify,
                       overflow: TextOverflow.ellipsis,
                     )
@@ -427,7 +427,7 @@ Widget historyServiceCard(
                     ),
                     spaceHeightSmall,
                     Text(
-                      "Waktu : $jam",
+                      "Waktu : ${jam.substring(0, 5)}",
                       textAlign: TextAlign.justify,
                       overflow: TextOverflow.ellipsis,
                       style: regularStyle.copyWith(
@@ -634,7 +634,7 @@ Widget detailHistoryStatus(
                     style: regularStyle.copyWith(color: Colors.black),
                   ),
                   Text(
-                    time,
+                    time.substring(0, 5),
                     style: semiBoldStyle.copyWith(color: Colors.black),
                   )
                 ],

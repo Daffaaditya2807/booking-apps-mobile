@@ -12,6 +12,7 @@ PersistentTabView navbarPersistance(
     controller: _controller,
     screens: pagesScreen,
     itemCount: pagesScreen.length,
+    navBarHeight: kBottomNavigationBarHeight + 10,
     isVisible: true,
     hideOnScrollSettings: HideOnScrollSettings(
       hideNavBarOnScroll: true,

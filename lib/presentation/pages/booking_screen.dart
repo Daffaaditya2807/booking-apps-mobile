@@ -93,14 +93,32 @@ class BookingScreen extends StatelessWidget {
                       (selectedDay, focusedDay) {
                     if (controllerBooking.isSelectable(selectedDay)) {
                       if (!controllerBooking.isLoadingLoket.value) {
+                        if (!controllerBooking.isSameMonth(
+                            selectedDay, focusedDay)) {
+                          controllerBooking.changeFocusedDay(DateTime(
+                              selectedDay.year,
+                              selectedDay.month,
+                              selectedDay.day));
+                        } else {
+                          controllerBooking.changeFocusedDay(focusedDay);
+                        }
                         controllerBooking.changeSelectedDay(selectedDay);
-                        controllerBooking.changeFocusedDay(focusedDay);
                       }
                     }
                   }, controllerBooking.isSelectable)),
               spaceHeightBig,
               const Divider(),
-              spaceHeightBig,
+
+              Obx(() => controllerBooking.times.isNotEmpty
+                  ? Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Pilih Jam Layanan",
+                        style: semiBoldStyle.copyWith(color: Colors.black),
+                      ),
+                    )
+                  : Container()),
+              spaceHeightMedium,
               Obx(() => controllerBooking.isLoading.value &&
                       controllerBooking.isFirstLoadValue.value
                   ? loadingData("memuat daftar jam...")
@@ -117,6 +135,7 @@ class BookingScreen extends StatelessWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         var timeEntry = controllerBooking.times[index];
+
                         DateTime currenTime = DateTime.now();
                         DateTime availableTimess = DateTime.parse(
                             '${controllerBooking.selectedDay.value!.toIso8601String().split('T')[0]} ${timeEntry['time']}:00');
@@ -146,7 +165,10 @@ class BookingScreen extends StatelessWidget {
                                 controllerBooking.jamBooking.value =
                                     timeEntry['time'];
                                 controllerBooking.selectedLocket.value = '';
-                                controllerBooking.fetchAvailableLoket();
+                                int slotTersedia = timeEntry['remaining_slots'];
+                                controllerBooking.availableSlots.value =
+                                    slotTersedia;
+                                // controllerBooking.fetchAvailableLoket();
                               }
                             },
                             child: isSelected
@@ -159,192 +181,215 @@ class BookingScreen extends StatelessWidget {
                       },
                     )),
               spaceHeightMedium,
-              Obx(() => controllerBooking.availableLoket.isEmpty
-                  ? controllerBooking.isLoadingLoket.value
-                      ? loadingData("memuat loket tersedia")
-                      : Container()
-                  : SizedBox(
-                      width: double.infinity,
-                      // decoration: BoxDecoration(color: Colors.pink),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Loket Tersedia",
-                            style: mediumStyle.copyWith(color: Colors.black),
-                          ),
-                          spaceHeightSmall,
-                          Obx(() => controllerBooking.isLoadingLoket.value
-                              ? loadingData("memuat loket tersedia")
-                              : SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.050,
-                                  child: Obx(() => ListView.builder(
-                                        itemCount: controllerBooking
-                                            .availableLoket.length,
-                                        shrinkWrap: true,
-                                        // physics: const NeverScrollableScrollPhysics(),
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: (context, index) {
-                                          return Obx(() {
-                                            bool isSelectedLocket =
-                                                controllerBooking
-                                                        .selectedLocket.value ==
-                                                    controllerBooking
-                                                        .availableLoket[index]
-                                                        .toString();
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 5),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  controllerBooking
-                                                          .selectedLocket
-                                                          .value =
-                                                      controllerBooking
-                                                          .availableLoket[index]
-                                                          .toString();
-                                                },
-                                                child: isSelectedLocket
-                                                    ? selectedTime(
-                                                        controllerBooking
-                                                            .availableLoket[
-                                                                index]
-                                                            .toString())
-                                                    : availableTime(
-                                                        controllerBooking
-                                                            .availableLoket[
-                                                                index]
-                                                            .toString()),
-                                              ),
-                                            );
-                                          });
-                                        },
-                                      )),
-                                ))
-                        ],
-                      ),
-                    )),
+              Obx(() => controllerBooking.availableSlots.value != 0
+                  ? Align(
+                      alignment: Alignment.topLeft,
+                      child: RichText(
+                        text: TextSpan(
+                            text: "Sisa loket tersedia :",
+                            style: regularStyle.copyWith(color: Colors.black),
+                            children: [
+                              TextSpan(
+                                  text:
+                                      " ${controllerBooking.availableSlots.value}",
+                                  style: semiBoldStyle.copyWith(
+                                      color: bluePrimary))
+                            ]),
+                      ))
+                  : Container()),
+              // Obx(() => controllerBooking.availableLoket.isEmpty
+              //     ? controllerBooking.isLoadingLoket.value
+              //         ? loadingData("memuat loket tersedia")
+              //         : Container()
+              //     : SizedBox(
+              //         width: double.infinity,
+              //         // decoration: BoxDecoration(color: Colors.pink),
+              //         child: Column(
+              //           crossAxisAlignment: CrossAxisAlignment.start,
+              //           children: [
+              //             Text(
+              //               "Loket Tersedia",
+              //               style: mediumStyle.copyWith(color: Colors.black),
+              //             ),
+              //             spaceHeightSmall,
+              //             Obx(() => controllerBooking.isLoadingLoket.value
+              //                 ? loadingData("memuat loket tersedia")
+              //                 : SizedBox(
+              //                     height: MediaQuery.of(context).size.height *
+              //                         0.050,
+              //                     child: Obx(() => ListView.builder(
+              //                           itemCount: controllerBooking
+              //                               .availableLoket.length,
+              //                           shrinkWrap: true,
+              //                           // physics: const NeverScrollableScrollPhysics(),
+              //                           scrollDirection: Axis.horizontal,
+              //                           itemBuilder: (context, index) {
+              //                             return Obx(() {
+              //                               bool isSelectedLocket =
+              //                                   controllerBooking
+              //                                           .selectedLocket.value ==
+              //                                       controllerBooking
+              //                                           .availableLoket[index]
+              //                                           .toString();
+              //                               return Padding(
+              //                                 padding: const EdgeInsets.only(
+              //                                     right: 5),
+              //                                 child: InkWell(
+              //                                   onTap: () {
+              //                                     controllerBooking
+              //                                             .selectedLocket
+              //                                             .value =
+              //                                         controllerBooking
+              //                                             .availableLoket[index]
+              //                                             .toString();
+              //                                   },
+              //                                   child: isSelectedLocket
+              //                                       ? selectedTime(
+              //                                           controllerBooking
+              //                                               .availableLoket[
+              //                                                   index]
+              //                                               .toString())
+              //                                       : availableTime(
+              //                                           controllerBooking
+              //                                               .availableLoket[
+              //                                                   index]
+              //                                               .toString()),
+              //                                 ),
+              //                               );
+              //                             });
+              //                           },
+              //                         )),
+              //                   ))
+              //           ],
+              //         ),
+              //       )),
               spaceHeightBig,
-              buttonPrimary("Booking", () {
-                String chooseLocket = controllerBooking.selectedLocket.value;
-                String idLayanan = services.id.toString();
-                String jamBooking = controllerBooking.selectedTime.value;
-                String tanggalBooking =
-                    controllerBooking.selectedDay.value.toString();
-                String idUser = controllerUser.user.value!.idUsers.toString();
-                if (jamBooking != '' &&
-                    idLayanan.isNotEmpty &&
-                    chooseLocket.isNotEmpty) {
-                  Get.defaultDialog(
-                      title: "Konfirmasi Booking",
-                      barrierDismissible: false,
-                      titleStyle: semiBoldStyle.copyWith(
-                          color: bluePrimary, fontSize: fonth4),
-                      content: Padding(
-                        padding: sidePaddingBig,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Obx(() => buttonPrimary("Booking",
+                      color: controllerBooking.selectedTime.value.isEmpty
+                          ? [Colors.grey.shade300, Colors.grey.shade200]
+                          : [bluePrimary, blueSecondary], () {
+                    String chooseLocket =
+                        controllerBooking.selectedLocket.value;
+                    String idLayanan = services.id.toString();
+                    String jamBooking = controllerBooking.selectedTime.value;
+                    String tanggalBooking =
+                        controllerBooking.selectedDay.value.toString();
+                    String idUser =
+                        controllerUser.user.value!.idUsers.toString();
+                    if (jamBooking != '' && idLayanan.isNotEmpty) {
+                      Get.defaultDialog(
+                          title: "Konfirmasi Booking",
+                          barrierDismissible: false,
+                          titleStyle: semiBoldStyle.copyWith(
+                              color: bluePrimary, fontSize: fonth4),
+                          content: Padding(
+                            padding: sidePaddingBig,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "Layanan",
-                                  style: semiBoldStyle.copyWith(
-                                      color: Colors.black),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Layanan",
+                                      style: semiBoldStyle.copyWith(
+                                          color: Colors.black),
+                                    ),
+                                    Text(
+                                      services.name,
+                                      style: regularStyle.copyWith(
+                                          color: Colors.black),
+                                    )
+                                  ],
                                 ),
-                                Text(
-                                  services.name,
-                                  style: regularStyle.copyWith(
-                                      color: Colors.black),
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Tanggal",
-                                  style: semiBoldStyle.copyWith(
-                                      color: Colors.black),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Tanggal",
+                                      style: semiBoldStyle.copyWith(
+                                          color: Colors.black),
+                                    ),
+                                    Text(
+                                      tanggal(tanggalBooking),
+                                      style: regularStyle.copyWith(
+                                          color: Colors.black),
+                                    )
+                                  ],
                                 ),
-                                Text(
-                                  tanggal(tanggalBooking),
-                                  style: regularStyle.copyWith(
-                                      color: Colors.black),
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Jam",
-                                  style: semiBoldStyle.copyWith(
-                                      color: Colors.black),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Jam",
+                                      style: semiBoldStyle.copyWith(
+                                          color: Colors.black),
+                                    ),
+                                    Text(
+                                      jamBooking,
+                                      style: regularStyle.copyWith(
+                                          color: Colors.black),
+                                    )
+                                  ],
                                 ),
-                                Text(
-                                  jamBooking,
-                                  style: regularStyle.copyWith(
-                                      color: Colors.black),
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Nomer Loket",
-                                  style: semiBoldStyle.copyWith(
-                                      color: Colors.black),
-                                ),
-                                Text(
-                                  chooseLocket,
-                                  style: regularStyle.copyWith(
-                                      color: Colors.black),
-                                )
-                              ],
-                            ),
-                            spaceHeightSmall,
-                            const Divider(),
-                            Obx(() => controllerBooking.isLoading.value
-                                ? loadingData("mengirim data")
-                                : Row(
-                                    children: [
-                                      Expanded(
-                                          child: miniButtonOutline("Batal", () {
-                                        Get.back();
-                                      })),
-                                      spaceWidthMedium,
-                                      Expanded(
-                                          child: miniButtonPrimary("Buat", () {
-                                        print(
-                                            "Loketnya adalah = $chooseLocket\nId Layanan = $idLayanan\nJam Booking = $jamBooking\ntanggal = $tanggalBooking\nId User = $idUser");
-                                        DateTime dateFormat =
-                                            DateTime.parse(tanggalBooking);
-                                        String formateDate =
-                                            DateFormat('yyyy-MM-dd')
-                                                .format(dateFormat);
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text(
+                                //       "Nomer Loket",
+                                //       style: semiBoldStyle.copyWith(
+                                //           color: Colors.black),
+                                //     ),
+                                //     Text(
+                                //       chooseLocket,
+                                //       style: regularStyle.copyWith(
+                                //           color: Colors.black),
+                                //     )
+                                //   ],
+                                // ),
+                                spaceHeightSmall,
+                                const Divider(),
+                                Obx(() => controllerBooking.isLoading.value
+                                    ? loadingData("mengirim data")
+                                    : Row(
+                                        children: [
+                                          Expanded(
+                                              child: miniButtonOutline("Batal",
+                                                  () {
+                                            Get.back();
+                                          })),
+                                          spaceWidthMedium,
+                                          Expanded(
+                                              child:
+                                                  miniButtonPrimary("Buat", () {
+                                            print(
+                                                "Loketnya adalah = $chooseLocket\nId Layanan = $idLayanan\nJam Booking = $jamBooking\ntanggal = $tanggalBooking\nId User = $idUser");
+                                            DateTime dateFormat =
+                                                DateTime.parse(tanggalBooking);
+                                            String formateDate =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(dateFormat);
 
-                                        controllerBooking.insertBooking(
-                                            idPelayanan: chooseLocket,
-                                            alamat: "Bluru Kidul",
-                                            idLayanan: idLayanan,
-                                            jamBooking: jamBooking,
-                                            tanggal: formateDate,
-                                            idUser: idUser);
-                                      })),
-                                    ],
-                                  )),
-                          ],
-                        ),
-                      ));
-                } else {
-                  snackBarError("Lengkapi Data",
-                      "Harap lengkapi data booking terlebih dahulu");
-                }
-              }),
+                                            controllerBooking.insertBooking(
+                                                alamat: "Bluru Kidul",
+                                                idLayanan: idLayanan,
+                                                jamBooking: jamBooking,
+                                                tanggal: formateDate,
+                                                idUser: idUser);
+                                          })),
+                                        ],
+                                      )),
+                              ],
+                            ),
+                          ));
+                    } else {
+                      snackBarError("Lengkapi Data",
+                          "Harap lengkapi data booking terlebih dahulu");
+                    }
+                  })),
               spaceHeightBig
             ],
           ),

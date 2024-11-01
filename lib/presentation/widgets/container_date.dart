@@ -99,7 +99,7 @@ Widget selectedDateContainer(
           selectedTextStyle: GoogleFonts.montserrat(
               color: Colors.white, fontWeight: FontWeight.bold),
           defaultTextStyle: GoogleFonts.montserrat(),
-          outsideTextStyle: GoogleFonts.montserrat(color: greyPrimary),
+          outsideTextStyle: semiBoldStyle.copyWith(color: blueTersier),
           holidayTextStyle: GoogleFonts.montserrat(color: Colors.redAccent),
           selectedDecoration: BoxDecoration(
             color: yellowActive,

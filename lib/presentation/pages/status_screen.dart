@@ -101,9 +101,15 @@ class _StatusScreenState extends State<StatusScreen>
         } else {
           return controllerStatusScreen.historyPesan.isEmpty
               ? emptyListService()
-              : ListView.builder(
+              : ListView.separated(
                   itemCount: controllerStatusScreen.historyPesan.length,
                   physics: const AlwaysScrollableScrollPhysics(),
+                  separatorBuilder: (context, index) => Padding(
+                    padding: sidePaddingBig,
+                    child: Divider(
+                      color: greyTersier,
+                    ),
+                  ),
                   itemBuilder: (context, index) {
                     print(
                         "Panjang Data Pesan = ${controllerStatusScreen.historyPesan.length}");
@@ -142,7 +148,13 @@ class _StatusScreenState extends State<StatusScreen>
         } else {
           return controllerStatusScreen.historyProses.isEmpty
               ? emptyListService()
-              : ListView.builder(
+              : ListView.separated(
+                  separatorBuilder: (context, index) => Padding(
+                    padding: sidePaddingBig,
+                    child: Divider(
+                      color: greyTersier,
+                    ),
+                  ),
                   itemCount: controllerStatusScreen.historyProses.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
@@ -183,7 +195,13 @@ class _StatusScreenState extends State<StatusScreen>
         } else {
           return controllerStatusScreen.historyTolak.isEmpty
               ? emptyListService()
-              : ListView.builder(
+              : ListView.separated(
+                  separatorBuilder: (context, index) => Padding(
+                    padding: sidePaddingBig,
+                    child: Divider(
+                      color: greyTersier,
+                    ),
+                  ),
                   itemCount: controllerStatusScreen.historyTolak.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
@@ -224,7 +242,13 @@ class _StatusScreenState extends State<StatusScreen>
         } else {
           return controllerStatusScreen.historySelesai.isEmpty
               ? emptyListService()
-              : ListView.builder(
+              : ListView.separated(
+                  separatorBuilder: (context, index) => Padding(
+                    padding: sidePaddingBig,
+                    child: Divider(
+                      color: greyTersier,
+                    ),
+                  ),
                   itemCount: controllerStatusScreen.historySelesai.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
@@ -574,19 +598,41 @@ class _StatusScreenState extends State<StatusScreen>
                 firstDate: controllerStatusScreen.firstDate,
                 lastDate: controllerStatusScreen.lastDate,
                 datePickerStyles: DatePickerStyles(
+                    nextIcon: Container(
+                      decoration: BoxDecoration(
+                          color: yellowActive, borderRadius: roundedMediumGeo),
+                      child: const Padding(
+                        padding: EdgeInsets.all(1.0),
+                        child: Icon(
+                          Icons.chevron_right,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    prevIcon: Container(
+                      decoration: BoxDecoration(
+                          color: yellowActive, borderRadius: roundedMediumGeo),
+                      child: const Padding(
+                        padding: EdgeInsets.all(1.0),
+                        child: Icon(
+                          Icons.chevron_left,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    dayHeaderStyle: DayHeaderStyle(
+                        textStyle: semiBoldStyle.copyWith(color: Colors.black)),
+                    displayedPeriodTitle:
+                        semiBoldStyle.copyWith(color: Colors.black),
                     selectedSingleDateDecoration: BoxDecoration(
-                        color: bluePrimary, shape: BoxShape.circle)))),
+                        color: yellowActive, shape: BoxShape.circle),
+                    selectedDateStyle:
+                        boldStyle.copyWith(color: Colors.white)))),
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Menutup dialog tanpa menyimpan
-              },
-              child: Text(
-                'OK',
-                style: semiBoldStyle.copyWith(color: bluePrimary),
-              ),
-            ),
+            miniButtonPrimary("OK", () => Navigator.of(context).pop()),
           ],
         );
       },
@@ -612,32 +658,56 @@ class _StatusScreenState extends State<StatusScreen>
                   firstDate: controllerStatusScreen.firstDate,
                   lastDate: controllerStatusScreen.lastDate,
                   datePickerStyles: DatePickerRangeStyles(
+                      nextIcon: Container(
+                        decoration: BoxDecoration(
+                            color: yellowActive,
+                            borderRadius: roundedMediumGeo),
+                        child: const Padding(
+                          padding: EdgeInsets.all(1.0),
+                          child: Icon(
+                            Icons.chevron_right,
+                            size: 25,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      prevIcon: Container(
+                        decoration: BoxDecoration(
+                            color: yellowActive,
+                            borderRadius: roundedMediumGeo),
+                        child: const Padding(
+                          padding: EdgeInsets.all(1.0),
+                          child: Icon(
+                            Icons.chevron_left,
+                            size: 25,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                       selectedSingleDateDecoration: BoxDecoration(
-                          color: bluePrimary, shape: BoxShape.circle),
+                          color: yellowActive, shape: BoxShape.circle),
                       selectedPeriodMiddleDecoration: BoxDecoration(
-                          color: Colors.blue.shade500.withOpacity(0.5)),
+                          color: Colors.amberAccent.withOpacity(0.5)),
+                      selectedPeriodMiddleTextStyle:
+                          semiBoldStyle.copyWith(color: Colors.white),
                       selectedPeriodStartDecoration: BoxDecoration(
-                          color: bluePrimary,
+                          color: yellowActive,
                           borderRadius: BorderRadius.only(
                               topLeft: roundedMedium,
                               bottomLeft: roundedMedium)),
+                      selectedPeriodStartTextStyle:
+                          boldStyle.copyWith(color: Colors.white),
                       selectedPeriodLastDecoration: BoxDecoration(
-                          color: bluePrimary,
+                          color: yellowActive,
                           borderRadius: BorderRadius.only(
                               topRight: roundedMedium,
-                              bottomRight: roundedMedium))),
+                              bottomRight: roundedMedium)),
+                      selectedPeriodEndTextStyle:
+                          boldStyle.copyWith(color: Colors.white)),
                 )),
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Menutup dialog
-              },
-              child: Text(
-                'OK',
-                style: semiBoldStyle.copyWith(color: bluePrimary),
-              ),
-            ),
+            miniButtonPrimary("OK", () => Navigator.of(context).pop()),
           ],
         );
       },

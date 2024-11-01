@@ -2,6 +2,7 @@ import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_dashboard.dart';
 import 'package:apllication_book_now/presentation/widgets/banner.dart';
 import 'package:apllication_book_now/presentation/widgets/carousel.dart';
+import 'package:apllication_book_now/presentation/widgets/list_button.dart';
 import 'package:apllication_book_now/presentation/widgets/loading_data.dart';
 import 'package:apllication_book_now/presentation/widgets/queue_number.dart';
 import 'package:apllication_book_now/resource/fonts_style/fonts_style.dart';
@@ -12,11 +13,13 @@ import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_date_pickers/flutter_date_pickers.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../config/routes/routes.dart';
+import '../../resource/sizes/list_rounded.dart';
 import '../state_management/controller_dicebear.dart';
 import '../state_management/controller_get_service.dart';
 import '../state_management/controller_login.dart';
@@ -89,6 +92,66 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return totalWidth;
   }
 
+  void showMonthPicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Pilih Tanggal Untuk Melihat Antrian',
+            textAlign: TextAlign.center,
+            style: regularStyle.copyWith(
+                color: Colors.black, fontSize: regularFont),
+          ),
+          content: SizedBox(
+            width: double.infinity,
+            child: Obx(() => DayPicker.single(
+                selectedDate: controllerDashboard.selectedDate.value,
+                onChanged: controllerDashboard.onSelectedDateChanged,
+                firstDate: controllerDashboard.firstDate,
+                lastDate: controllerDashboard.lastDate,
+                datePickerStyles: DatePickerRangeStyles(
+                    nextIcon: Container(
+                      decoration: BoxDecoration(
+                          color: yellowActive, borderRadius: roundedMediumGeo),
+                      child: const Padding(
+                        padding: EdgeInsets.all(1.0),
+                        child: Icon(
+                          Icons.chevron_right,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    prevIcon: Container(
+                      decoration: BoxDecoration(
+                          color: yellowActive, borderRadius: roundedMediumGeo),
+                      child: const Padding(
+                        padding: EdgeInsets.all(1.0),
+                        child: Icon(
+                          Icons.chevron_left,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    dayHeaderStyle: DayHeaderStyle(
+                        textStyle: semiBoldStyle.copyWith(color: Colors.black)),
+                    displayedPeriodTitle:
+                        semiBoldStyle.copyWith(color: Colors.black),
+                    selectedSingleDateDecoration: BoxDecoration(
+                        color: yellowActive, shape: BoxShape.circle),
+                    selectedDateStyle:
+                        boldStyle.copyWith(color: Colors.white)))),
+          ),
+          actions: [
+            miniButtonPrimary("OK", () => Navigator.of(context).pop()),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildDatePicker() {
     return Padding(
       padding: sidePaddingBig,
@@ -104,20 +167,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // ),
               child: Obx(() => InkWell(
                     onTap: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: controllerDashboard.selectedDate.value ??
-                            DateTime.now(),
-                        initialDatePickerMode: DatePickerMode.day,
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2025),
-                      );
-                      if (picked != null) {
-                        controllerDashboard.selectedDate.value = picked;
-                        final formattedDate =
-                            DateFormat('yyyy-MM-dd').format(picked);
-                        controllerDashboard.fetchChartDataByDate(formattedDate);
-                      }
+                      // final DateTime? picked = await showDatePicker(
+                      //   context: context,
+                      //   initialDate: controllerDashboard.selectedDate.value ??
+                      //       DateTime.now(),
+                      //   initialDatePickerMode: DatePickerMode.day,
+                      //   firstDate: DateTime(2020),
+                      //   lastDate: DateTime(2025),
+                      // );
+                      // if (picked != null) {
+                      //   controllerDashboard.selectedDate.value = picked;
+                      //   final formattedDate =
+                      //       DateFormat('yyyy-MM-dd').format(picked);
+                      //   controllerDashboard.fetchChartDataByDate(formattedDate);
+                      // }
+                      showMonthPicker(context);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -125,9 +189,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Icon(Icons.calendar_today, color: blueTersier),
                         spaceWidthMedium,
                         Text(
-                          controllerDashboard.selectedDate.value != null
+                          controllerDashboard.selectedDateNull.value != null
                               ? DateFormat('dd MMMM yyyy').format(
-                                  controllerDashboard.selectedDate.value!)
+                                  controllerDashboard.selectedDate.value)
                               : 'Pilih Tanggal',
                           style: semiBoldStyle.copyWith(
                             fontSize: regularFont,
@@ -139,7 +203,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   )),
             ),
           ),
-          Obx(() => controllerDashboard.selectedDate.value != null
+          Obx(() => controllerDashboard.selectedDateNull.value != null
               ? IconButton(
                   onPressed: () => controllerDashboard.resetDate(),
                   icon: Icon(Icons.close, color: blueTersier),

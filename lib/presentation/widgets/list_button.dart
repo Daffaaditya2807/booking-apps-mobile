@@ -19,14 +19,12 @@ Widget miniButtonPrimary(String text, VoidCallback funcion) {
       ));
 }
 
-Widget buttonPrimary(String text, VoidCallback function) {
+Widget buttonPrimary(String text, VoidCallback function, {List<Color>? color}) {
   return Container(
     decoration: BoxDecoration(
       gradient: LinearGradient(
-        colors: [
-          bluePrimary,
-          blueSecondary
-        ], // Sesuaikan warna gradient di sini
+        colors: color ??
+            [bluePrimary, blueSecondary], // Sesuaikan warna gradient di sini
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ),

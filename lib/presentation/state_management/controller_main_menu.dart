@@ -1,4 +1,5 @@
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,8 +38,8 @@ class ControllerMainMenu extends GetxController {
     return [
       PersistentBottomNavBarItem(
         icon: const Icon(
-          Icons.home_outlined,
-          size: 30,
+          CupertinoIcons.house,
+          // size: 30,
         ),
         title: ("Home"),
         textStyle: GoogleFonts.montserrat(fontSize: 14),

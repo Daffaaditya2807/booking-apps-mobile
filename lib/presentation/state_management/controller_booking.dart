@@ -8,6 +8,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../../data/models/times_slot.dart';
+
 class ControllerBooking extends GetxController {
   var isLoading = false.obs;
   var isFirstLoadValue = true.obs;
@@ -26,9 +28,15 @@ class ControllerBooking extends GetxController {
   // var availableLoket = <int>[].obs;
   var jamBooking = ''.obs;
   var tags = ''.obs;
+  var availableSlots = 0.obs;
+  final Rx<LoketInfo?> loketInfo = Rx<LoketInfo?>(null);
 
   void changeFocusedDay(DateTime focus) {
     focusedDay.value = focus;
+  }
+
+  bool isSameMonth(DateTime date1, DateTime date2) {
+    return date1.year == date2.year && date1.month == date2.month;
   }
 
   void changeSelectedDay(DateTime select) {
@@ -36,6 +44,7 @@ class ControllerBooking extends GetxController {
       selectedDay.value = select;
       selectedTime.value = '';
       availableLoket.clear();
+      availableSlots.value = 0;
       isLoadingLoket(false);
       isFirstLoadValue(true);
       fetchAvailableTimes();
@@ -50,10 +59,12 @@ class ControllerBooking extends GetxController {
     if (isFirstLoadValue.value) {
       isLoading(true);
     }
+
     try {
       if (selectedDay.value == null) return;
+
       var response = await http.post(
-        Uri.parse('${apiService}booking'), // Ganti dengan URL API Anda
+        Uri.parse('${apiService}booking'),
         body: jsonEncode({
           'tanggal': selectedDay.value!.toIso8601String().split('T')[0],
           'id_layanan': serviceId.value,
@@ -64,35 +75,117 @@ class ControllerBooking extends GetxController {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        List<String> available =
-            List<String>.from(jsonData['data']['time_slots']['available']);
-        List<String> nonAvailable =
-            List<String>.from(jsonData['data']['time_slots']['non_available']);
-        List<String> allTimes = (available + nonAvailable).toSet().toList()
-          ..sort(); // Remove duplicates and sort
 
+        // Parse loket info
+        var loketInfo = LoketInfo(
+          totalLoket: jsonData['data']['loket_info']['total_loket'],
+          capacityPerLoket: jsonData['data']['loket_info']
+              ['capacity_per_loket'],
+          totalCapacity: jsonData['data']['loket_info']['total_capacity'],
+        );
+
+        // Parse available times with remaining slots
+        List<TimeSlot> availableSlots =
+            (jsonData['data']['time_slots']['available'] as List)
+                .map((slot) => TimeSlot(
+                      time: slot['time'],
+                      remainingSlots: slot['remaining_slots'],
+                      available: true,
+                    ))
+                .toList();
+
+        // Parse non-available times
+        List<TimeSlot> nonAvailableSlots =
+            (jsonData['data']['time_slots']['non_available'] as List)
+                .map((time) => TimeSlot(
+                      time: time,
+                      remainingSlots: 0,
+                      available: false,
+                    ))
+                .toList();
+
+        // Combine and sort all time slots
+        List<TimeSlot> allSlots = [...availableSlots, ...nonAvailableSlots];
+        allSlots.sort((a, b) => a.time.compareTo(b.time));
+
+        // Update your times list with the new format
         times.clear();
-        for (String time in allTimes) {
+        for (var slot in allSlots) {
           String formattedTime =
-              time.substring(0, 5); // Converts "08:00:00" to "08:00"
-          times.add(
-              {'time': formattedTime, 'available': available.contains(time)});
+              slot.time.substring(0, 5); // Converts "08:00:00" to "08:00"
+          times.add({
+            'time': formattedTime,
+            'available': slot.available,
+            'remaining_slots': slot.remainingSlots,
+          });
         }
+
+        // You might want to store loket info somewhere if needed
+        // For example:
+        // loketInfo.value = loketInfo;
       } else {
         // Handle error
+        print('Error: ${response.statusCode}');
       }
     } on SocketException {
-      snackBarError("Perika Koneksi Internet",
+      snackBarError("Periksa Koneksi Internet",
           "Gagal mendapatkan data harap periksa koneksi internet");
-
       times.clear();
     } catch (e) {
-      print(e);
+      print('Error: $e');
     } finally {
       isLoading(false);
       isFirstLoadValue(false);
     }
   }
+
+  // Future<void> fetchAvailableTimes() async {
+  //   if (isFirstLoadValue.value) {
+  //     isLoading(true);
+  //   }
+  //   try {
+  //     if (selectedDay.value == null) return;
+  //     var response = await http.post(
+  //       Uri.parse('${apiService}booking'), // Ganti dengan URL API Anda
+  //       body: jsonEncode({
+  //         'tanggal': selectedDay.value!.toIso8601String().split('T')[0],
+  //         'id_layanan': serviceId.value,
+  //         'id': 1
+  //       }),
+  //       headers: {'Content-Type': 'application/json'},
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       var jsonData = jsonDecode(response.body);
+  //       List<String> available = List<String>.from(
+  //           jsonData['data']['time_slots']['available']['time']);
+  //       List<String> nonAvailable =
+  //           List<String>.from(jsonData['data']['time_slots']['non_available']);
+  //       List<String> allTimes = (available + nonAvailable).toSet().toList()
+  //         ..sort(); // Remove duplicates and sort
+
+  //       times.clear();
+  //       for (String time in allTimes) {
+  //         String formattedTime =
+  //             time.substring(0, 5); // Converts "08:00:00" to "08:00"
+  //         times.add(
+  //             {'time': formattedTime, 'available': available.contains(time)});
+  //       }
+  //     } else {
+  //       // Handle error
+  //     }
+  //   } on SocketException {
+  //     snackBarError("Perika Koneksi Internet",
+  //         "Gagal mendapatkan data harap periksa koneksi internet");
+
+  //     times.clear();
+  //   } catch (e) {
+  //     print(e);
+  //   } finally {
+  //     isLoading(false);
+  //     isFirstLoadValue(false);
+  //   }
+  // }
 
   Future<void> fetchAvailableLoket() async {
     if (!isFirstLoadValue.value) {
@@ -138,14 +231,13 @@ class ControllerBooking extends GetxController {
   }
 
   Future<void> insertBooking(
-      {String? idPelayanan,
-      String? alamat,
+      {String? alamat,
       String? idLayanan,
       String? jamBooking,
       String? tanggal,
       String? idUser}) async {
     isLoading(true);
-    bool check = checkDataNullBooking(jamBooking!, tanggal!, idPelayanan!);
+    bool check = checkDataNullBooking(jamBooking!, tanggal!);
     if (!check) {
       try {
         final jakarta = tz.getLocation('Asia/Jakarta');
@@ -155,7 +247,6 @@ class ControllerBooking extends GetxController {
             await http.post(Uri.parse('${apiService}insertbooking'),
                 headers: {'Content-Type': 'application/json'},
                 body: jsonEncode({
-                  'no_pelayanan': idPelayanan,
                   'id_layanan': idLayanan,
                   'jam_booking': jamBooking,
                   'tanggal': tanggal,
@@ -177,6 +268,9 @@ class ControllerBooking extends GetxController {
         } else if (code == 400) {
           snackBarError("Gagal buat booking pesanan",
               "Tanggal tersebut dan loket tersebut sudah terdapat data booking mohon cari yang lain");
+        } else if (code == 402) {
+          snackBarError("Gagal buat booking pesanan",
+              "Harap pesan pada jam lain karena sudah booking pada jam tersebut");
         }
       } on SocketException {
         snackBarError("Perika Koneksi Internet",
@@ -191,8 +285,7 @@ class ControllerBooking extends GetxController {
     }
   }
 
-  bool checkDataNullBooking(
-      String jamBooking, String tanggal, String idPelayanan) {
+  bool checkDataNullBooking(String jamBooking, String tanggal) {
     if (tanggal.isEmpty) {
       snackBarError("tanggal booking kosong",
           "Harap pilih tanggal booking terlebih dahulu");
@@ -203,12 +296,6 @@ class ControllerBooking extends GetxController {
           "Jam Booking Kosong", "Harap pilih jam booking terlebih dahulu");
       return true;
     }
-    if (idPelayanan.isEmpty) {
-      snackBarError("Nomor Loket kosong",
-          "Harap pilih Nomor Loket booking terlebih dahulu");
-      return true;
-    }
-
     return false;
   }
 }

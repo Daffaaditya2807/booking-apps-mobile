@@ -35,7 +35,7 @@ class CustomNavBarWidget extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 5.0),
+            padding: const EdgeInsets.only(top: 1.0),
             child: Material(
               type: MaterialType.transparency,
               child: FittedBox(
