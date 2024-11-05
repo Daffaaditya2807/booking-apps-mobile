@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -17,6 +18,28 @@ class ControllerLogin extends GetxController {
   var user = Rxn<UserModel>();
   var errorMessage = ''.obs;
   var phoneToken = ''.obs;
+
+  // Stream for handling force logout
+  final _forceLogoutController = StreamController<bool>.broadcast();
+  Stream<bool> get forceLogoutStream => _forceLogoutController.stream;
+
+  // Setup Firebase messaging listener
+  Future<void> setupMessageListener() async {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.data['type'] == 'force_logout') {
+        handleForceLogout();
+      }
+    });
+  }
+
+  // Handle force logout
+  void handleForceLogout() {
+    _forceLogoutController.add(true);
+    clearUserData();
+    Get.offAllNamed(Routes.loginScreen);
+    snackBarError(
+        "Logged Out", "Your account has been logged in on another device");
+  }
 
   Future<String> getDeviceToken() async {
     final deviceInfo = DeviceInfoPlugin();
@@ -77,7 +100,7 @@ class ControllerLogin extends GetxController {
         snackBarError("Gagal Login",
             "Akun yang digunakan sudah terdapat pada device lain!");
         return false;
-      } else if (code == 400) {
+      } else if (code == 505) {
         user.value = UserModel.fromJson(responseBody['data']['user']);
         Get.toNamed(Routes.otpInputScreen, arguments: {
           'email': user.value!.email,
@@ -145,9 +168,7 @@ class ControllerLogin extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        user.value = null;
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.remove('user');
+        clearUserData();
         Get.offAllNamed(Routes.loginScreen);
       } else {
         snackBarError("Logout Gagal", "Terjadi kesalahan saat logout.");
@@ -159,11 +180,25 @@ class ControllerLogin extends GetxController {
     }
   }
 
+  Future<void> clearUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user');
+    user.value = null;
+  }
+
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
     loadUserFromPrefs();
     getToken();
+    setupMessageListener();
+  }
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    _forceLogoutController.close();
+    super.onClose();
   }
 }

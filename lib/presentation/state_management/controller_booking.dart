@@ -77,12 +77,12 @@ class ControllerBooking extends GetxController {
         var jsonData = jsonDecode(response.body);
 
         // Parse loket info
-        var loketInfo = LoketInfo(
-          totalLoket: jsonData['data']['loket_info']['total_loket'],
-          capacityPerLoket: jsonData['data']['loket_info']
-              ['capacity_per_loket'],
-          totalCapacity: jsonData['data']['loket_info']['total_capacity'],
-        );
+        // var loketInfo = LoketInfo(
+        //   totalLoket: jsonData['data']['loket_info']['total_loket'],
+        //   capacityPerLoket: jsonData['data']['loket_info']
+        //       ['capacity_per_loket'],
+        //   totalCapacity: jsonData['data']['loket_info']['total_capacity'],
+        // );
 
         // Parse available times with remaining slots
         List<TimeSlot> availableSlots =
@@ -235,7 +235,8 @@ class ControllerBooking extends GetxController {
       String? idLayanan,
       String? jamBooking,
       String? tanggal,
-      String? idUser}) async {
+      String? idUser,
+      String? layanan}) async {
     isLoading(true);
     bool check = checkDataNullBooking(jamBooking!, tanggal!);
     if (!check) {
@@ -260,7 +261,8 @@ class ControllerBooking extends GetxController {
 
         if (code == 200) {
           if (responseBody['meta']['status'] == 'success') {
-            Get.toNamed(Routes.bookingDoneScreen);
+            Get.toNamed(Routes.bookingDoneScreen,
+                arguments: {'layanan': layanan});
           }
         } else if (code == 500) {
           snackBarError("Gagal buat booking pesanan",

@@ -45,22 +45,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       Get.put(ControllerGetService());
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  List<Widget> listWidget(BuildContext context) =>
-      List.generate(controllerDashboard.urlImagee.length, (int index) {
-        final listUrl = controllerDashboard.urlImagee[index];
-        if (listUrl != null) {
-          return containerBanner2(context, listUrl);
-        } else {
-          return Container(
-            color: Colors.blue,
-          );
-        }
-      });
-  @override
   Widget build(BuildContext context) {
     double heightAppBar = MediaQuery.of(context).viewPadding.top;
     double heightScreen = MediaQuery.sizeOf(context).height;
@@ -68,194 +52,80 @@ class _DashboardScreenState extends State<DashboardScreen> {
         (heightScreen - kToolbarHeight - heightAppBar) * 0.25;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: RefreshIndicator(
-        onRefresh: () async {
-          controllerDashboard.fetchGetTicketUser(
-              controllerLogin.user.value!.idUsers.toString());
-          controllerDashboard.fetchChartData();
-          controllerGetService.fetchService();
-          controllerDashboard.assignAllHistoryLast(
-              controllerLogin.user.value!.idUsers.toString());
-        },
-        child: _buildDashboardPage(heightContainer, context,
-            controllerLogin.user.value?.namaPembeli ?? ''),
-      ),
-    );
-  }
-
-  double calculateTotalWidth() {
-    double totalWidth = MediaQuery.sizeOf(context).width;
-    for (var group in controllerDashboard.barGroups) {
-      totalWidth +=
-          group.barRods.length * 10; // 40.0 adalah lebar rata-rata per bar
-    }
-    return totalWidth;
-  }
-
-  void showMonthPicker(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Pilih Tanggal Untuk Melihat Antrian',
-            textAlign: TextAlign.center,
-            style: regularStyle.copyWith(
-                color: Colors.black, fontSize: regularFont),
-          ),
-          content: SizedBox(
-            width: double.infinity,
-            child: Obx(() => DayPicker.single(
-                selectedDate: controllerDashboard.selectedDate.value,
-                onChanged: controllerDashboard.onSelectedDateChanged,
-                firstDate: controllerDashboard.firstDate,
-                lastDate: controllerDashboard.lastDate,
-                datePickerStyles: DatePickerRangeStyles(
-                    nextIcon: Container(
-                      decoration: BoxDecoration(
-                          color: yellowActive, borderRadius: roundedMediumGeo),
-                      child: const Padding(
-                        padding: EdgeInsets.all(1.0),
-                        child: Icon(
-                          Icons.chevron_right,
-                          size: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    prevIcon: Container(
-                      decoration: BoxDecoration(
-                          color: yellowActive, borderRadius: roundedMediumGeo),
-                      child: const Padding(
-                        padding: EdgeInsets.all(1.0),
-                        child: Icon(
-                          Icons.chevron_left,
-                          size: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    dayHeaderStyle: DayHeaderStyle(
-                        textStyle: semiBoldStyle.copyWith(color: Colors.black)),
-                    displayedPeriodTitle:
-                        semiBoldStyle.copyWith(color: Colors.black),
-                    selectedSingleDateDecoration: BoxDecoration(
-                        color: yellowActive, shape: BoxShape.circle),
-                    selectedDateStyle:
-                        boldStyle.copyWith(color: Colors.white)))),
-          ),
-          actions: [
-            miniButtonPrimary("OK", () => Navigator.of(context).pop()),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildDatePicker() {
-    return Padding(
-      padding: sidePaddingBig,
-      child: Row(
-        children: [
-          // spaceWidthMedium,
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-              // decoration: BoxDecoration(
-              //   border: Border.all(color: greyTersier),
-              //   borderRadius: BorderRadius.circular(8),
-              // ),
-              child: Obx(() => InkWell(
-                    onTap: () async {
-                      // final DateTime? picked = await showDatePicker(
-                      //   context: context,
-                      //   initialDate: controllerDashboard.selectedDate.value ??
-                      //       DateTime.now(),
-                      //   initialDatePickerMode: DatePickerMode.day,
-                      //   firstDate: DateTime(2020),
-                      //   lastDate: DateTime(2025),
-                      // );
-                      // if (picked != null) {
-                      //   controllerDashboard.selectedDate.value = picked;
-                      //   final formattedDate =
-                      //       DateFormat('yyyy-MM-dd').format(picked);
-                      //   controllerDashboard.fetchChartDataByDate(formattedDate);
-                      // }
-                      showMonthPicker(context);
-                    },
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            controllerDashboard.fetchGetTicketUser(
+                controllerLogin.user.value!.idUsers.toString());
+            controllerDashboard.fetchChartData();
+            controllerGetService.fetchService();
+            controllerDashboard.assignAllHistoryLast(
+                controllerLogin.user.value!.idUsers.toString());
+          },
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                floating: true,
+                pinned: true,
+                elevation: 0,
+                surfaceTintColor: Colors.white,
+                toolbarHeight: kToolbarHeight + 20,
+                backgroundColor: Colors.white,
+                flexibleSpace: FlexibleSpaceBar(
+                  // expandedTitleScale: 120.0,
+                  background: Padding(
+                    padding: sidePaddingBig,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.calendar_today, color: blueTersier),
-                        spaceWidthMedium,
-                        Text(
-                          controllerDashboard.selectedDateNull.value != null
-                              ? DateFormat('dd MMMM yyyy').format(
-                                  controllerDashboard.selectedDate.value)
-                              : 'Pilih Tanggal',
-                          style: semiBoldStyle.copyWith(
-                            fontSize: regularFont,
-                            color: blueTersier,
-                          ),
-                        ),
+                        componentTextGreeting(
+                            "${controllerLogin.user.value?.namaPembeli ?? ''}!"),
+                        Obx(() {
+                          return controllerLogin.user.value == null
+                              ? const CircularProgressIndicator()
+                              : Center(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: greyTersier,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: ClipOval(
+                                      child: SvgPicture.network(
+                                        controllerLogin.user.value!.avatarUrl,
+                                        fit: BoxFit.contain,
+                                        alignment: Alignment.center,
+                                        width: 50,
+                                        height: 50,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                        })
                       ],
                     ),
-                  )),
-            ),
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: _buildDashboardPage(heightContainer, context),
+              )
+            ],
           ),
-          Obx(() => controllerDashboard.selectedDateNull.value != null
-              ? IconButton(
-                  onPressed: () => controllerDashboard.resetDate(),
-                  icon: Icon(Icons.close, color: blueTersier),
-                )
-              : Container())
-        ],
+        ),
       ),
     );
   }
 
-  SafeArea _buildDashboardPage(
-      double heightContainer, BuildContext context, String nameUser) {
+  SafeArea _buildDashboardPage(double heightContainer, BuildContext context) {
     return SafeArea(
         child: SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          spaceHeightBig,
-          Padding(
-            padding: sidePaddingBig,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                componentTextGreeting("$nameUser!"),
-                Obx(() {
-                  return controllerLogin.user.value == null
-                      ? const CircularProgressIndicator()
-                      : Center(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: greyTersier,
-                                width: 1.0,
-                              ),
-                            ),
-                            padding: const EdgeInsets.all(2.0),
-                            child: ClipOval(
-                              child: SvgPicture.network(
-                                controllerLogin.user.value!.avatarUrl,
-                                fit: BoxFit.contain,
-                                alignment: Alignment.center,
-                                width: 50,
-                                height: 50,
-                              ),
-                            ),
-                          ),
-                        );
-                })
-              ],
-            ),
-          ),
           spaceHeightBig,
           Padding(
             padding: sidePaddingBig,
@@ -429,19 +299,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             width: double.infinity,
             child: Padding(
               padding: sidePaddingBig,
-              child: Obx(() => controllerDashboard.selectedDate.value != null
-                  ? Text(
-                      "Tanggal : ${DateFormat('dd MMMM yyyy').format(DateTime.parse(controllerDashboard.selectedDate.value.toString()))}",
-                      textAlign: TextAlign.center,
-                      style: regularStyle.copyWith(
-                          color: Colors.black, fontSize: regularFont),
-                    )
-                  : Text(
-                      "Tanggal : ${DateFormat('dd MMMM yyyy').format(DateTime.now())}",
-                      textAlign: TextAlign.center,
-                      style: regularStyle.copyWith(
-                          color: Colors.black, fontSize: regularFont),
-                    )),
+              child: Obx(() => Text(
+                    "Tanggal : ${DateFormat('dd MMMM yyyy', 'id').format(DateTime.parse(controllerDashboard.selectedDate.value.toString()))}",
+                    textAlign: TextAlign.center,
+                    style: regularStyle.copyWith(
+                        color: Colors.black, fontSize: regularFont),
+                  )),
             ),
           ),
           spaceHeightMedium,
@@ -543,5 +406,143 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
     ));
+  }
+
+  List<Widget> listWidget(BuildContext context) =>
+      List.generate(controllerDashboard.urlImagee.length, (int index) {
+        final listUrl = controllerDashboard.urlImagee[index];
+        if (listUrl != null) {
+          return containerBanner2(context, listUrl);
+        } else {
+          return Container(
+            color: Colors.blue,
+          );
+        }
+      });
+
+  double calculateTotalWidth() {
+    double totalWidth = MediaQuery.sizeOf(context).width;
+    for (var group in controllerDashboard.barGroups) {
+      totalWidth +=
+          group.barRods.length * 10; // 40.0 adalah lebar rata-rata per bar
+    }
+    return totalWidth;
+  }
+
+  void showMonthPicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Pilih Tanggal Untuk Melihat Antrian',
+            textAlign: TextAlign.center,
+            style: regularStyle.copyWith(
+                color: Colors.black, fontSize: regularFont),
+          ),
+          content: SizedBox(
+            width: double.infinity,
+            child: Obx(() => DayPicker.single(
+                selectedDate: controllerDashboard.selectedDate.value,
+                onChanged: controllerDashboard.onSelectedDateChanged,
+                firstDate: controllerDashboard.firstDate,
+                lastDate: controllerDashboard.lastDate,
+                datePickerStyles: DatePickerRangeStyles(
+                    nextIcon: Container(
+                      decoration: BoxDecoration(
+                          color: yellowActive, borderRadius: roundedMediumGeo),
+                      child: const Padding(
+                        padding: EdgeInsets.all(1.0),
+                        child: Icon(
+                          Icons.chevron_right,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    prevIcon: Container(
+                      decoration: BoxDecoration(
+                          color: yellowActive, borderRadius: roundedMediumGeo),
+                      child: const Padding(
+                        padding: EdgeInsets.all(1.0),
+                        child: Icon(
+                          Icons.chevron_left,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    dayHeaderStyle: DayHeaderStyle(
+                        textStyle: semiBoldStyle.copyWith(color: Colors.black)),
+                    displayedPeriodTitle:
+                        semiBoldStyle.copyWith(color: Colors.black),
+                    selectedSingleDateDecoration: BoxDecoration(
+                        color: yellowActive, shape: BoxShape.circle),
+                    selectedDateStyle:
+                        boldStyle.copyWith(color: Colors.white)))),
+          ),
+          actions: [
+            Column(
+              children: [
+                Obx(() => Align(
+                    alignment: Alignment.center,
+                    child: controllerDashboard.selectedDateNull.value == null
+                        ? Container()
+                        : Text(
+                            DateFormat('dd MMMM yyyy', 'id')
+                                .format(controllerDashboard.selectedDate.value),
+                            style: semiBoldStyle.copyWith(color: blueTersier),
+                          ))),
+                miniButtonPrimary("OK", () => Navigator.of(context).pop())
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildDatePicker() {
+    return Padding(
+      padding: sidePaddingBig,
+      child: Row(
+        children: [
+          // spaceWidthMedium,
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+              child: Obx(() => InkWell(
+                    onTap: () async {
+                      showMonthPicker(context);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.calendar_today, color: blueTersier),
+                        spaceWidthMedium,
+                        Text(
+                          controllerDashboard.selectedDateNull.value != null
+                              ? DateFormat('dd MMMM yyyy').format(
+                                  controllerDashboard.selectedDate.value)
+                              : 'Pilih Tanggal',
+                          style: semiBoldStyle.copyWith(
+                            fontSize: regularFont,
+                            color: blueTersier,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+            ),
+          ),
+          Obx(() => controllerDashboard.selectedDateNull.value != null
+              ? IconButton(
+                  onPressed: () => controllerDashboard.resetDate(),
+                  icon: Icon(Icons.close, color: blueTersier),
+                )
+              : Container())
+        ],
+      ),
+    );
   }
 }

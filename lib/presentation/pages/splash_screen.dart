@@ -45,16 +45,16 @@ class SplashScreen extends StatelessWidget {
             Container(
               width: double.infinity,
             ),
-            SizedBox(
+            CachedNetworkImage(
+              imageUrl: controllerSplashScreen.profileModel.value!.logo,
+              fit: BoxFit.cover,
               width: heightContainer,
               height: heightContainer,
-              child: CachedNetworkImage(
-                imageUrl: controllerSplashScreen.profileModel.value!.logo,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+              placeholder: (context, url) => Placeholder(
+                color: greyTersier,
+                strokeWidth: 1.0,
               ),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
             spaceHeightBig,
             Text(controllerSplashScreen.profileModel.value?.namaUsaha ?? '',

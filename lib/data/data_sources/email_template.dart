@@ -1,159 +1,75 @@
 String emailTemplate(String name, String kodeOtp) {
-  return """
-  <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Static Template</title>
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body
-    style="
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: #ffffff;
-      font-size: 14px;
-    "
-  >
-    <div
-      style="
-        max-width: 680px;
-        margin: 0 auto;
-        padding: 45px 30px 60px;
-        background: #f4f7ff;
-        background-image: url(https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1661497957196_595865/email-template-background-banner);
-        background-repeat: no-repeat;
-        background-size: 800px 452px;
-        background-position: top center;
-        font-size: 14px;
-        color: #434343;
-      "
-    >
-      <header>
-        <table style="width: 100%;">
-          <tbody>
-            <tr style="height: 0;">
-              <td>
-                <img
-                  alt=""
-                  src="https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1663574980688_114990/archisketch-logo"
-                  height="30px"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </header>
-
-      <main>
-        <div
-          style="
+  return '''
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <style>
+        body {
             margin: 0;
-            margin-top: 70px;
-            padding: 92px 30px 115px;
-            background: #ffffff;
-            border-radius: 30px;
-            text-align: center;
-          "
-        >
-          <div style="width: 100%; max-width: 489px; margin: 0 auto;">
-            <h1
-              style="
-                margin: 0;
-                font-size: 24px;
-                font-weight: 500;
-                color: #1f1f1f;
-              "
-            >
-              Kode OTP
-            </h1>
-            <p
-              style="
-                margin: 0;
-                margin-top: 17px;
-                font-size: 16px;
-                font-weight: 500;
-              "
-            >
-              Hey $name,
-            </p>
-            <p
-              style="
-                margin: 0;
-                margin-top: 17px;
-                font-weight: 500;
-                letter-spacing: 0.56px;
-              "
-            >
-              Terima kasih telah memilih Antriqu Apps. Gunakan OTP berikut
-              untuk menyelesaikan pembuatan akun email Anda. OTP berlaku untuk
-              <span style="font-weight: 600; color: #1f1f1f;">1 minutes</span>.
-              Jangan bagikan kode ini dengan orang lain.
-            </p>
-            <p
-              style="
-                margin: 0;
-                margin-top: 60px;
-                font-size: 30px;
-                font-weight: 600;
-                letter-spacing: 25px;
-                color: #ba3d4f;
-              "
-            >
-              $kodeOtp
-            </p>
-          </div>
-        </div>
-
-        <p
-          style="
-            max-width: 400px;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
             margin: 0 auto;
-            margin-top: 90px;
+            padding: 20px;
+            background-image: url('https://archisketch-resources.s3.ap-northeast-2.amazonaws.com/vrstyler/1661497957196_595865/email-template-background-banner');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .content {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
             text-align: center;
-            font-weight: 500;
-            color: #8c8c8c;
-          "
-        >
-          Need help? Ask at
-          <a
-            href="mailto:antriquapps@gmail.com"
-            style="color: #499fb6; text-decoration: none;"
-            >antriquapps@gmail.com</a
-          >
-        </p>
-      </main>
-
-      <footer
-        style="
-          width: 100%;
-          max-width: 490px;
-          margin: 20px auto 0;
-          text-align: center;
-          border-top: 1px solid #e6ebf1;
-        "
-      >
-        <p
-          style="
-            margin: 0;
-            margin-top: 40px;
-            font-size: 16px;
-            font-weight: 600;
-            color: #434343;
-          "
-        >
-          Antriqu Apps
-        </p>
-
-      </footer>
+        }
+        .otp-code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #007bff;
+            text-align: center;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        .brand {
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="header">Kode OTP</div>
+            <p>Hey $name,</p>
+            <p>Terima kasih telah memilih Antriqu Apps. Gunakan OTP berikut untuk menyelesaikan pembuatan akun email Anda. Silakan kembali ke menu registrasi dan masukkan kode dibawah ini agar akun anda terverifikasi</p>
+            <div class="otp-code">$kodeOtp</div>
+            <p>Need help? Ask at <a href="mailto:antriquapps@gmail.com">antriquapps@gmail.com</a></p>
+            <div class="footer">
+                <div class="brand">Antriqu Apps</div>
+            </div>
+        </div>
     </div>
-  </body>
-</html>  
-  """;
+</body>
+</html>
+''';
 }

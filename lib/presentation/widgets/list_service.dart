@@ -9,7 +9,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:intl/intl.dart';
+
 import 'package:ticket_widget/ticket_widget.dart';
 
 import '../../config/routes/routes.dart';
@@ -20,19 +22,19 @@ import 'loading_data.dart';
 
 String hari(String tanggal) {
   DateTime parsedDate = DateTime.parse(tanggal);
-  String convHari = DateFormat('EEEE').format(parsedDate);
+  String convHari = DateFormat('EEEE', 'id').format(parsedDate);
   return convHari;
 }
 
 String tanggal(String tanggal) {
   DateTime parsedDate = DateTime.parse(tanggal);
-  String convTanggal = DateFormat('dd MMMM yyyy').format(parsedDate);
+  String convTanggal = DateFormat('dd MMMM yyyy', 'id').format(parsedDate);
   return convTanggal;
 }
 
 String tanggalJam(String tanggal) {
   DateTime parsedDate = DateTime.parse(tanggal);
-  String convTanggal = DateFormat('dd MMMM yyyy HH:mm').format(parsedDate);
+  String convTanggal = DateFormat('dd-M-yyyy HH:mm', 'id').format(parsedDate);
   return convTanggal;
 }
 
@@ -311,15 +313,6 @@ Widget historyServiceCardDashboard(
                     spaceHeightSmall,
                     Row(
                       children: [
-                        // Text(
-                        //   "Status : ",
-                        //   textAlign: TextAlign.justify,
-                        //   overflow: TextOverflow.ellipsis,
-                        //   style: regularStyle.copyWith(
-                        //       color: greyPrimary,
-                        //       fontSize: regularFont,
-                        //       height: 1.5),
-                        // ),
                         Container(
                           decoration: BoxDecoration(
                               gradient: LinearGradient(colors: colours),
@@ -531,7 +524,8 @@ Widget detailHistoryStatus(
     String idBooking,
     String note,
     String tanggalBuatBooking,
-    String statusLewati) {
+    String statusLewati,
+    String imageUrl) {
   List<Color> colours = [];
   if (status == 'dipesan') {
     colours = [bluePrimary, blueSecondary];
@@ -554,16 +548,38 @@ Widget detailHistoryStatus(
           child: Column(
             children: [
               spaceHeightMedium,
+
+              ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  width: 80,
+                  height: 80,
+                ),
+              ),
               Text(
                 name,
-                style: boldStyle.copyWith(color: Colors.black),
-              ),
-              spaceHeightSmall,
-              Text(
-                serviceName,
-                style: regularStyle.copyWith(color: Colors.black),
+                style:
+                    boldStyle.copyWith(color: Colors.black, fontSize: fonth4),
               ),
               spaceHeightMedium,
+              DottedLine(
+                dashLength: 5,
+                lineThickness: 1.0,
+                dashGapLength: 3,
+                dashRadius: 3,
+                dashColor: greyPrimary,
+              ),
+              spaceHeightMedium,
+              Text(
+                "Nomor Antrian Anda",
+                style: semiBoldStyle.copyWith(
+                  color: Colors.black,
+                ),
+              ),
+              Text(
+                codeBooking,
+                style: boldStyle.copyWith(fontSize: 40, color: bluePrimary),
+              ),
               Container(
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -581,23 +597,20 @@ Widget detailHistoryStatus(
                 ),
               ),
               spaceHeightBig,
-              DottedLine(
-                dashLength: 5,
-                lineThickness: 1.0,
-                dashGapLength: 3,
-                dashRadius: 3,
-                dashColor: greyPrimary,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Layanan",
+                    style: regularStyle.copyWith(color: Colors.black),
+                  ),
+                  Text(
+                    serviceName,
+                    style: semiBoldStyle.copyWith(color: Colors.black),
+                  )
+                ],
               ),
               spaceHeightMedium,
-              Text(
-                "Nomor Antrian Anda",
-                style: semiBoldStyle.copyWith(
-                    color: Colors.black, fontSize: regularFont),
-              ),
-              Text(
-                codeBooking,
-                style: boldStyle.copyWith(fontSize: 40, color: bluePrimary),
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -689,57 +702,68 @@ Widget detailHistoryStatus(
                 dashRadius: 3,
                 dashColor: greyPrimary,
               ),
-              spaceHeightMedium,
-              //CATATAN KONDISI
+              // Catatan saat pesanan diproses dan dipesan
               status == 'dibatalkan' || status == 'selesai'
                   ? Container()
-                  : Text(
-                      "Catatan",
-                      style: semiBoldStyle.copyWith(color: Colors.black),
-                    ),
-              spaceHeightMedium,
-              status == 'dibatalkan' || status == 'selesai'
-                  ? Container()
-                  : notedd(
-                      "Harap Datang maximal 30 menit sebelum jam booking yang telah ditentukan untuk menghindari anda ditentukan pada jadwal lain! Terima Kasih"),
-              spaceHeightMedium,
-              // PESANAN DILEWATI KONDISI
-              statusLewati == '0'
-                  ? Container()
-                  : Text(
-                      "Pesanan Dilewati",
-                      style: semiBoldStyle.copyWith(color: Colors.black),
-                    ),
-              statusLewati == '0'
-                  ? Container()
-                  : notedd(
-                      "Pesanan anda telah dilewati sebanyak $statusLewati antrian"),
-              // KONDISI PESANNA DITOLAK
-              spaceHeightMedium,
-              note == '' || note == 'null'
-                  ? Container()
-                  : Text(
-                      "Alasan Pesanan Ditolak",
-                      style: semiBoldStyle.copyWith(color: Colors.black),
-                    ),
-              spaceHeightMedium,
-              note == '' || note == 'null'
-                  ? Container()
-                  : Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: Colors.redAccent.shade200.withOpacity(0.5),
-                          border: Border.all(color: Colors.redAccent.shade200),
-                          borderRadius: roundedMediumGeo),
-                      child: Padding(
-                        padding: valuePaddingMedium,
-                        child: Text(
-                          note,
-                          softWrap: true,
-                          style: regularStyle.copyWith(fontSize: regularFont),
-                          textAlign: TextAlign.justify,
+                  : ExpansionTile(
+                      title: Text(
+                        "Petunjuk",
+                        style: semiBoldStyle.copyWith(
+                            color: Colors.black, fontSize: fonth6),
+                      ),
+                      subtitle: Text(
+                        "Harap dibaca agar tahu bagaimana penggunaan tiket pada aplikasi",
+                        textAlign: TextAlign.justify,
+                        style: regularStyle.copyWith(
+                          color: Colors.black,
+                          fontSize: smallFont,
                         ),
                       ),
+                      tilePadding: const EdgeInsets.all(0),
+                      dense: true,
+                      childrenPadding: const EdgeInsets.only(top: 5),
+                      minTileHeight: 0,
+                      shape: const RoundedRectangleBorder(),
+                      children: [
+                        notedd(
+                            "Harap Datang maximal 30 menit sebelum jam booking yang telah ditentukan untuk menghindari anda ditentukan pada jadwal lain! Kemudian tunjukkan tiket ini kepada loket sesuai dengan yang tertera pada aplikasi agar dapat segera diproses. Terima Kasih"),
+                      ],
+                    ),
+              // Kondisi saat pesanan dilewati
+              statusLewati != '0' ? const Divider() : Container(),
+              statusLewati != '0'
+                  ? ExpansionTile(
+                      title: Text(
+                        "Pesanan Dilewati",
+                        style: semiBoldStyle.copyWith(
+                            color: Colors.black, fontSize: fonth6),
+                      ),
+                      tilePadding: const EdgeInsets.all(0),
+                      dense: true,
+                      minTileHeight: 0,
+                      shape: const RoundedRectangleBorder(),
+                      children: [
+                        notedd(
+                            "Pesanan anda telah dilewati sebanyak $statusLewati antrian")
+                      ],
+                    )
+                  : Container(),
+
+              // KONDISI PESANNA DITOLAK
+              note == '' || note == 'null' ? Container() : const Divider(),
+              note == '' || note == 'null'
+                  ? Container()
+                  : ExpansionTile(
+                      title: Text(
+                        "Catatan",
+                        style: semiBoldStyle.copyWith(
+                            color: Colors.black, fontSize: fonth6),
+                      ),
+                      tilePadding: const EdgeInsets.all(0),
+                      dense: true,
+                      minTileHeight: 0,
+                      shape: const RoundedRectangleBorder(),
+                      children: [notedd(note)],
                     )
             ],
           ),

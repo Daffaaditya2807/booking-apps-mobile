@@ -44,6 +44,6 @@ class HistoryBookingModel {
         catatan: json['catatan'].toString(),
         layanan: ServiceModel.fromJson(json['layanan']),
         createdAt: DateTime.parse(json['created_at']),
-        statusLewati: json['status_lewati'] ?? 0.toString());
+        statusLewati: json['dilewati_sekali'] ?? 0.toString());
   }
 }

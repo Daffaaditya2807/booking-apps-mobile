@@ -69,7 +69,7 @@ class Routes {
     GetPage(name: settingScreen, page: () => SettingScreen()),
     GetPage(name: detailServiceScreen, page: () => const DetailServiceScreen()),
     GetPage(name: bookingScreen, page: () => BookingScreen()),
-    GetPage(name: bookingDoneScreen, page: () => const BookingDoneScreen()),
+    GetPage(name: bookingDoneScreen, page: () => BookingDoneScreen()),
     GetPage(name: serviceStatusScreen, page: () => StatusServiceScreen()),
     GetPage(name: profileSettingScreen, page: () => SettingProfileScreen()),
     GetPage(

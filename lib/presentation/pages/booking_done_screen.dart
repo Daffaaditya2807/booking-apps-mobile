@@ -8,7 +8,8 @@ import 'package:get/get.dart';
 import '../../config/routes/routes.dart';
 
 class BookingDoneScreen extends StatelessWidget {
-  const BookingDoneScreen({super.key});
+  BookingDoneScreen({super.key});
+  final layanan = Get.arguments['layanan'];
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class BookingDoneScreen extends StatelessWidget {
           informationTextAsset(
               "assets/image/splash_screen/booking.png",
               "Booking Berhasil!",
-              "Selamat! Booking antrian untuk layanan 1  berhasil. Tunggu pemberitahuan lanjut untuk menikmati layanan terbaik  kami. "),
+              "Selamat! Booking antrian untuk $layanan  berhasil. Tunggu pemberitahuan lanjut untuk menikmati layanan terbaik  kami. "),
           Expanded(child: Container()),
           buttonPrimary("Selesai", () {
             Get.offAllNamed(Routes.navbarMenu);

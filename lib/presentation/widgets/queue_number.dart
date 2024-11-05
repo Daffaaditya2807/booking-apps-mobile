@@ -61,7 +61,7 @@ Widget queueNumberUser(
           ),
           spaceHeightSmall,
           Text(
-            "$layanan || Jam: $timeBookedUser",
+            "$layanan || Jam: ${timeBookedUser.substring(0, 5)}",
             style: boldStyle.copyWith(fontSize: smallFont, color: greyPrimary),
           ),
         ],

@@ -50,7 +50,7 @@ class ControllerStatusScreen extends GetxController {
   Rx<DatePeriod> selectedPeriod = Rx<DatePeriod>(
     DatePeriod(
       DateTime.now().subtract(const Duration(days: 0)),
-      DateTime.now().add(const Duration(days: 0)),
+      DateTime.now().add(const Duration(days: 3)),
     ),
   );
 
@@ -73,13 +73,13 @@ class ControllerStatusScreen extends GetxController {
 
   String convMonthYear(String date) {
     DateTime dateTime = DateTime.parse(date);
-    String formatedDate = DateFormat('MMMM yyyy').format(dateTime);
+    String formatedDate = DateFormat('MMMM yyyy', 'id').format(dateTime);
     return formatedDate;
   }
 
   String convDate(String date) {
     DateTime dateTime = DateTime.parse(date);
-    String formatedDate = DateFormat('dd MMMM yyyy').format(dateTime);
+    String formatedDate = DateFormat('dd MMMM yyyy', 'id').format(dateTime);
     return formatedDate;
   }
 

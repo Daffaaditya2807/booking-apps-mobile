@@ -421,6 +421,13 @@ class _StatusScreenState extends State<StatusScreen>
                                         () {
                                           controller.selectButton(2);
                                           controller.update;
+                                          controllerStatusScreen
+                                                  .valueDateFilter.value =
+                                              controllerStatusScreen
+                                                  .convMonthYear(
+                                                      controllerStatusScreen
+                                                          .selectedDate.value
+                                                          .toString());
                                           showMonthPicker(context);
                                         },
                                       ))),
@@ -434,6 +441,9 @@ class _StatusScreenState extends State<StatusScreen>
                                                   : Colors.grey.shade400, () {
                                         controller.selectButton(3);
                                         controller.update;
+                                        controllerStatusScreen
+                                                .valueDateFilter.value =
+                                            "${controllerStatusScreen.convDate(controllerStatusScreen.selectedPeriod.value.start.toString())} - ${controllerStatusScreen.convDate(controllerStatusScreen.selectedPeriod.value.end.toString())}";
                                         showDateRangePicker(context);
                                       })))
                             ],
@@ -453,7 +463,7 @@ class _StatusScreenState extends State<StatusScreen>
                                       child: Obx(() => Text(
                                             controller.valueDateFilter.value,
                                             textAlign: TextAlign.center,
-                                            style: semiBoldStyle.copyWith(
+                                            style: regularStyle.copyWith(
                                                 color: Colors.black),
                                           )),
                                     ),

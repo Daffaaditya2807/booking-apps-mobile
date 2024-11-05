@@ -62,7 +62,8 @@ class BookingScreen extends StatelessWidget {
               ExpansionTile(
                 title: Text(
                   services.name,
-                  style: semiBoldStyle.copyWith(color: bluePrimary),
+                  style: semiBoldStyle.copyWith(
+                      color: bluePrimary, fontSize: fonth5),
                 ),
                 tilePadding: const EdgeInsets.all(0),
                 shape: const RoundedRectangleBorder(),
@@ -83,9 +84,7 @@ class BookingScreen extends StatelessWidget {
               spaceHeightBig,
               const Divider(),
               spaceHeightBig,
-              componentTextHeader(
-                "Tentukan Tanggal Booking",
-              ),
+              componentTextHeader("Tentukan Tanggal Booking", size: fonth5),
               spaceHeightMedium,
               Obx(() => selectedDateContainer(
                       controllerBooking.focusedDay.value,
@@ -114,7 +113,7 @@ class BookingScreen extends StatelessWidget {
                       alignment: Alignment.topLeft,
                       child: Text(
                         "Pilih Jam Layanan",
-                        style: semiBoldStyle.copyWith(color: Colors.black),
+                        style: regularStyle.copyWith(color: Colors.black),
                       ),
                     )
                   : Container()),
@@ -335,21 +334,6 @@ class BookingScreen extends StatelessWidget {
                                     )
                                   ],
                                 ),
-                                // Row(
-                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //   children: [
-                                //     Text(
-                                //       "Nomer Loket",
-                                //       style: semiBoldStyle.copyWith(
-                                //           color: Colors.black),
-                                //     ),
-                                //     Text(
-                                //       chooseLocket,
-                                //       style: regularStyle.copyWith(
-                                //           color: Colors.black),
-                                //     )
-                                //   ],
-                                // ),
                                 spaceHeightSmall,
                                 const Divider(),
                                 Obx(() => controllerBooking.isLoading.value
@@ -370,7 +354,7 @@ class BookingScreen extends StatelessWidget {
                                             DateTime dateFormat =
                                                 DateTime.parse(tanggalBooking);
                                             String formateDate =
-                                                DateFormat('yyyy-MM-dd')
+                                                DateFormat('yyyy-MM-dd', 'id')
                                                     .format(dateFormat);
 
                                             controllerBooking.insertBooking(
@@ -378,7 +362,8 @@ class BookingScreen extends StatelessWidget {
                                                 idLayanan: idLayanan,
                                                 jamBooking: jamBooking,
                                                 tanggal: formateDate,
-                                                idUser: idUser);
+                                                idUser: idUser,
+                                                layanan: services.name);
                                           })),
                                         ],
                                       )),

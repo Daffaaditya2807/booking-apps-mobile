@@ -1,5 +1,6 @@
 import 'package:apllication_book_now/resource/fonts_style/fonts_style.dart';
 import 'package:apllication_book_now/resource/list_color/colors.dart';
+import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
 import 'package:apllication_book_now/resource/sizes/list_rounded.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,6 +22,7 @@ Widget selectedDateContainer(
       padding: const EdgeInsets.all(8.0),
       child: TableCalendar(
         focusedDay: focusedDay,
+        locale: 'id',
         // calendarBuilders: CalendarBuilders(
         //   dowBuilder: (context, day) {
         //     if (day.weekday == DateTime.sunday) {
@@ -48,7 +50,7 @@ Widget selectedDateContainer(
         headerStyle: HeaderStyle(
           titleCentered: true,
           titleTextStyle:
-              semiBoldStyle.copyWith(fontSize: 16, color: Colors.black),
+              semiBoldStyle.copyWith(fontSize: fonth5, color: Colors.black),
           formatButtonVisible: false,
           leftChevronPadding: const EdgeInsets.all(0),
           headerPadding: verticalPaddingBig,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_forget_password.dart';
 import 'package:apllication_book_now/presentation/widgets/list_button.dart';
 import 'package:apllication_book_now/presentation/widgets/list_text.dart';
@@ -5,7 +6,7 @@ import 'package:apllication_book_now/presentation/widgets/list_textfield.dart';
 import 'package:apllication_book_now/presentation/widgets/loading_data.dart';
 import 'package:apllication_book_now/resource/sizes/list_margin.dart';
 import 'package:apllication_book_now/resource/sizes/list_padding.dart';
-import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
 
 class ForgetPasswordScreen extends StatelessWidget {
