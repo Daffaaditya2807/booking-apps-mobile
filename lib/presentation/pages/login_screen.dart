@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apllication_book_now/config/routes/routes.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_show_hide.dart';
@@ -49,16 +51,28 @@ class LoginScreen extends StatelessWidget {
                 FilteringTextInputFormatter.deny(RegExp(r'\s')),
               ]),
           Obx(() => textFieldPassword(
-              "Password",
-              "Password",
-              controllerShowHide.isShow.value,
-              _password,
-              context,
-              controllerShowHide.isShow.value == true
-                  ? Icons.visibility_off
-                  : Icons.visibility,
-              controllerShowHide.showHidePassword,
-              typeInput: TextInputType.text)),
+                  "Password",
+                  "Password",
+                  controllerShowHide.isShow.value,
+                  _password,
+                  context,
+                  controllerShowHide.isShow.value == true
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                  controllerShowHide.showHidePassword, onSubmit: (value) {
+                log("Ketika data dienter");
+                String username = _username.text;
+                String password = _password.text;
+                bool checkField =
+                    controllerLogin.checkDataNull(username, password);
+                if (!checkField) {
+                  controllerLogin.login(username, password).then((bool value) {
+                    if (value) {
+                      Get.toNamed(Routes.navbarMenu);
+                    }
+                  });
+                }
+              }, typeInput: TextInputType.text)),
           Align(
             alignment: Alignment.topRight,
             child: InkWell(

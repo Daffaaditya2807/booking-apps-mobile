@@ -10,7 +10,9 @@ import '../../resource/list_color/colors.dart';
 Widget textFieldInput(String label, String hintext,
     TextEditingController controller, BuildContext context,
     {TextInputType? typeInput,
+    String? counter,
     List<TextInputFormatter>? formatter,
+    Function(String value)? onSubmit,
     int? lenght}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,10 +32,12 @@ Widget textFieldInput(String label, String hintext,
           cursorColor: blueSecondary,
           cursorWidth: 1.5,
           maxLength: lenght,
+          onSubmitted: onSubmit,
           inputFormatters: formatter,
           keyboardType: typeInput,
           decoration: InputDecoration(
               hintText: hintext,
+              counterText: counter,
               hintStyle: regularStyle.copyWith(color: greySecondary),
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: greySecondary),
@@ -63,6 +67,7 @@ Widget textFieldPassword(
     IconData showHide,
     VoidCallback funcion,
     {TextInputType? typeInput,
+    Function(String value)? onSubmit,
     List<TextInputFormatter>? formatter}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +89,7 @@ Widget textFieldPassword(
           obscureText: isShow,
           inputFormatters: formatter,
           keyboardType: typeInput,
+          onSubmitted: onSubmit,
           decoration: InputDecoration(
               hintText: hintext,
               hintStyle: regularStyle.copyWith(color: greySecondary),

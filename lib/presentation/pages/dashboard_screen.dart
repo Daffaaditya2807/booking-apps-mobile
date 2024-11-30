@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apllication_book_now/data/data_sources/api.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_dashboard.dart';
 import 'package:apllication_book_now/presentation/widgets/banner.dart';
@@ -69,7 +71,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 pinned: true,
                 elevation: 0,
                 surfaceTintColor: Colors.white,
-                toolbarHeight: kToolbarHeight + 20,
+                toolbarHeight: kToolbarHeight + 30,
                 backgroundColor: Colors.white,
                 flexibleSpace: FlexibleSpaceBar(
                   // expandedTitleScale: 120.0,
@@ -78,8 +80,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        componentTextGreeting(
-                            "${controllerLogin.user.value?.namaPembeli ?? ''}!"),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: componentTextGreeting(
+                              controllerLogin.user.value?.namaPembeli ?? ''),
+                        ),
                         Obx(() {
                           return controllerLogin.user.value == null
                               ? const CircularProgressIndicator()
@@ -126,7 +131,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          spaceHeightBig,
+          // spaceHeightBig,
           Padding(
             padding: sidePaddingBig,
             child: Obx(() => controllerDashboard.ticketUser.isEmpty
@@ -172,7 +177,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
               }
             }),
           ),
-          spaceHeightMedium,
+
+          Obx(() => controllerDashboard.ticketUser.isEmpty ||
+                  controllerDashboard.ticketUser.length == 1
+              ? Container()
+              : Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Geser kanan untuk melihat nomor antrian lainnya",
+                    style: regularStyle.copyWith(
+                        fontSize: smallFont, color: Colors.black),
+                  ),
+                )),
+          spaceHeightBig,
           Padding(
             padding: sidePaddingBig,
             child: componenTextHeaderDesc(
@@ -367,6 +384,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   final historyService = controllerDashboard.historyLast[index];
                   return InkWell(
                     onTap: () {
+                      log("halo");
                       Get.toNamed(Routes.serviceStatusScreen,
                           arguments: historyService);
                     },

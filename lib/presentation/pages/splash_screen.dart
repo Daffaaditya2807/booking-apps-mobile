@@ -3,6 +3,7 @@ import 'package:apllication_book_now/presentation/widgets/no_internet.dart';
 import 'package:apllication_book_now/resource/fonts_style/fonts_style.dart';
 import 'package:apllication_book_now/resource/list_color/colors.dart';
 import 'package:apllication_book_now/resource/sizes/list_font_size.dart';
+import 'package:apllication_book_now/resource/sizes/list_padding.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -20,9 +21,28 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Obx(() =>
-          controllerSplashScreen.controllerConnection.isConnected.value
-              ? _buildPageSplashScreen(context)
+      body: Obx(
+          () => controllerSplashScreen.controllerConnection.isConnected.value
+              ? controllerSplashScreen.timeOut.value
+                  ? Padding(
+                      padding: sidePaddingBig,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Server Bermasalah",
+                            style: semiBoldStyle.copyWith(color: Colors.black),
+                          ),
+                          Text(
+                            "Harap coba lagi aplikasi dalam beberapa menit",
+                            textAlign: TextAlign.center,
+                            style: regularStyle.copyWith(color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    )
+                  : _buildPageSplashScreen(context)
               : noInternetConnection()),
     );
   }

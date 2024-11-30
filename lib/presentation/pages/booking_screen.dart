@@ -107,7 +107,6 @@ class BookingScreen extends StatelessWidget {
                   }, controllerBooking.isSelectable)),
               spaceHeightBig,
               const Divider(),
-
               Obx(() => controllerBooking.times.isNotEmpty
                   ? Align(
                       alignment: Alignment.topLeft,
@@ -196,72 +195,6 @@ class BookingScreen extends StatelessWidget {
                             ]),
                       ))
                   : Container()),
-              // Obx(() => controllerBooking.availableLoket.isEmpty
-              //     ? controllerBooking.isLoadingLoket.value
-              //         ? loadingData("memuat loket tersedia")
-              //         : Container()
-              //     : SizedBox(
-              //         width: double.infinity,
-              //         // decoration: BoxDecoration(color: Colors.pink),
-              //         child: Column(
-              //           crossAxisAlignment: CrossAxisAlignment.start,
-              //           children: [
-              //             Text(
-              //               "Loket Tersedia",
-              //               style: mediumStyle.copyWith(color: Colors.black),
-              //             ),
-              //             spaceHeightSmall,
-              //             Obx(() => controllerBooking.isLoadingLoket.value
-              //                 ? loadingData("memuat loket tersedia")
-              //                 : SizedBox(
-              //                     height: MediaQuery.of(context).size.height *
-              //                         0.050,
-              //                     child: Obx(() => ListView.builder(
-              //                           itemCount: controllerBooking
-              //                               .availableLoket.length,
-              //                           shrinkWrap: true,
-              //                           // physics: const NeverScrollableScrollPhysics(),
-              //                           scrollDirection: Axis.horizontal,
-              //                           itemBuilder: (context, index) {
-              //                             return Obx(() {
-              //                               bool isSelectedLocket =
-              //                                   controllerBooking
-              //                                           .selectedLocket.value ==
-              //                                       controllerBooking
-              //                                           .availableLoket[index]
-              //                                           .toString();
-              //                               return Padding(
-              //                                 padding: const EdgeInsets.only(
-              //                                     right: 5),
-              //                                 child: InkWell(
-              //                                   onTap: () {
-              //                                     controllerBooking
-              //                                             .selectedLocket
-              //                                             .value =
-              //                                         controllerBooking
-              //                                             .availableLoket[index]
-              //                                             .toString();
-              //                                   },
-              //                                   child: isSelectedLocket
-              //                                       ? selectedTime(
-              //                                           controllerBooking
-              //                                               .availableLoket[
-              //                                                   index]
-              //                                               .toString())
-              //                                       : availableTime(
-              //                                           controllerBooking
-              //                                               .availableLoket[
-              //                                                   index]
-              //                                               .toString()),
-              //                                 ),
-              //                               );
-              //                             });
-              //                           },
-              //                         )),
-              //                   ))
-              //           ],
-              //         ),
-              //       )),
               spaceHeightBig,
               Obx(() => buttonPrimary("Booking",
                       color: controllerBooking.selectedTime.value.isEmpty

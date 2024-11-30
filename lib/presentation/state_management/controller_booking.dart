@@ -75,15 +75,6 @@ class ControllerBooking extends GetxController {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-
-        // Parse loket info
-        // var loketInfo = LoketInfo(
-        //   totalLoket: jsonData['data']['loket_info']['total_loket'],
-        //   capacityPerLoket: jsonData['data']['loket_info']
-        //       ['capacity_per_loket'],
-        //   totalCapacity: jsonData['data']['loket_info']['total_capacity'],
-        // );
-
         // Parse available times with remaining slots
         List<TimeSlot> availableSlots =
             (jsonData['data']['time_slots']['available'] as List)
@@ -119,10 +110,6 @@ class ControllerBooking extends GetxController {
             'remaining_slots': slot.remainingSlots,
           });
         }
-
-        // You might want to store loket info somewhere if needed
-        // For example:
-        // loketInfo.value = loketInfo;
       } else {
         // Handle error
         print('Error: ${response.statusCode}');
@@ -138,54 +125,6 @@ class ControllerBooking extends GetxController {
       isFirstLoadValue(false);
     }
   }
-
-  // Future<void> fetchAvailableTimes() async {
-  //   if (isFirstLoadValue.value) {
-  //     isLoading(true);
-  //   }
-  //   try {
-  //     if (selectedDay.value == null) return;
-  //     var response = await http.post(
-  //       Uri.parse('${apiService}booking'), // Ganti dengan URL API Anda
-  //       body: jsonEncode({
-  //         'tanggal': selectedDay.value!.toIso8601String().split('T')[0],
-  //         'id_layanan': serviceId.value,
-  //         'id': 1
-  //       }),
-  //       headers: {'Content-Type': 'application/json'},
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       var jsonData = jsonDecode(response.body);
-  //       List<String> available = List<String>.from(
-  //           jsonData['data']['time_slots']['available']['time']);
-  //       List<String> nonAvailable =
-  //           List<String>.from(jsonData['data']['time_slots']['non_available']);
-  //       List<String> allTimes = (available + nonAvailable).toSet().toList()
-  //         ..sort(); // Remove duplicates and sort
-
-  //       times.clear();
-  //       for (String time in allTimes) {
-  //         String formattedTime =
-  //             time.substring(0, 5); // Converts "08:00:00" to "08:00"
-  //         times.add(
-  //             {'time': formattedTime, 'available': available.contains(time)});
-  //       }
-  //     } else {
-  //       // Handle error
-  //     }
-  //   } on SocketException {
-  //     snackBarError("Perika Koneksi Internet",
-  //         "Gagal mendapatkan data harap periksa koneksi internet");
-
-  //     times.clear();
-  //   } catch (e) {
-  //     print(e);
-  //   } finally {
-  //     isLoading(false);
-  //     isFirstLoadValue(false);
-  //   }
-  // }
 
   Future<void> fetchAvailableLoket() async {
     if (!isFirstLoadValue.value) {
@@ -265,16 +204,20 @@ class ControllerBooking extends GetxController {
                 arguments: {'layanan': layanan});
           }
         } else if (code == 500) {
+          Get.back();
           snackBarError("Gagal buat booking pesanan",
               "Terjadi kesalahan saat melakukan booking pesanan");
         } else if (code == 400) {
+          Get.back();
           snackBarError("Gagal buat booking pesanan",
               "Tanggal tersebut dan loket tersebut sudah terdapat data booking mohon cari yang lain");
         } else if (code == 402) {
+          Get.back();
           snackBarError("Gagal buat booking pesanan",
               "Harap pesan pada jam lain karena sudah booking pada jam tersebut");
         }
       } on SocketException {
+        Get.back();
         snackBarError("Perika Koneksi Internet",
             "Gagal mengirim data harap periksa koneksi internet");
       } catch (e) {

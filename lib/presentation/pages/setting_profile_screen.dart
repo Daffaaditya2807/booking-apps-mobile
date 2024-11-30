@@ -40,12 +40,14 @@ class SettingProfileScreen extends StatelessWidget {
           spaceHeightBig,
           textFieldInput("Nama Lengkap", "Nama Lengkap", _nama, context,
               typeInput: TextInputType.name,
+              lenght: 35,
+              counter: '',
               formatter: [
                 FilteringTextInputFormatter.allow(RegExp('[a-zA-Z ]'))
               ]),
           textFieldInput("No Telepon", "No Telepon", _noTelpon, context,
               typeInput: TextInputType.phone,
-              lenght: 13,
+              lenght: 15,
               formatter: [FilteringTextInputFormatter.digitsOnly]),
           Expanded(child: Container()),
           Obx(() {

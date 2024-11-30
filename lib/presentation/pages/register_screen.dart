@@ -50,24 +50,30 @@ class RegisterScreen extends StatelessWidget {
             componenTextHeaderDesc(
                 "Buat Akun", "Silakan masukkan data diri anda"),
             spaceHeightBig,
-            textFieldInput("Nama Lengkap", "Nama Lengkap", _nama, context,
+            textFieldInput("Nama Lengkap", "user", _nama, context,
                 typeInput: TextInputType.name,
+                lenght: 35,
+                counter: '',
                 formatter: [
-                  FilteringTextInputFormatter.allow(RegExp('[a-zA-Z ]'))
+                  FilteringTextInputFormatter.allow(
+                    RegExp('[a-zA-Z ]'),
+                  )
                 ]),
-            textFieldInput("Email", "Email", _email, context,
+            textFieldInput("Email", "test@gmail.com", _email, context,
                 typeInput: TextInputType.emailAddress,
                 formatter: [
                   FilteringTextInputFormatter.deny(RegExp(r'\s')),
                 ]),
-            textFieldInput("Username", "Username", _username, context,
+            textFieldInput("Username", "User123x", _username, context,
                 typeInput: TextInputType.text,
+                lenght: 15,
+                counter: '',
                 formatter: [
                   FilteringTextInputFormatter.deny(RegExp(r'\s')),
                 ]),
             Obx(() => textFieldPassword(
                 "Password",
-                "Password",
+                "Example123",
                 controllerShowHide.isShow.value,
                 _password,
                 context,
@@ -78,7 +84,7 @@ class RegisterScreen extends StatelessWidget {
                 typeInput: TextInputType.text)),
             Obx(() => textFieldPassword(
                 "Konfirmasi Password",
-                "Konfirmasi Password",
+                "Example123",
                 controllerShowHide.isShowConfirm.value,
                 _confirmpassword,
                 context,
@@ -87,8 +93,8 @@ class RegisterScreen extends StatelessWidget {
                     : Icons.visibility,
                 controllerShowHide.showHideConfirmPassword,
                 typeInput: TextInputType.text)),
-            textFieldInput("Nomor Telepon", "Nomor Telepon", _noTelpon, context,
-                lenght: 13,
+            textFieldInput("Nomor Telepon", "08563109xxx", _noTelpon, context,
+                lenght: 15,
                 typeInput: TextInputType.phone,
                 formatter: [FilteringTextInputFormatter.digitsOnly]),
             spaceHeightMedium,

@@ -29,7 +29,15 @@ class ForgetPasswordScreen extends StatelessWidget {
                   "Silakan masukkan email yang sebelumnya telah didaftarkan pada aplikasi untuk memastikan apakah akun tersebut sudah dibuat"),
               spaceHeightBig,
               textFieldInput(
-                  "Email", "masukkan email", _controllerEmail, context),
+                "Email",
+                "masukkan email",
+                _controllerEmail,
+                context,
+                onSubmit: (value) {
+                  _controllerForgetPassword
+                      .checkUserAvailable(_controllerEmail.text);
+                },
+              ),
               Obx(() => _controllerForgetPassword.isLoading.value
                   ? loadingData("memerika user")
                   : buttonPrimary("Check User", () {

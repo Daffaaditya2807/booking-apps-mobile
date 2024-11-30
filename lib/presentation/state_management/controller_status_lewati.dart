@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 
@@ -5,6 +7,7 @@ class ControllerStatusLewati extends GetxController {
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
   RxInt unreadCount = 0.obs;
   RxList<Map<String, dynamic>> lewatiList = <Map<String, dynamic>>[].obs;
+  var isLoading = false.obs;
 
   // Listen to real-time updates for unread notifications
   void listenToUnreadNotifications(String userId) {
@@ -16,7 +19,9 @@ class ControllerStatusLewati extends GetxController {
 
         values.forEach((key, value) {
           if (value['id_users'] == userId) {
-            lewatiList.add(Map<String, dynamic>.from(value));
+            Map<String, dynamic> item = Map<String, dynamic>.from(value);
+            item['key'] = key;
+            lewatiList.add(item);
           }
         });
 
@@ -48,6 +53,20 @@ class ControllerStatusLewati extends GetxController {
           await lewatiRef.child(key).update({'read': "true"});
         }
       });
+    }
+  }
+
+  Future<void> deleteData(String id) async {
+    isLoading(true);
+    try {
+      final ref = _dbRef.child('lewati').child(id);
+      lewatiList.removeWhere((element) => element['id_booking'] == id);
+      await ref.remove();
+      log("berhasil dihapus $id");
+    } catch (e) {
+      log("gagal dihapus $e");
+    } finally {
+      isLoading(false);
     }
   }
 

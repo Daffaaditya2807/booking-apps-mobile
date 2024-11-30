@@ -79,9 +79,10 @@ class StatusServiceScreen extends StatelessWidget {
                   context,
                   controllerStatusScreen.profileModel.value!.namaUsaha,
                   status.value.layanan.name,
-                  controllerStatusScreen.statusPesanan.value == ''
-                      ? status.value.status
-                      : controllerStatusScreen.statusPesanan.value,
+                  // controllerStatusScreen.statusPesanan.value == ''
+                  //     ? status.value.status
+                  //     : controllerStatusScreen.statusPesanan.value,
+                  status.value.status,
                   status.value.nomorBooking,
                   status.value.tanggal,
                   status.value.tanggal,

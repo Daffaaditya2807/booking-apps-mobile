@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:apllication_book_now/config/routes/routes.dart';
@@ -7,6 +9,7 @@ import 'package:apllication_book_now/data/data_sources/notification_helper.dart'
 import 'package:apllication_book_now/data/models/profile_model.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_connection.dart';
 import 'package:apllication_book_now/presentation/state_management/controller_login.dart';
+import 'package:apllication_book_now/presentation/widgets/snackbar.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +21,7 @@ class ControllerSplashScreen extends GetxController {
       Get.put(ControllerConnection());
   NotificationHelper notificationHelper = NotificationHelper();
   var profileModel = Rxn<ProfileModel>();
+  var timeOut = false.obs;
 
   @override
   void onInit() {
@@ -27,7 +31,6 @@ class ControllerSplashScreen extends GetxController {
     controllerConnection.listenConnectivity(
       onConnected: () {
         if (controllerConnection.isConnected.value == true) {
-          print("object");
           initializeSplashScreen();
         }
       },
@@ -61,7 +64,8 @@ class ControllerSplashScreen extends GetxController {
       final deviceToken = await getDeviceToken();
       final userId = controllerLogin.user.value!.idUsers;
 
-      final response = await http.post(
+      final response = await http
+          .post(
         Uri.parse('${apiService}validate-session'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -69,10 +73,26 @@ class ControllerSplashScreen extends GetxController {
           'device_token': deviceToken,
           'phone_token': controllerLogin.phoneToken.value,
         }),
+      )
+          .timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          log("Server Down");
+
+          throw TimeoutException("Server is Down");
+        },
       );
 
       final responseBody = json.decode(response.body);
       return responseBody['meta']['code'] == 200;
+    } on TimeoutException {
+      log("Server Down Bawah");
+      snackBarError(
+          "Server Connection", "Server sedang down harap coba lagi nanti");
+      timeOut(true);
+      return Future.error("Server timeout");
+    } on SocketException {
+      return Future.error("Error: koneksi internet tidak ada");
     } catch (e) {
       print('Session validation error: $e');
       return false;
@@ -112,6 +132,12 @@ class ControllerSplashScreen extends GetxController {
       final response = await http.get(
         Uri.parse('${apiService}getprofile'),
         headers: {'Content-Type': 'application/json'},
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          log("Server Down");
+          throw TimeoutException("Server is Down");
+        },
       );
 
       final responseBody = json.decode(response.body);
@@ -122,6 +148,12 @@ class ControllerSplashScreen extends GetxController {
       } else {
         return Future.error("Failed to retrive");
       }
+    } on TimeoutException {
+      timeOut(true);
+      log("Server Down Bawah");
+      snackBarError(
+          "Server Connection", "Server sedang down harap coba lagi nanti");
+      return Future.error("Server timeout");
     } on SocketException {
       return Future.error("Error: koneksi internet tidak ada");
     } catch (e) {

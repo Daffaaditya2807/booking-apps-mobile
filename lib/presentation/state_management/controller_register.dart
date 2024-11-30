@@ -122,6 +122,12 @@ class ControllerRegister extends GetxController {
       snackBarError("Nomor telepon tidak valid",
           "Mohon periksa kembali nomor telepon yang dimasukkan apakah sesuai");
       return true;
+    } else {
+      String? phoneValidate = validateIndonesianPhone(noTelpon);
+      if (phoneValidate != null) {
+        snackBarError("Nomor telepon tidak valid", phoneValidate);
+        return true;
+      }
     }
 
     if (password != confirmPassword) {
@@ -130,5 +136,29 @@ class ControllerRegister extends GetxController {
     }
 
     return false;
+  }
+
+  String? validateIndonesianPhone(String? phone) {
+    if (phone == null || phone.isEmpty) {
+      return 'Nomor telepon tidak boleh kosong';
+    }
+
+    // Hapus semua spasi dan karakter non-digit
+    phone = phone.replaceAll(RegExp(r'\s+'), '');
+
+    // Regular expression untuk format nomor Indonesia
+    final RegExp indonesianPhoneRegex =
+        RegExp(r'^(?:(?:\+|62|0)(?:\d{9,15}))$');
+
+    // Cek panjang minimal dan maksimal
+    if (phone.length < 9 || phone.length > 15) {
+      return 'Nomor telepon harus antara 9-15 digit';
+    }
+
+    // Cek format nomor Indonesia
+    if (!indonesianPhoneRegex.hasMatch(phone)) {
+      return 'Format nomor telepon tidak valid';
+    }
+    return null;
   }
 }

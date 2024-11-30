@@ -17,6 +17,7 @@ import 'package:apllication_book_now/presentation/pages/status_lewati_screen.dar
 import 'package:apllication_book_now/presentation/pages/status_screen.dart';
 import 'package:apllication_book_now/presentation/pages/status_service_screen.dart';
 import 'package:apllication_book_now/presentation/pages/update_status_done_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Routes {
@@ -48,41 +49,102 @@ class Routes {
     ),
     GetPage(
       name: introductionFirst,
+      transition: Transition.cupertino,
+      curve: Curves.linear,
+      transitionDuration: const Duration(milliseconds: 1500),
       page: () => const IntroductionFirst(),
     ),
     GetPage(
       name: introductionLast,
+      transition: Transition.cupertino,
+      curve: Curves.easeIn,
+      transitionDuration: const Duration(milliseconds: 500),
       page: () => const IntroductionLastScreen(),
     ),
     GetPage(
       name: loginScreen,
+      transition: Transition.cupertino,
+      curve: Curves.easeIn,
+      transitionDuration: const Duration(milliseconds: 500),
       page: () => LoginScreen(),
     ),
     GetPage(
       name: registerScreen,
+      transition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 500),
       page: () => RegisterScreen(),
     ),
     GetPage(
       name: navbarMenu,
+      transition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 500),
       page: () => MainMenu(),
     ),
-    GetPage(name: settingScreen, page: () => SettingScreen()),
-    GetPage(name: detailServiceScreen, page: () => const DetailServiceScreen()),
-    GetPage(name: bookingScreen, page: () => BookingScreen()),
-    GetPage(name: bookingDoneScreen, page: () => BookingDoneScreen()),
-    GetPage(name: serviceStatusScreen, page: () => StatusServiceScreen()),
-    GetPage(name: profileSettingScreen, page: () => SettingProfileScreen()),
+    GetPage(
+        name: settingScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => SettingScreen()),
+    GetPage(
+        name: detailServiceScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => const DetailServiceScreen()),
+    GetPage(
+        name: bookingScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => BookingScreen()),
+    GetPage(
+        name: bookingDoneScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => BookingDoneScreen()),
+    GetPage(
+        name: serviceStatusScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => StatusServiceScreen()),
+    GetPage(
+        name: profileSettingScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => SettingProfileScreen()),
     GetPage(
       name: passwordSettingScreen,
+      transition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 500),
       page: () => SettingPasswordScreen(),
     ),
-    GetPage(name: statusScreen, page: () => const StatusScreen()),
+    GetPage(
+        name: statusScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => const StatusScreen()),
     GetPage(
         name: doneUpdateStatusScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
         page: () => const ScreenUpdateStatusDone()),
-    GetPage(name: otpInputScreen, page: () => OtpScreen()),
-    GetPage(name: forgetPasswordScreen, page: () => ForgetPasswordScreen()),
-    GetPage(name: resetPasswordScreen, page: () => ResetPasswordScreen()),
-    GetPage(name: statusLewatiScreen, page: () => StatusLewatiScreen())
+    GetPage(
+        name: otpInputScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => OtpScreen()),
+    GetPage(
+        name: forgetPasswordScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => ForgetPasswordScreen()),
+    GetPage(
+        name: resetPasswordScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => ResetPasswordScreen()),
+    GetPage(
+        name: statusLewatiScreen,
+        transition: Transition.cupertino,
+        transitionDuration: const Duration(milliseconds: 500),
+        page: () => StatusLewatiScreen())
   ];
 }

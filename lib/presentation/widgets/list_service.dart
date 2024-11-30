@@ -48,7 +48,7 @@ Widget serviceCardGridView(BuildContext context, List<ServiceModel> model) {
       mainAxisSpacing: 16,
       crossAxisSpacing: 10,
       childAspectRatio: 1.2,
-      mainAxisExtent: 200,
+      mainAxisExtent: 210,
     ),
     itemBuilder: (context, index) {
       final services = model[index];
@@ -497,15 +497,16 @@ Widget detailService(BuildContext context, String serviceName,
   );
 }
 
-Widget emptyListService() {
+Widget emptyListService({String? deskripsi, String? header}) {
   return Column(
     mainAxisSize: MainAxisSize.min,
     children: [
       Expanded(child: Container()),
       informationTextAsset(
           "assets/image/splash_screen/empty1.png",
-          "Booking Kosong!",
-          "Belum ada layanan yang anda pesan. Pesan sekarang dan nikmati layanan terbaik kami sekarang juga!"),
+          header ?? "Booking Kosong!",
+          deskripsi ??
+              "Belum ada layanan yang anda pesan. Pesan sekarang dan nikmati layanan terbaik kami sekarang juga!"),
       Expanded(child: Container()),
     ],
   );
@@ -730,41 +731,42 @@ Widget detailHistoryStatus(
                       ],
                     ),
               // Kondisi saat pesanan dilewati
-              statusLewati != '0' ? const Divider() : Container(),
-              statusLewati != '0'
-                  ? ExpansionTile(
-                      title: Text(
-                        "Pesanan Dilewati",
-                        style: semiBoldStyle.copyWith(
-                            color: Colors.black, fontSize: fonth6),
-                      ),
-                      tilePadding: const EdgeInsets.all(0),
-                      dense: true,
-                      minTileHeight: 0,
-                      shape: const RoundedRectangleBorder(),
-                      children: [
-                        notedd(
-                            "Pesanan anda telah dilewati sebanyak $statusLewati antrian")
-                      ],
-                    )
-                  : Container(),
+              // statusLewati != '0' ? const Divider() : Container(),
+              // statusLewati != '0'
+              //     ? ExpansionTile(
+              //         title: Text(
+              //           "Pesanan Dilewati",
+              //           style: semiBoldStyle.copyWith(
+              //               color: Colors.black, fontSize: fonth6),
+              //         ),
+              //         tilePadding: const EdgeInsets.all(0),
+              //         dense: true,
+              //         minTileHeight: 0,
+              //         shape: const RoundedRectangleBorder(),
+              //         children: [
+              //           notedd(
+              //               "Pesanan anda telah dilewati sebanyak $statusLewati antrian")
+              //         ],
+              //       )
+              //     : Container(),
 
               // KONDISI PESANNA DITOLAK
-              note == '' || note == 'null' ? Container() : const Divider(),
               note == '' || note == 'null'
                   ? Container()
-                  : ExpansionTile(
-                      title: Text(
-                        "Catatan",
-                        style: semiBoldStyle.copyWith(
-                            color: Colors.black, fontSize: fonth6),
-                      ),
-                      tilePadding: const EdgeInsets.all(0),
-                      dense: true,
-                      minTileHeight: 0,
-                      shape: const RoundedRectangleBorder(),
-                      children: [notedd(note)],
-                    )
+                  : status == 'dibatalkan'
+                      ? ExpansionTile(
+                          title: Text(
+                            "Catatan",
+                            style: semiBoldStyle.copyWith(
+                                color: Colors.black, fontSize: fonth6),
+                          ),
+                          tilePadding: const EdgeInsets.all(0),
+                          dense: true,
+                          minTileHeight: 0,
+                          shape: const RoundedRectangleBorder(),
+                          children: [notedd(note)],
+                        )
+                      : Container()
             ],
           ),
         ),

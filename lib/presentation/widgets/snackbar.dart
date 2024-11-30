@@ -26,7 +26,7 @@ SnackbarController snackBarSucces(String title, String messageSucces) {
 
 SnackbarController snackBarError(String title, String messageError) {
   return Get.snackbar(title, messageError,
-      icon: Icon(
+      icon: const Icon(
         Icons.cancel_outlined,
         color: Colors.redAccent,
       ),

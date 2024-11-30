@@ -15,6 +15,39 @@ Widget selectedDateContainer(
     bool Function(DateTime) isSelectable) {
   final DateTime currentMonth =
       DateTime(DateTime.now().year, DateTime.now().month, 1);
+
+  int getDaysInMonth(int year, int month) {
+    if (month == DateTime.february) {
+      final bool isLeapYear =
+          (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0);
+      return isLeapYear ? 29 : 28;
+    }
+
+    month = month % 12;
+
+    const List<int> daysInMonth = [
+      31, // January
+      -1, // February (handled separately above)
+      31, // March
+      30, // April
+      31, // May
+      30, // June
+      31, // July
+      31, // August
+      30, // September
+      31, // October
+      30, // November
+      31 // December
+    ];
+
+    return daysInMonth[month];
+  }
+
+  final DateTime lastMonth = DateTime(
+      DateTime.now().year,
+      DateTime.now().month + 2,
+      getDaysInMonth(DateTime.now().year, DateTime.now().month + 1));
+
   return Container(
     decoration: BoxDecoration(
         borderRadius: borderRoundedBig, border: Border.all(color: blueTersier)),
@@ -45,7 +78,7 @@ Widget selectedDateContainer(
         startingDayOfWeek: StartingDayOfWeek.monday,
         enabledDayPredicate: isSelectable,
         firstDay: currentMonth,
-        lastDay: DateTime.utc(2030, 3, 14),
+        lastDay: lastMonth,
         rowHeight: 45,
         headerStyle: HeaderStyle(
           titleCentered: true,
@@ -74,7 +107,10 @@ Widget selectedDateContainer(
           ),
           rightChevronIcon: Container(
             decoration: BoxDecoration(
-                color: yellowActive, borderRadius: roundedMediumGeo),
+                color: isSameMonth(focusedDay, lastMonth)
+                    ? greyTersier
+                    : yellowActive,
+                borderRadius: roundedMediumGeo),
             child: const Padding(
               padding: EdgeInsets.all(2.0),
               child: Icon(
@@ -115,4 +151,8 @@ Widget selectedDateContainer(
 
 bool isSameMonth(DateTime date1, DateTime date2) {
   return date1.year == date2.year && date1.month == date2.month;
+}
+
+bool isSameYear(DateTime date1, DateTime date2) {
+  return date1.year == date2.year;
 }

@@ -58,8 +58,72 @@ class ControllerProfile extends GetxController {
       snackBarError("Nomor telepon tidak valid",
           "Mohon periksa kembali nomor telepon yang dimasukan apakah sesuai");
       return true;
+    } else {
+      String? phoneValidate = validateIndonesianPhone(noTelpon);
+      if (phoneValidate != null) {
+        snackBarError("Nomor telepon tidak valid", phoneValidate);
+        return true;
+      }
     }
 
     return false;
+  }
+
+  String? validateIndonesianPhone(String? phone) {
+    if (phone == null || phone.isEmpty) {
+      return 'Nomor telepon tidak boleh kosong';
+    }
+
+    // Hapus semua spasi dan karakter non-digit
+    phone = phone.replaceAll(RegExp(r'\s+'), '');
+
+    // Regular expression untuk format nomor Indonesia
+    final RegExp indonesianPhoneRegex =
+        RegExp(r'^(?:(?:\+|62|0)(?:\d{9,15}))$');
+
+    // Cek panjang minimal dan maksimal
+    if (phone.length < 9 || phone.length > 15) {
+      return 'Nomor telepon harus antara 9-15 digit';
+    }
+
+    // Cek format nomor Indonesia
+    if (!indonesianPhoneRegex.hasMatch(phone)) {
+      return 'Format nomor telepon tidak valid';
+    }
+
+    // Cek awalan yang valid untuk Indonesia
+    List<String> validPrefixes = [
+      '0811', '0812', '0813', '0814', '0815', '0816', '0817', '0818',
+      '0819', // Telkomsel
+      '0851', '0852', '0853', '0855', '0856', '0857', '0858', // Indosat
+      '0895', '0896', '0897', '0898', '0899', // Three
+      '0881', '0882', '0883', '0884', '0885', '0886', '0887', '0888',
+      '0889', // Smartfren
+      '0821', '0822', '0823', '0851', '0852', '0853', // XL
+      '0838', '0831', '0832', '0833', // Axis
+    ];
+
+    // Konversi nomor ke format 08xx
+    String normalizedNumber = phone;
+    if (phone.startsWith('+62')) {
+      normalizedNumber = '0' + phone.substring(3);
+    } else if (phone.startsWith('62')) {
+      normalizedNumber = '0' + phone.substring(2);
+    }
+
+    // Cek apakah awalan valid
+    bool hasValidPrefix = false;
+    for (String prefix in validPrefixes) {
+      if (normalizedNumber.startsWith(prefix)) {
+        hasValidPrefix = true;
+        break;
+      }
+    }
+
+    if (!hasValidPrefix) {
+      return 'Nomor provider tidak valid untuk Indonesia';
+    }
+
+    return null;
   }
 }

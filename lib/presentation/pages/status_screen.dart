@@ -420,7 +420,7 @@ class _StatusScreenState extends State<StatusScreen>
                                                 : Colors.grey.shade400,
                                         () {
                                           controller.selectButton(2);
-                                          controller.update;
+
                                           controllerStatusScreen
                                                   .valueDateFilter.value =
                                               controllerStatusScreen
@@ -429,6 +429,7 @@ class _StatusScreenState extends State<StatusScreen>
                                                           .selectedDate.value
                                                           .toString());
                                           showMonthPicker(context);
+                                          controller.update;
                                         },
                                       ))),
                               spaceWidthSmall,

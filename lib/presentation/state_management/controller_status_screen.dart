@@ -38,8 +38,8 @@ class ControllerStatusScreen extends GetxController {
   var selectedIndex = (-1).obs;
 
   // Mont Picker Data
-  final DateTime firstDate = DateTime.now().subtract(const Duration(days: 350));
-  final DateTime lastDate = DateTime.now().add(const Duration(days: 350));
+  final DateTime firstDate = DateTime(DateTime.now().year - 3, 12);
+  final DateTime lastDate = DateTime(DateTime.now().year + 1, 12);
   var selectedDate = DateTime.now().obs;
   void onSelectedDateChanged(DateTime newDate) {
     selectedDate.value = newDate;
@@ -109,7 +109,7 @@ class ControllerStatusScreen extends GetxController {
           assignHistoryDitolak(idUsers.value);
           String statusPesananUser = booking['status'];
           print("STATUS = $statusPesananUser");
-          statusPesanan.value = statusPesananUser;
+          // statusPesanan.value = statusPesananUser;
 
           if (booking['status'] == 'selesai') {
             String bookingId = booking['id_booking'];
@@ -380,7 +380,7 @@ class ControllerStatusScreen extends GetxController {
           selectedIndex.value >= 2) {
         // Monthly filter
         if (!dateFilter.contains('-')) {
-          final filterDate = DateFormat('MMMM yyyy').parse(dateFilter);
+          final filterDate = DateFormat('MMMM yyyy', 'id').parse(dateFilter);
 
           void filterByMonth(RxList<HistoryBookingModel> list) {
             list.value = list.where((history) {
@@ -409,8 +409,8 @@ class ControllerStatusScreen extends GetxController {
         // Date range filter
         else {
           final dates = dateFilter.split(' - ');
-          final startDate = DateFormat('dd MMMM yyyy').parse(dates[0]);
-          final endDate = DateFormat('dd MMMM yyyy').parse(dates[1]);
+          final startDate = DateFormat('dd MMMM yyyy', 'id').parse(dates[0]);
+          final endDate = DateFormat('dd MMMM yyyy', 'id').parse(dates[1]);
 
           void filterByDateRange(RxList<HistoryBookingModel> list) {
             list.value = list.where((history) {
