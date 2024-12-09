@@ -1,16 +1,47 @@
-# apllication_book_now
+# AntreQu Apps 🚀
 
-A new Flutter project.
+**AntreQu Apps** adalah aplikasi modern untuk pemesanan (booking) yang terintegrasi dengan:  
+- **Website** sebagai **Admin**  
+- **Mobile App** sebagai **User**  
 
-## Getting Started
+Aplikasi ini dirancang untuk memberikan pengalaman pemesanan yang mudah, cepat, dan efisien!
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## 📋 Konfigurasi Backend untuk Mobile App
+Untuk mengatur **base URL** pada aplikasi mobile, Anda dapat melakukannya di file berikut:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+**Lokasi File:**
+Booking-apps-mobile -> lib -> data -> data_sources -> api.dart
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 🔗 Base URL untuk Server **LIVE**
+Gunakan URL berikut untuk server **LIVE**:
+
+String http = "https://antreeze.kingperseus.online";
+
+
+### 🔗 Base URL untuk Server **LOCAL**
+Gunakan URL berikut untuk server **LOCAL**:
+String http = "http://192.168.xxx.xx:8000";
+
+Tips:
+Untuk mendapatkan IPv4 Address, buka terminal/command prompt dan ketikkan:
+ipconfig
+Gantilah xxx.xx dengan IP Address lokal Anda.
+
+🛠️ Menjalankan Backend secara Lokal
+Jika menggunakan server lokal, pastikan Anda menjalankan backend dari repositori berikut:
+AntreeZe Backend Repository
+https://github.com/faris2000111/AntreeZe
+
+Langkah-langkah:
+Clone repo backend ke komputer Anda.
+
+Masuk ke direktori project backend menggunakan terminal.
+
+Jalankan perintah berikut untuk memulai server backend:
+php artisan serve --host=ip4address
+Gantilah ip4address dengan IP Address lokal Anda yang diperoleh sebelumnya.
+
+🎉 Sekarang Anda siap menjalankan AntreQu Apps dengan lancar! 🎉
+Jangan ragu untuk memberikan bintang ⭐ pada repositori ini jika Anda merasa terbantu!
