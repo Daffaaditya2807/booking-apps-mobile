@@ -69,8 +69,8 @@ Berikut langkah-langkah untuk meng-compile aplikasi Flutter ke format **APK** da
 
 ### 1️⃣ **Prasyarat**
 Pastikan perangkat Anda memiliki:
-- **Flutter SDK** (versi terbaru).  
-- **Android Studio** (untuk tools build).  
+- **Flutter SDK**.  
+- **Visual Studio** (untuk tools build).  
 - **Keystore** (untuk menandatangani APK/AAB jika ingin di-publish).  
 - Dependency project sudah terpasang dengan perintah:  
   ```bash
